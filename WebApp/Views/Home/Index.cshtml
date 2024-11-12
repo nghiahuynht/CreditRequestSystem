@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "Hệ thống quản lý nghiệp vụ dự toán/thanh toán";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{ 
+    <link href="~/plugins/amcharts5/examples/xy-clustered-column/index.css" rel="stylesheet" />
+    <style>
+        #chartdiv{
+            height:400px;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-8">
+                <h1>Xin chào @(ViewBag.FullNameLogin)</h1>
+            </div>
+            <div class="col-sm-4">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active">TP Hồ Chí Minh - @(DateTime.Now.ToString("dd/MM/yyyy"))</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <input type="hidden" value="@(DateTime.Now.Year)" id="ddl-year" />
+    @*<div class="col-md-12">
+            <img class="img" src="~/img/ichi-bg-dashboard.png" style="width:100%;opacity:0.9" />
+        </div>*@
+
+
+
+    <div class="card">
+        <div class="card-header">
+
+        </div>
+        <div class="card-body">
+           
+        </div>
+    </div>
+
+
+
+
+    
+
+    <div class="card">
+        <div class="card-header">
+            
+        </div>
+        <div class="card-body" id="chartdiv">
+
+        </div>
+    </div>
+
+
+
+</section>
+
+@section scripts{
+    <script src="~/plugins/amcharts5/index.js"></script>
+    <script src="~/plugins/amcharts5/xy.js"></script>
+    <script src="~/plugins/amcharts5/themes/Animated.js"></script>
+    @*<script src="~/plugins/amcharts5/examples/xy-clustered-column/index.js"></script>*@
+    <script>
+
+      
+
+        $(document).ready(function () {
+
+           
+
+        });
+
+
+        
+
+    </script>
+}

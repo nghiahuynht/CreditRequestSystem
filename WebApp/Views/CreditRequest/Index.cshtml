@@ -1,0 +1,300 @@
+﻿@model DAL.Models.CreditRequest.CreditRequestFilterModel
+@{
+    string titlePage = string.Empty;
+    if (Model.CreditType == "TU")
+    {
+        titlePage = "tạm ứng";
+    }else if(Model.CreditType == "HU")
+    {
+        titlePage = "hoàn ứng";
+    }
+    else if (Model.CreditType == "TT")
+    {
+        titlePage = "Thanh toán";
+    }
+    ViewData["Title"] = "Danh sách yêu cầu "+ titlePage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using DAL
+@using DAL.Models
+@section styles{
+    <link href="~/plugins/datepicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .fa-cube{cursor:pointer;}
+    </style>
+}
+<input type="hidden" value="@(Model.CreditType)" id="request-credit-type" />
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label>Trạng thái</label>
+                    <select class="form-control" id="ddl-status">
+                        <option value="">Tất cả</option>
+                        <option value="@Contanst.CreditRequestStatus_Draft">Nháp</option>
+                        <option value="@Contanst.CreditRequestStatus_Waiting">Chờ QL kiểm tra</option>
+                        <option value="@Contanst.CreditRequestStatus_Reviewed">Chờ GĐ duyệt</option>
+                        <option value="@Contanst.CreditRequestStatus_Approved">Đã duyệt</option>
+                        <option value="@Contanst.CreditRequestStatus_Completed">Đã thu/chi tiền</option>
+                        <option value="@Contanst.CreditRequestStatus_Rejected">Từ chối</option>
+                        <option value="@Contanst.CreditRequestStatus_Canceled">Huỷ</option>
+                        @{
+                            if (Model.CreditType == Contanst.CreditType_HoanUng)
+                            {
+                                <option value="@Contanst.CreditRequestStatus_WaitingAccountant">Chờ KT kiểm tra HS</option>
+                            }
+                        }
+
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <label>Từ ngày</label>
+                    <div class="input-group date">
+                        <input type="text" id="FromDate" value="@(Model.FromDate)" class="form-control">
+                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <label>Đến ngày</label>
+                    <div class="input-group date">
+                        <input type="text" id="ToDate" value="@(Model.ToDate)" class="form-control">
+                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <label>Từ khoá</label>
+                    <input type="text" class="form-control" placeholder="Mã YC/lý do/Tên người yêu cầu" id="txtkeyword" />
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-warning btn-filter"><i class="fa fa-search" id="btn-search"></i></button>
+                </div>
+                <div class="col-sm-2">
+                    <div class="text-right">
+                        <a class="btn btn-sm btn-warning btn-filter" href="/CreditRequest/CreditRequestDetail/0/@(Model.CreditType)"><i class="fa fa-plus-circle"></i>&nbsp;Tạo mới</a>&nbsp;
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+            <div class="text-right">
+
+            </div>
+            <table class="table table-bordered table-hover dataTable" id="table-creditRequest" width="100%">
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Người yêu cầu</th>
+                        <th>Lý do</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Số tiền @(titlePage)</th>
+                        @{
+                            if (Model.CreditType == "TU")
+                            {
+                                <th>Số tiền duyệt</th>
+                            }
+                        }
+                        @{
+                            if (Model.CreditType == "HU")
+                            {
+                                <th>Mã TU liên quan</th>
+                            }
+                        }
+
+
+                        <th>Ngày</th>
+                        <th width="50px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script src="~/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script>
+        var tableId = "#table-creditRequest";
+        var ajaxURL = "/CreditRequest/SearchCreditRequestPaging";
+        var columnData = [
+           
+            { "data": "code" },
+            { "data": "userRequest" },
+            { "data": "reason" },
+            {
+                "data": "creaditType", "render": function (data, type, row, meta) {
+                    return RenderCreditRequestTypes(data);
+                }
+            },
+            {
+                "data": "status", "render": function (data, type, row, meta) {
+                    return RenderStatusCreditRequest(data);
+                }
+            },
+            //{
+            //    "data": "requestedAmount", "render": function (data, type, row, meta) {
+            //        return RenderNumerFormat(data);
+            //    }
+            //},
+            { "data": "requestedAmount" },
+            {
+                "data": "approvedAmount", "render": function (data, type, row, meta) {
+                    return RenderNumerFormat(data);
+                }
+            },
+            { "data": "referRequestCode" },
+            { "data": "dateRequest" },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(data, row["status"], row["referRequestCode"]);
+                }
+            },
+           
+        ];
+
+        $(document).ready(function () {
+            $(".date").datepicker({
+                format: "dd/mm/yyyy"
+            }).on('changeDate', function (e) {
+                $(this).datepicker('hide');
+            });
+
+            HidColumForHU();
+
+            
+
+            $("#btn-search").click(function () {
+                HidColumForHU();
+            });
+        })
+        function SearchCreditRequest() {
+            var searchModel = {
+                Status: $("#ddl-status").val(),
+                CreditType: $("#request-credit-type").val(),
+                ContentCredit: $("#txtkeyword").val(),
+                FromDate: ConverFormatDate($("#FromDate").val()),
+                ToDate: ConverFormatDate($("#ToDate").val()),
+                UserName:""
+                
+            };
+
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, searchModel);
+
+
+
+        }
+
+        function RenderStatusCreditRequest(status) {
+            var statusHTML = "";
+            if (status == "draft") {
+                statusHTML = "<span class='badge badge-secondary badge-status'>Nháp</span>";
+            }
+            else if (status == "waiting") {
+                statusHTML = "<span class='badge badge-warning badge-status'>Chờ QL kiểm tra</span>";
+            }
+            else if (status == "reviewed") {
+                statusHTML = "<span class='badge badge-warning badge-status'>Chờ GĐ duyệt</span>";
+            }
+            else if (status == "approved") {
+                statusHTML = "<span class='badge badge-success badge-status'>Đã duyệt</span>";
+            }
+            else if (status == "canceled") {
+                statusHTML = "<span class='badge badge-danger badge-status'>Hủy</span>";
+            }
+            else if (status == "rejected") {
+                statusHTML = "<span class='badge badge-danger badge-status'>Từ chối</span>";
+            }
+            else if (status == "waitacc") {
+                statusHTML = "<span class='badge badge-warning badge-status'>Chờ KT kiểm tra HS</span>";
+            }
+            else if (status == "completed") {
+                statusHTML = "<span class='badge badge-success badge-status'>Đã thu/chi tiền</span>";
+            }
+            return statusHTML;
+        }
+
+        function RenderCreditRequestTypes(types) {
+            var typesHTML = "";
+            if (types == "TU") {
+                typesHTML = "<span class=''>Tạm ứng</span>";
+            }
+            else if (types == "HU") {
+                typesHTML = "<span class=''>Hoàn ứng</span>";
+            }
+            
+            return typesHTML;
+        }
+
+        function RenderTableAction(id,status,referCode)
+        {
+            let creditType = $("#request-credit-type").val();
+            let hideHU = "";
+            if (creditType == "HU" || status == "canceled" || status == "rejected")
+            {
+                hideHU = "style='display:none'";
+            }
+
+            if (creditType == "TU" && referCode != null && referCode != "")
+            {
+                hideHU = "style='display:none'";
+            }
+
+
+
+            var html = "<div class='div-table-action'>" +
+                "<i class='fa fa-edit' onclick='GotoDetail(" + id + ")'></i>&nbsp;&nbsp;" +
+                "<i class='fa fa-cube' " + hideHU+" title='Tạo hoàn ứng' onclick='CreateHU(" + id + ")'></i>&nbsp;" +
+                "</div>";
+            return html;
+        }
+
+        function GotoDetail(id) {
+            let creditType = $("#request-credit-type").val();
+            location.href = "/CreditRequest/CreditRequestDetail/" + id + "/" + creditType;
+        }
+
+        function CreateHU(id) {
+            let creditType = "HU";
+            location.href = "/CreditRequest/CreditRequestDetail/0/" + creditType + "/" + id;
+        }
+
+        function HidColumForHU() {
+            let creditType = $("#request-credit-type").val();
+            if (creditType == "HU") {
+                columnData = columnData.filter(x => x.data != "approvedAmount");
+                SearchCreditRequest();
+            } else if (creditType == "TU") {
+                columnData = columnData.filter(x => x.data != "referRequestCode");
+                SearchCreditRequest();
+            }
+        }
+
+    </script>
+}

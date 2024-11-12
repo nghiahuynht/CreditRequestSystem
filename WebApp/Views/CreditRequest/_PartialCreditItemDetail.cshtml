@@ -1,0 +1,42 @@
+﻿@model DAL.Models.CreditRequest.CreditRequestItemModel
+
+@Html.HiddenFor(x => x.Id)
+@Html.HiddenFor(x => x.CreditRequestId)
+<div class="form-group">
+
+    <div class="row">
+        <label class="col-md-3 control-label">Nội dung</label>
+        <div class="col-md-3">
+            @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+        </div>
+
+        <label class="col-md-3 control-label">Đơn vị tính</label>
+        <div class="col-md-3">
+            @Html.TextBoxFor(x => x.Unit, new { @class = "form-control" })
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <label class="col-md-3 control-label">Số lượng</label>
+        <div class="col-md-3">
+            @Html.TextBoxFor(x => x.Quanti, new { @class = "form-control" })
+        </div>
+        <label class="col-md-3 control-label">Đơn giá</label>
+        <div class="col-md-3">
+            @Html.TextBoxFor(x => x.Price, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <br />
+    <div class="row">
+        <label class="col-md-3 control-label">Ghi chú</label>
+        <div class="col-md-9">
+            @Html.TextBoxFor(x => x.Note, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+
+
+</div>
+<br />

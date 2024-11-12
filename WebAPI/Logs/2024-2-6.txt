@@ -1,0 +1,10 @@
+
+RequestURL: / Route/Checkin
+Input: {"Id":null,"customerCode":"KH001","createdBy":"sale1","checkin":null,"checkout":null,"image":null,"latMap":"10.7686751","longMap":"106.7011424","note":null}
+
+
+
+RequestURL: / Route/Checkin
+Input: {"Id":null,"customerCode":"KH001","createdBy":"sale1","checkin":null,"checkout":null,"image":null,"latMap":"10.7686751","longMap":"106.7011424","note":null}
+
+

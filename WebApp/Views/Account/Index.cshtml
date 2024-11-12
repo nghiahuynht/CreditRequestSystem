@@ -1,0 +1,237 @@
+﻿
+@{
+    ViewData["Title"] = "Danh sách nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<DAL.Models.ComboBoxModel>
+@section styles{
+
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .div-member {
+            margin-left: 20px;
+        }
+            .div-member .nav .nav-link {
+                margin: 4px 0 !important;
+            }
+        .card .nav.flex-column > li{
+            border-bottom:0px;
+        }
+        .span-team-name{
+            font-weight:bold
+        }
+
+        .i-edit-saleteam{
+            color:#555;
+        }
+        .i-delete-saleteam {
+            color: #ff0000;
+        }
+        .typeahead {
+            width: 100% !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header">
+                    <strong>Sơ đồ tổ chức</strong>
+                    
+                </div>
+                <div class="card-body" id="load-saleteam-tree">
+                    <!-- tree view-->
+                  
+
+                    <!-- end tree view-->
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="col-sm-9">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label>Nhóm quyền</label>
+                            <select class="form-control" id="ddl-role">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model)
+                                    {
+                                        <option value="@opt.Value">@opt.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Tìm theo SĐT/tên/email</label>
+                            <input type="text" class="form-control" id="txtkeyword" />
+                        </div>
+                        <div class="col-sm-1">
+                            <button id="btn-search" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="text-right btn-filter">
+                                <a class="btn btn-sm btn-primary" href="/account/detail"><i class="fa fa-plus-circle"></i>&nbsp;Tạo NV mới</a>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body ">
+                    <table class="table table-bordered table-hover dataTable" id="table-userinfo" width="1400px">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th width="100px">Tên đăng nhập</th>
+                                <th width="200px">Tên đầy đủ</th>
+                                <th>SDT</th>
+                                <th>Email</th>
+                                <th width="150px">Nhóm quyền</th>
+                                <th width="150px">Chức danh</th>
+                                <th width="70px">Hoạt động?</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+
+
+
+
+@section scripts{
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script src="~/plugins/mdb-treeview/forms-free.js"></script>
+    <script src="~/plugins/mdb-treeview/scrolling-navbar.js"></script>
+    <script src="~/plugins/mdb-treeview/treeview.js"></script>
+    <script src="~/plugins/mdb-treeview/wow.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script>
+        var tableId = "#table-userinfo";
+        var ajaxURL = "/Account/SearchUserInfo";
+        var columnData = [
+            { "data": "id", visible: false },
+
+            { "data": "userName" },
+            { "data": "fullName" },
+            { "data": "phone" },
+            { "data": "email" },
+            { "data": "roleName" },
+            { "data": "title" },
+            { "data": "isActive" },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(data);
+                }
+            },
+
+
+        ];
+
+        var arrMembers = [];
+
+
+        $(document).ready(function () {
+
+            SearchUserInfo();
+
+            $('.treeview-animated').mdbTreeview();
+
+            $("#btn-search").click(function () {
+                SearchUserInfo();
+            });
+            
+            LoadSaleTeamTree();
+            InitTreeViewSaleTeam();
+
+
+        });
+        function RenderTableAction(userId) {
+            var html = "<div class='div-table-action'><i class='fa fa-edit' onclick='GotoUserDetail(" + userId + ")'></i></div>";
+            return html;
+        }
+        function GotoUserDetail(userId) {
+            location.href = "/account/detail/" + userId;
+        }
+        function SearchUserInfo() {
+
+            var dataSearch = {
+                RoleCode: $("#ddl-role").val(),
+                Keyword: $("#txtkeyword").val()
+            };
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
+
+        }
+
+
+        /*================== Sale Team ======================================*/
+
+        function LoadSaleTeamTree() {
+            $("#load-saleteam-tree").load("/SaleTeam/_PartialSaleTeamTree", function () {
+
+
+            });
+        }
+
+
+
+        function InitTreeViewSaleTeam() {
+            $('.tree li').each(function () {
+                if ($(this).children('ul').length > 0) {
+                    $(this).addClass('parent');
+                }
+            });
+
+            $('.tree li.parent > a').click(function () {
+                $(this).parent().toggleClass('active');
+                $(this).parent().children('ul').slideToggle('fast');
+            });
+
+            $('#all').click(function () {
+
+                $('.tree li').each(function () {
+                    $(this).toggleClass('active');
+                    $(this).children('ul').slideToggle('fast');
+                });
+            });
+        }
+    </script>
+}
+
+

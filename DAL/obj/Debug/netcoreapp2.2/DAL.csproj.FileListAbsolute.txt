@@ -1,0 +1,116 @@
+D:\WebApp\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+D:\WebApp\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+D:\WebApp\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+D:\WebApp\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\WebApp\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\WebApp\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\WebApp\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+D:\WebApp\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects Source\MyFW2\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+D:\Projects Source\MyFW2\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+D:\Projects Source\MyFW2\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects Source\MyFW2\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\Projects Source\MyFW2\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\Projects Source\MyFW2\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\Projects Source\MyFW2\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+D:\Projects Source\MyFW2\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\Web Application\FW-NetCore-Jquery\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache
+D:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+D:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+D:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+D:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+D:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+D:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache
+F:\Projects\NopTotNghiep-Nhan\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+F:\Projects\NopTotNghiep-Nhan\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\NopTotNghiep-Nhan\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\NopTotNghiep-Nhan\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\NopTotNghiep-Nhan\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\NopTotNghiep-Nhan\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\NopTotNghiep-Nhan\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\NopTotNghiep-Nhan\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\NopTotNghiep-Nhan\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\NopTotNghiep-Nhan\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+F:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnSVN\DMSDanhHuy\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnSVN\DMSDanhHuy\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache
+F:\Projects\OnSVN\IchiSkill\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+F:\Projects\OnSVN\IchiSkill\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\OnSVN\IchiSkill\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\OnSVN\IchiSkill\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnSVN\IchiSkill\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnSVN\IchiSkill\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\OnSVN\IchiSkill\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\OnSVN\IchiSkill\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\OnSVN\IchiSkill\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnSVN\IchiSkill\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\HOME\ICHISKILL\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+D:\HOME\ICHISKILL\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+D:\HOME\ICHISKILL\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+D:\HOME\ICHISKILL\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+D:\HOME\ICHISKILL\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.AssemblyReference.cache
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\HOME\ICHISKILL\DAL\obj\Debug\netcoreapp2.2\DAL.genruntimeconfig.cache
+F:\Projects\OnSVN\IchiWeb\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\OnSVN\IchiWeb\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\OnSVN\IchiWeb\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\OnSVN\IchiWeb\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+F:\Projects\OnSVN\IchiWeb\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\OnSVN\IchiWeb\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\OnSVN\IchiWeb\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnSVN\IchiWeb\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnSVN\IchiWeb\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnSVN\IchiWeb\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditProcessCDC\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+F:\Projects\OnGIT\CreditProcessCDC\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\OnGIT\CreditProcessCDC\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\OnGIT\CreditProcessCDC\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnGIT\CreditProcessCDC\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.AssemblyReference.cache
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.GeneratedMSBuildEditorConfig.editorconfig
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditProcessCDC\DAL\obj\Debug\netcoreapp2.2\DAL.genruntimeconfig.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.AssemblyReference.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.GeneratedMSBuildEditorConfig.editorconfig
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.genruntimeconfig.cache

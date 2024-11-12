@@ -1,0 +1,1041 @@
+﻿@using DAL
+@{
+
+    string titlePage = "";
+    if (Model.CreaditType == Contanst.CreditType_TamUng)
+    {
+        titlePage = Model.Id == 0 ? "Thông tin tạm ứng" : "Yêu cầu tạm ứng: " + Model.Code;
+    }else if (Model.CreaditType == Contanst.CreditType_HoanUng)
+    {
+        titlePage = Model.Id == 0 ? "Thông tin hoàn ứng" : "hoàn ứng: " + Model.Code;
+    }
+    ViewData["Title"] = titlePage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+
+
+}
+@model DAL.Models.CreditRequest.CreditRequestViewModel
+
+@{ 
+
+    string role = ViewBag.Role;
+    string userName = ViewBag.UserLogin;
+    string hideAction = string.Empty;
+
+    if (Model.Status != Contanst.CreditRequestStatus_Draft)
+    {
+        hideAction = "style=display:none";
+    }
+}
+
+
+@section styles{
+
+    <link href="~/plugins/datepicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+
+    <style>
+        #btn-add-todetail {
+            font-size: 9pt !important;
+        }
+
+        .text-display-money {
+            position: relative;
+            top: 4px;
+            font-size: 14pt;
+        }
+
+        .typeahead {
+            width: 100% !important;
+        }
+
+        .badge-status {
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 0px !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+
+                        @{
+
+                            if (Model.CreatedBy == userName)
+                            {
+                                <input type="button" @(hideAction) value="Lưu" class="btn btn-warning" id="btn-save" style="margin-right:5px;" />
+                            }
+
+
+                            if (Model.Id != 0)
+                            {
+
+                                var approveMatrix = (DAL.Models.CreditRequest.CreditRequestMatrixModel)ViewBag.ApproveMatrix;
+
+
+
+                                if (Model.CreaditType == Contanst.CreditType_TamUng)
+                                {
+                                    if (Model.Status == Contanst.CreditRequestStatus_Draft)
+                                    {
+                                        <input type="button" value="Gửi kiểm tra" class="btn btn-warning" id="btn-sentchecked" style="margin-right:5px;" />
+                                        <input type="button" value="Huỷ" class="btn btn-warning" id="btn-cancel" style="margin-right:5px;" />
+                                    }
+
+                                    if ((role == Contanst.Role_QuanLy || role == Contanst.Role_KeToan)
+                                        && Model.Status == Contanst.CreditRequestStatus_Waiting
+                                        && userName == approveMatrix.UserCheck)
+                                    {
+                                        <input type="button" value="OK, Gửi duyệt" class="btn btn-warning" id="btn-reviewed" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+                                    if (role == Contanst.Role_BGD
+                                        && Model.Status == Contanst.CreditRequestStatus_Reviewed
+                                        && userName == approveMatrix.UserApprove)
+                                    {
+                                        <input type="button" value="Duyệt" class="btn btn-warning" id="btn-open-approve" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+                                    if (role == Contanst.Role_KeToan
+                                        && Model.Status == Contanst.CreditRequestStatus_Approved)
+                                    {
+                                        <input type="button" value="Đã thu/chi tiền" class="btn btn-warning" id="btn-completed" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+
+
+                                }
+                                else if (Model.CreaditType == Contanst.CreditType_HoanUng)
+                                {
+                                    if (Model.Status == Contanst.CreditRequestStatus_Draft)
+                                    {
+                                        <input type="button" value="Gửi kiểm tra" class="btn btn-warning" id="btn-sentchecked" style="margin-right:5px;" />
+                                        <input type="button" value="Huỷ" class="btn btn-warning" id="btn-cancel" style="margin-right:5px;" />
+                                    }
+
+                                    if ((role == Contanst.Role_QuanLy || role == Contanst.Role_KeToan)
+                                        && Model.Status == Contanst.CreditRequestStatus_Waiting
+                                        && userName == approveMatrix.UserCheck)
+                                    {
+                                        <input type="button" value="OK, Gửi kế toán" class="btn btn-warning" id="btn-sent-account" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+                                    if (role == Contanst.Role_KeToan
+                                        && Model.Status == Contanst.CreditRequestStatus_WaitingAccountant)
+                                    {
+                                        <input type="button" value="OK, Gửi duyệt" class="btn btn-warning" id="btn-sent-approve" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+
+                                    if (role == Contanst.Role_BGD
+                                        && Model.Status == Contanst.CreditRequestStatus_Reviewed
+                                        && userName == approveMatrix.UserApprove)
+                                    {
+                                        <input type="button" value="Duyệt" class="btn btn-warning" id="btn-open-approve" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+
+
+                                    if (role == Contanst.Role_KeToan
+                                        && Model.Status == Contanst.CreditRequestStatus_Approved)
+                                    {
+                                        <input type="button" value="Đã thu/chi tiền" class="btn btn-warning" id="btn-completed" style="margin-right:5px;" />
+                                        <input type="button" value="Từ chối" class="btn btn-warning" id="btn-open-reject" style="margin-right:5px;" />
+                                    }
+
+
+                                }
+
+
+
+
+                                <input type="button" value="Xuất PDF" class="btn btn-warning" id="btn-view-pdf" style="margin-right:5px;" />
+
+                            }
+
+
+
+                        }
+
+                    </li>
+
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="row">
+
+
+        <div class="col-sm-12">
+
+
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <form class="form-horizontal" id="form-creditRequest">
+                        <input type="hidden" id="header-requestId" value="@(Model.Id)" />
+                        @Html.HiddenFor(x => x.Id)
+                        @Html.HiddenFor(x => x.UserRequest)
+                        @Html.HiddenFor(x => x.Status)
+                        @Html.HiddenFor(x => x.CreaditType)
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="row form-group ">
+                                    <label class="col-md-4 col-form-label">Mã *</label>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(x => x.Code, new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Loại yêu cầu *</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" readonly value="@(Model.CreaditType == Contanst.CreditType_HoanUng?"Hoàn ứng":"Tạm ứng")" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-md-4 col-form-label">Ngày thực hiện *</label>
+                                    <div class="col-md-8">
+                                        <div class="input-group date">
+                                            <input type="text" id="DateRequest" name="DateRequest" value="@(Model.DateRequest.HasValue?Model.DateRequest.Value.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
+                                            <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row form-group ">
+                                    <label class="col-md-4 col-form-label">Người thực hiện *</label>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(x => x.UserRequest, new { @class = "form-control", @disabled = "disabled" })
+                                    </div>
+                                </div>
+
+                                @{
+                                    if (Model.Id != 0)
+                                    {
+                                        <div class="form-group row">
+                                            <br /><br />
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>File đính kèm</th>
+                                                        <th>Ngày</th>
+                                                        <th>User</th>
+                                                        <th class="text-center" @(hideAction)>
+                                                            <input type="button" value="Đính kèm file" class="btn btn-sm btn-primary" id="btn-open-upload" />
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        var lstAttach = (List<DAL.Models.AttactFileModel>)ViewBag.LstAttachment;
+                                                        if (lstAttach.Any())
+                                                        {
+                                                            foreach (var item in lstAttach)
+                                                            {
+                                                                <tr>
+                                                                    <td><a href="@(Url.Content("~/upload/credit-request/"+item.ObjectId+"/" + item.FileName))" download="@item.FileName" ><span class="fa fa-download"></span>&nbsp; @(item.FileName)</a></td>
+                                                                    <td>@(item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy") : string.Empty)</td>
+                                                                    <td>@(item.CreatedBy)</td>
+                                                                    <td class="text-center" @(hideAction)>
+                                                                        <span onclick="DeleteAttachment(@(item.Id))"><i class="fa fa-trash"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="5"><span>Không có file đính kèm</span></td>
+                                                            </tr>
+                                                        }
+                                                    }
+
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                }
+
+
+                            </div>
+                            <div class="col-sm-6">
+                                @{
+                                    if (Model.CreaditType == Contanst.CreditType_HoanUng)
+                                    {
+                                        <div class="form-group row">
+                                            <label class="col-md-4 col-form-label">Mã TU liên quan *</label>
+                                            <div class="col-sm-8">
+                                                @Html.TextBoxFor(x => x.ReferRequestCode, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                @{
+                                    if (Model.CreaditType == Contanst.CreditType_TamUng)
+                                    {
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Số tiền tạm ứng *</label>
+                                            <div class="col-sm-8">
+                                                @Html.TextBoxFor(x => x.RequestedAmount, new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Nội dung *</label>
+                                    <div class="col-sm-8">
+                                        @Html.TextBoxFor(x => x.Reason, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                @{
+                                    if (Model.CreaditType == Contanst.CreditType_TamUng
+                                        && (Model.Status == Contanst.CreditRequestStatus_Approved || Model.Status == Contanst.CreditRequestStatus_Completed))
+                                    {
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Sồ tiền được duyệt *</label>
+                                            <div class="col-sm-8">
+                                                @Html.TextBoxFor(x => x.ApprovedAmount, new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Tình trạng *</label>
+                                    <div class="col-sm-8">
+                                        @{
+                                            var lstStatus = (List<DAL.Models.StatusHistoryModel>)ViewBag.StatusHistory;
+                                            if (lstStatus.Any())
+                                            {
+
+                                                <table class="table table-bordered">
+                                                    @{
+                                                        foreach (var statusItem in lstStatus)
+                                                        {
+                                                            string classStatus = "";
+
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Waiting)
+                                                            {
+                                                                classStatus = "<span class='badge badge-warning badge-status'>Chờ QL kiểm tra</span>";
+                                                            }
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Reviewed)
+                                                            {
+                                                                classStatus = "<span class='badge badge-warning badge-status'>Chờ GĐ duyệt</span>";
+                                                            }
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Approved)
+                                                            {
+                                                                classStatus = "<span class='badge badge-success badge-status'>Đã duyệt</span>";
+                                                            }
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Rejected)
+                                                            {
+                                                                classStatus = "<span class='badge badge-danger badge-status'>Từ chối</span>&nbsp;("+Model.RejectNote+")";
+                                                            }
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Canceled)
+                                                            {
+                                                                classStatus = "<span class='badge badge-danger badge-status'>Huỷ</span>";
+                                                            }
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_WaitingAccountant)
+                                                            {
+                                                                classStatus = "<span class='badge badge-warning badge-status'>Chờ KT kiểm tra HS</span>";
+                                                            }
+                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Completed)
+                                                            {
+                                                                classStatus = "<span class='badge badge-success badge-status'>Đã thu/chi tiền</span>";
+                                                            }
+                                                            <tr>
+                                                                <td>@Html.Raw(classStatus)</td>
+                                                                <td>@(statusItem.actionBy)</td>
+                                                                <td>@(statusItem.actionDate.Value.ToString("dd/MM/yyyy hh:mm tt"))</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                if (Model.Status == DAL.Contanst.CreditRequestStatus_Draft)
+                                                {
+                                                    <span class="badge badge-secondary badge-status">Nháp</span>
+                                                }
+                                                
+
+                                            }
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </form>
+
+                    @{
+                        if (Model.Id != 0)
+                        {
+                            <div class="clearfix">
+
+                            </div>
+
+                            <br />
+                            <div class="col-sm-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nội dung</th>
+                                            <th>Đơn vị</th>
+                                            <th>SL</th>
+                                            <th>Đơn giá</th>
+                                            <th>Thành tiền</th>
+                                            <th>Ghi chú</th>
+                                            <th width="50px" @(hideAction)><button title="Thêm chi tiết" class="btn btn-warning" id="open-modal-credit-item"><i class="fa fa-plus"></i></button></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-item"></tbody>
+                                </table>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+</section>
+
+
+
+<div class="modal fade show" data-backdrop="static" id="modal-credit-detail" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                @{ 
+                    string refixDetail = "";
+                    if (Model.CreaditType == Contanst.CreditType_TamUng)
+                    {
+                        refixDetail = "tạm ứng";
+                    } else if (Model.CreaditType == Contanst.CreditType_HoanUng)
+                    {
+                        refixDetail = "hoàn ứng";
+                    }
+
+                }
+                <h4 class="modal-title">Nội dung chi tiết @(refixDetail)</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="form-credit-detail"></form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" @(hideAction) class="btn btn-warning" id="btn-save-credit-item">OK</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<div class="modal fade show" data-backdrop="static" id="modal-approve-credit" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Duyệt @(titlePage)</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <label class="col-md-6 control-label">Số tiền yêu cầu</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" value="@(Model.RequestedAmount)" disabled="disabled" />
+                    </div>
+
+                    <label class="col-md-6 control-label">Số tiền duyệt</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="txt-approve-amount" value="@(Model.ApprovedAmount.HasValue?Model.ApprovedAmount.Value:Model.RequestedAmount)" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" id="btn-approve">OK</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<div class="modal fade show" data-backdrop="static" id="modal-reject-credit" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Từ chối @(titlePage)</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <label class="col-md-6 control-label">Ghi chú lý do từ chối</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="txt-reject-note"  />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" id="btn-reject">OK</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+
+
+<div class="modal fade show" id="modal-attach-upload" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Đính kèm file</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formattact" name="formattact" class="form-horizontal" action="/CreditRequest/CreditRequestDetail" method="post" enctype="multipart/form-data">
+                    @(Html.AntiForgeryToken())
+                    <input type="hidden" id="attachcreditId" name="attachcreditId" value="@(Model.Id)" />
+                    <input type="hidden" id="creditType" name="creditType" value="@(Model.CreaditType)" />
+                    <input type="file" name="postedFile" />
+                    <input type="submit" value="Upload" class="btn btn-sm btn-success" />
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+@section scripts{
+    <script src="~/js/jquery.validate.js"></script>
+    <script src="~/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/custom-thousands-separator/dist/number-divider.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $(".date").datepicker({
+                format: "dd/mm/yyyy"
+            }).on('changeDate', function (e) {
+                $(this).datepicker('hide');
+            });
+
+            $("#btn-save").click(function () {
+                SaveCreditRequest();
+
+
+            });
+
+            $("#open-modal-credit-item").click(function () {
+                LoadCreditItemForm(0);
+            });
+
+            $("#btn-save-credit-item").click(function () {
+                SaveItemCreditDetail();
+            });
+
+            if (parseFloat($("#header-requestId").val()) > 0) {
+                GetItemByCreditId();
+            }
+
+            /*========= action change status ======================*/
+
+            $("#btn-sentchecked").click(function () {
+                ChangeStatus("waiting");
+            });
+
+            $("#btn-cancel").click(function () {
+                ChangeStatus("canceled");
+            });
+
+            $("#btn-reviewed").click(function () {
+                ChangeStatus("reviewed");
+            });
+
+            $("#btn-reject").click(function () {
+                ChangeStatus("rejected");
+            });
+
+
+
+            $("#btn-open-approve").click(function () {
+                let requestType = $("#CreaditType").val();
+                if (requestType == "HU")
+                {
+                    ChangeStatus("approved");
+                    
+                } else
+                {
+                    $("#modal-approve-credit").modal();
+                }
+
+                
+            });
+
+            $("#btn-approve").click(function () {
+                let amountApprove = $("#txt-approve-amount").val();
+                if (amountApprove == "0" || amountApprove == "" || amountApprove == null) {
+                    bootbox.alert(AlertFail("Số tiền cần duyệt không được trống"));
+                } else {
+                    ChangeStatus("approved");
+                }
+               
+            });
+
+
+            $("#btn-open-reject").click(function () {
+                $("#modal-reject-credit").modal();
+            });
+
+            $("#btn-reject").click(function () {
+                let noteReject = $("#txt-reject-note").val();
+                if (noteReject == "" || noteReject == null) {
+                    bootbox.alert(AlertFail("Vui lòng ghi chú lý do từ chối"));
+                } else {
+                    ChangeStatus("rejected");
+                }
+
+            });
+
+
+
+
+
+
+            $("#btn-sent-account").click(function () {
+                ChangeStatus("waitacc");
+            });
+
+            $("#btn-sent-approve").click(function () {
+                ChangeStatus("reviewed");
+            });
+
+            $("#btn-completed").click(function () {
+                ChangeStatus("completed");
+            });
+
+
+            /*========= end action change status ======================*/
+
+
+            $("#btn-view-pdf").click(function () {
+                let requestId = parseFloat($("#header-requestId").val());
+                let requestType = $("#CreaditType").val();
+                if (requestType == "TU")
+                {
+                    window.open("/CreditRequest/PrintViewTU?tuId=" + requestId, 'Xem pdf');
+
+                } else if (requestType == "HU")
+                {
+                    window.open("/CreditRequest/PrintViewHU?huId=" + requestId, 'Xem pdf');
+                }
+
+                
+            });
+
+            $("#btn-open-upload").click(function () {
+                $("#modal-attach-upload").show();
+            });
+
+
+        })
+        function ValidCreditRequest() {
+            $.validator.addMethod("nonZeroAmount", function (value, element) {
+                return value != "0";
+            }, "Nhập số tiền yêu cầu");
+
+            var resutlValid = $("#form-creditRequest").validate({
+                rules: {
+                    "creaditType": "required",
+                    "RequestedAmount": {
+                        required: true,
+                        nonZeroAmount: true
+                    },
+                    "Reason": "required",
+                },
+                messages: {
+                    "creaditType": "Chọn loại yêu câu",
+                    "RequestedAmount": {
+                        required: "Nhập số tiền yêu cầu",
+                        nonZeroAmount: "Số tiền yêu cầu khác 0"
+                    },
+                    "Reason": "Nhập nội dung",
+                }
+            }).form();
+            return resutlValid;
+        }
+
+        function SaveCreditRequest() {
+            var valid = ValidCreditRequest();
+            if (valid) {
+                var saveData = FormToObject("#form-creditRequest", "");
+                saveData.DateRequest = ConverFormatDate($("#DateRequest").val());
+
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/CreditRequest/SaveCreditRequest",
+                    dataType: 'json',
+                    data: JSON.stringify(saveData),
+                    beforeSend: function () {
+                        ShowWaiting();
+                    },
+                    success: function (res) {
+                        HideWaiting();
+                        if (res.isSuccess === true) {
+                            bootbox.alert(AlertSuccess("Lưu dữ liệu thành công"), function () {
+
+                                location.href = "/CreditRequest/CreditRequestDetail/" + res.longValReturn + "/" + saveData.CreaditType;
+                            });
+                        } else {
+                            bootbox.alert(AlertFail(res.errorMessage));
+                        }
+
+                    }
+                });
+
+
+            }
+
+
+
+        }
+
+
+        function ChangeStatus(statusCode) {
+
+            let modelChangeStatus = {
+                "requestId": parseFloat($("#header-requestId").val()),
+                "status": statusCode,
+                "userName": "",
+                "amountApprove": parseFloat($("#txt-approve-amount").val()),
+                "rejectNote": $("#txt-reject-note").val()
+            }
+
+            $.ajax({
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                url: "/CreditRequest/ChangeCreditRequestStatus",
+                dataType: 'json',
+                data: JSON.stringify(modelChangeStatus),
+                beforeSend: function () {
+                    ShowWaiting();
+                },
+                success: function (res) {
+                    HideWaiting();
+                    if (res.isSuccess === true) {
+                        bootbox.alert(AlertSuccess("Chuyển trạng thái thành công"), function () {
+                            $("#txt-approve-amount").val(null);
+                            $("#txt-reject-note").val(null);
+                            let requestType = $("#CreaditType").val();
+                            location.href = "/CreditRequest/CreditRequestDetail/" + modelChangeStatus.requestId + "/" + requestType;
+                        });
+
+                    } else {
+                        bootbox.alert(AlertFail(res.errorMessage));
+                    }
+
+                }
+            });
+
+        }
+
+
+
+
+
+
+
+
+        //==================== Credit Item detail ====================
+
+
+        function LoadCreditItemForm(iditem) {
+            ShowWaiting();
+            let crequestID = $("#Id").val();
+            $("#form-credit-detail").load("/CreditRequest/_PartialCreditItemDetail?id=" + iditem + "&requestId=" + crequestID, function () {
+                HideWaiting();
+                $("#modal-credit-detail").modal();
+            });
+        }
+
+        function validFormCreditDetailItem() {
+            var resutlValid = $("#form-credit-detail").validate({
+                rules: {
+                    "Name": "required",
+                    "Unit": "required",
+                    "Quanti": "required",
+                    "Price": "required",
+                },
+                messages: {
+                    "Name": "Bắt buộc",
+                    "Unit": "Bắt buộc",
+                    "Quanti": "Bắt buộc",
+                    "Price": "Bắt buộc",
+                }
+            }).form();
+            return resutlValid;
+        }
+
+        function SaveItemCreditDetail() {
+            var validItem = validFormCreditDetailItem();
+            if (validItem) {
+
+                var saveDataItem = FormToObject("#form-credit-detail", "");
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/CreditRequest/SaveCreditRequestItem",
+                    dataType: 'json',
+                    data: JSON.stringify(saveDataItem),
+                    beforeSend: function () {
+                        ShowWaiting();
+                    },
+                    success: function (res) {
+                        HideWaiting();
+                        if (res.isSuccess === true) {
+                            bootbox.alert(AlertSuccess("Lưu dữ liệu thành công"), function () {
+                                $("#form-credit-detail")[0].reset();
+                                GetItemByCreditId();
+                            });
+
+                        } else {
+                            bootbox.alert(AlertFail(res.errorMessage));
+                        }
+
+                    }
+                });
+            }
+
+        }
+
+
+        function GetItemByCreditId() {
+            let requestId = $("#Id").val();
+            let hidAction = "";
+            if ($("#Status").val() != "draft")
+            {
+                hidAction = "display:none;";
+            }
+
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/CreditRequest/ListItemByCreditId?requestId=" + requestId,
+                success: function (result) {
+                    debugger;
+                    let htmlitems = "";
+                    if (result.length > 0) {
+                        let stt = 1;
+                        let total = 0;
+                        $.each(result, function (index, value) {
+
+                            total = total + value.total;
+                            htmlitems = htmlitems + "<tr><td>" + stt + "</td>" + "<td>" + value.name
+                                + "</td><td>" + value.unit + "</td>"
+                                + "</td><td>" + value.quanti + "</td>"
+                                + "</td><td class='number-divide' style='text-align:right;'>" + value.price + "</td>"
+                                + "</td><td class='number-divide' style='text-align:right;'>" + value.total + "</td>"
+                                + "</td><td class='number-divide' style='text-align:right;'>" + value.note + "</td>"
+                                + "</td><td style='text-align:center;" + hidAction+"'><span class='fa fa-edit' onclick='LoadCreditItemForm(" + value.id + ")' ></span>&nbsp;<span class='fa fa-trash' onclick='DeleteItemRequest(" + value.id + ")' ></span></td>"
+                                + "</tr>";
+                            stt++;
+                        });
+                        $("#RequestedAmount").val(total);
+                        htmlitems += "<tr><td colspan='5' style='text-align:right;'><strong>Tổng</strong></td>" +
+                            "<td class='number-divide' style='text-align:right;font-weight:bold;'>" + total + "</td>" +
+                            "<td></td><td style='" + hidAction+"'></td>"
+                        "</tr>";
+
+                    }
+
+                    $("#tbody-item").html(htmlitems);
+                    FormatNumberDevide();
+                }
+            });
+        }
+
+        function FormatNumberDevide() {
+            $('.number-divide').divide({
+                delimiter: ',',
+                divideThousand: true,
+                delimiterRegExp: /[\.\,\s]/g
+
+            });
+        }
+
+
+        function DeleteItemRequest(itemId) {
+
+            var conf = bootbox.confirm("Bạn có chắc muốn xoá dòng này?", function () {
+                if (conf) {
+                    $.ajax({
+                        type: "GET",
+                        contentType: 'application/json; charset=utf-8',
+                        url: "/CreditRequest/DeleteItem?itemId=" + itemId,
+                        success: function (result) {
+                            bootbox.alert(AlertSuccess("Đã xoá thành công"), function () {
+                                GetItemByCreditId();
+                            });
+
+                        }
+                    });
+                }
+            });
+
+
+        }
+
+
+
+        function DeleteAttachment(attachId) {
+
+            var conf = bootbox.confirm("Bạn có chắc muốn file đính kèm này?", function () {
+                if (conf) {
+                    $.ajax({
+                        type: "GET",
+                        contentType: 'application/json; charset=utf-8',
+                        url: "/CreditRequest/DeleteAttachment?attachId=" + attachId,
+                        success: function (result) {
+                            bootbox.alert(AlertSuccess("Đã xoá thành công"), function () {
+
+                                let requestType = $("#CreaditType").val();
+                                let requestId = parseFloat($("#header-requestId").val());
+                                location.href = "/CreditRequest/CreditRequestDetail/" + requestId + "/" + requestType;
+                            });
+
+                        }
+                    });
+                }
+            });
+
+
+        }
+
+
+
+        function DownloadFile(attachId) {
+
+
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/CreditRequest/DownloadAttachFile?attachId=" + attachId,
+                success: function (r) {
+
+                    //Convert Base64 string to Byte Array.
+                    var bytes = Base64ToBytes(r);
+
+                    //Convert Byte Array to BLOB.
+                    var blob = new Blob([bytes], { type: "application/octetstream" });
+
+                    //Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    if (isIE) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", fileName);
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+                    }
+
+                }
+            });
+
+
+
+        }
+            
+        function Base64ToBytes(base64) {
+            var s = window.atob(base64);
+            var bytes = new Uint8Array(s.length);
+            for (var i = 0; i < s.length; i++) {
+                bytes[i] = s.charCodeAt(i);
+            }
+            return bytes;
+        };
+
+
+
+
+
+
+    </script>
+
+}
+
+
