@@ -1,0 +1,241 @@
+﻿@{
+    ViewData["Title"] = "Hệ thống quản lý nghiệp vụ dự toán/thanh toán";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="~/plugins/amcharts5/examples/xy-clustered-column/index.css" rel="stylesheet" />
+    <!-- Thêm CSS Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Thêm JS Flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        #chartdiv {
+            height: 400px;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-8">
+                <h1>Xin chào @(ViewBag.FullNameLogin)</h1>
+            </div>
+            <div class="col-sm-4">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active">TP Hồ Chí Minh - @(DateTime.Now.ToString("dd/MM/yyyy"))</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <input type="hidden" value="@(DateTime.Now.Year)" id="ddl-year" />
+    @*<div class="col-md-12">
+            <img class="img" src="~/img/ichi-bg-dashboard.png" style="width:100%;opacity:0.9" />
+        </div>*@
+
+
+
+    <div class="card">
+        <div class="card-header bg-bluebeetle-card-header">
+            <b>Tìm kiếm</b>
+        </div>
+        <div class="card-body">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-3 col-sm-12">
+                    <label class="form-label">Tên CT/DA</label>
+                    <input type="text" class="form-control " id="ngay_baocao" name="ngay_baocao" autocomplete="off" />
+                </div>
+                <div class="col-md-3 col-sm-12">
+                    <label class="form-label">Thời gian thực hiện</label>
+                    <input type="text" class="form-control " id="ngay_baocao" name="ngay_baocao" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3 col-sm-12">
+                    <label class="form-label"></label>
+                    <button type="button" class="btn btn-blue btn-small mt-4" onclick="onLoad_TableBaoCaoSuCo();"><i class="fas fa-search me-1"></i>Tìm kiếm</button>
+
+                    <button type="button" class="btn btn-outline-blue btn-small mt-4" onclick="onClick_AddProjectFinancial();"><i class="fas fa-plus me-1"></i>Thêm dự án</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="card">
+        <div class="card-header">
+
+        </div>
+        <div class="card-body" id="chartdiv">
+
+        </div>
+    </div>
+
+
+
+</section>
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_form_add_project_financial" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header p-3">
+                <h5 class="modal-title">Tạo chương trình/dự án/dịch vụ:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal_AddProjectFinancial();"></button>
+            </div>
+            <div class="content-body">
+                <div class="modal-body p-3">
+                    <form id="frmCreateProjectFinancial">
+                        @Html.AntiForgeryToken()
+                        <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                            <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin phiếu tạo</legend>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tên chương trình/dự án/dịch vụ: <span class="text-red">*</span></label>
+                                    <input type="text" class="form-control" id="a_ten_du_an" name="ten_du_an" />
+                                </div>
+                                <div class="col-md-4 ">
+                                    <label class="form-label col-auto">Căn cứ pháp lý: <span class="text-red">*</span></label>
+                                    <input type="text" class="form-control" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Thời gian thực hiện: <span class="text-red">*</span></label>
+                                    <input type="text" class="form-control datetime-picker" id="a_thoigian_thuchien" name="thoigian_thuchien" required />
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tổng tiền: <span class="text-red">*</span></label>
+                                    <input type="text" class="form-control" id="a_tongtien" name="tong_tien" />
+                                </div>
+                                <div class="col-md-4 ">
+                                    <label class="form-label col-auto">Trạng thái: </label>
+                                    <input type="text" class="form-control" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Ghi chú: </label>
+                                    <textarea class="form-control" rows="2" id="a_ghichu" name="ghichu"></textarea>
+                                </div>
+
+                            </div>
+                        </fieldset>
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer p-0">
+                <button type="button" class="btn btn-primary btn-footer" id="btnLuuTaoDot" onclick="CreateProjectFinancial();"><i class="fas fa-save me-1"></i>Lưu</button>
+                <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_AddProjectFinancial();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/plugins/amcharts5/index.js"></script>
+    <script src="~/plugins/amcharts5/xy.js"></script>
+    <script src="~/plugins/amcharts5/themes/Animated.js"></script>
+ 
+
+    <!-- Thêm jQuery Validate -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    @*<script src="~/plugins/amcharts5/examples/xy-clustered-column/index.js"></script>*@
+    <script>
+
+
+
+        $(document).ready(function () {
+
+
+        });
+
+        function onClick_AddProjectFinancial() {
+            $('#modal_form_add_project_financial').modal('show');
+        }
+        function closeModal_AddProjectFinancial() {
+            $('#modal_form_add_project_financial').modal('hide');
+        }
+
+        function CreateProjectFinancial() {
+            var isValidate = validateData();
+            if (isValidate == true) {
+                debugger
+                var dataPost = {
+                    Id:0,
+                    ProjectName: $("#a_ten_du_an").val(),
+                    LegalBasis: $("#a_can_cu_phap_ly").val(),
+                    ExecutionPeriod: $("#a_thoigian_thuchien").val(),
+                    TotalAmount: $("#tong_tien").val(),
+                    StatusText: $("#trang_thai").val(),
+                    Notes: $("#a_ghichu").val()
+                };
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    url: '/ProjectFinancialSummar/CreateProjectFinancialSummar', 
+                    type: 'POST',  
+                    data: JSON.stringify(dataPost),
+                    contentType: 'application/json', 
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Dự án đã được tạo thành công!');
+                           
+                            closeModal_AddProjectFinancial();
+                           
+                        } else {
+                            alert('Có lỗi khi tạo dự án. Vui lòng thử lại!');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
+                        alert('Có lỗi khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+        function validateData() {
+            var resultValid = $("#frmCreateProjectFinancial").validate({
+                rules: {
+                    "ten_du_an": {
+                        required: true,
+                    },
+                    "can_cu_phap_ly": {
+                        required: true,
+                    },
+                    "thoigian_thuchien": {
+                        required: true,
+                    },
+                    "tong_tien": {
+                        required: true,
+                        number: true,
+                        min: 1
+                    },
+
+                },
+                messages: {
+                    "ten_du_an": "Tên chương trình/dự án/dịch vụ không được để trống!",
+                    "can_cu_phap_ly": "Căn cứ pháp lý không được để trống!",
+                    "thoigian_thuchien": "Thời gian thực hiện không được để trống!",
+                    "tong_tien": {
+                        required: "Tổng tiền không được để trống!",
+                        number: "Tổng tiền phải là số!",
+                        min: "Tổng tiền phải lớn hơn 0!"
+                    }
+                },
+
+            }).form();
+
+            return resultValid;
+        }
+
+    </script>
+}

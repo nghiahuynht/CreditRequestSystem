@@ -46,6 +46,7 @@ namespace WebApp
             services.AddTransient<ICreditRequestService, CreditRequestService>();
             services.AddTransient<IAttachFileService, AttachFileService>();
             services.AddTransient<IDashboardService, DashboardService>();
+            services.AddTransient<IProjectFinancialSummarService, ProjectFinancialSummarService>();
 
             var mapperConfig = new MapperConfiguration(mc =>
             {
