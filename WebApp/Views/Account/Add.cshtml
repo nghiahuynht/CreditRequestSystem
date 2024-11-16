@@ -1,0 +1,73 @@
+﻿
+@model DAL.Models.UserInfo.UserDetailViewModel
+<div class="modal-content">
+    <div class="modal-header p-2">
+        @if (Model.User.Id == 0)
+        {
+            <h5 class="modal-title">Thêm mới nhân viên</h5>
+        }
+        else
+        {
+            <h5 class="modal-title">Chỉnh sửa nhân viên</h5>
+        }
+
+    </div>
+    <div class="content-body">
+        <div class="modal-body p-3">
+            <div id="frmCreateNV">
+
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin nhân viên</legend>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Họ tên: <span class="text-red">*</span></label>
+                            <input type="text" class="form-control" id="a_full_name" name="full_name" value="@Model.User.FullName"/>
+                        </div>
+                        <div class="col-md-4 ">
+                            <label class="form-label col-auto">SĐT: <span class="text-red">*</span></label>
+                            <input type="text" class="form-control" id="a_phone" name="Phone" value="@Model.User.Phone"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Email: <span class="text-red">*</span></label>
+                            <input type="text" class="form-control " id="a_email" name="email" value="@Model.User.Email" required />
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Nhóm quyền: <span class="text-red">*</span></label>
+                            <select class="form-control" id="Role" name="Role">
+                                <option value=""></option>
+                                @{
+                                    foreach (var item in Model.LstRoles)
+                                    {
+                                        string selected = item.Value == Model.RoleSelected ? "selected='selected'" : "";
+                                        <option value="@item.Value" @(selected)>@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4 ">
+                            <label class="form-label col-auto">Chức danh: </label>
+                            <input type="text" class="form-control" id="a_chuc_danh" name="chuc_danh" value="@Model.User.Title" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="pt-4">
+                                <input type="checkbox" id="a_active" name="active" @(Model.User.IsActive ? "checked" : "") />
+                                <label > Hoạt động</label><br>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </fieldset>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer p-0">
+        <button type="button" class="btn btn-primary btn-footer" id="btnLuuTaoDot" onclick="CreateProjectFinancial();"><i class="fas fa-save me-1"></i>&nbsp;Lưu</button>
+        <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_AddProjectFinancial();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>&nbsp;Đóng</button>
+    </div>
+</div>
