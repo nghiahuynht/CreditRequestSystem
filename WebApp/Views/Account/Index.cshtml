@@ -12,22 +12,27 @@
         .div-member {
             margin-left: 20px;
         }
+
             .div-member .nav .nav-link {
                 margin: 4px 0 !important;
             }
-        .card .nav.flex-column > li{
-            border-bottom:0px;
-        }
-        .span-team-name{
-            font-weight:bold
+
+        .card .nav.flex-column > li {
+            border-bottom: 0px;
         }
 
-        .i-edit-saleteam{
-            color:#555;
+        .span-team-name {
+            font-weight: bold
         }
+
+        .i-edit-saleteam {
+            color: #555;
+        }
+
         .i-delete-saleteam {
             color: #ff0000;
         }
+
         .typeahead {
             width: 100% !important;
         }
@@ -51,28 +56,12 @@
 <section class="content">
 
     <div class="row">
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header">
-                    <strong>Sơ đồ tổ chức</strong>
-                    
-                </div>
-                <div class="card-body" id="load-saleteam-tree">
-                    <!-- tree view-->
-                  
 
-                    <!-- end tree view-->
-                </div>
-            </div>
-
-
-
-        </div>
-        <div class="col-sm-9">
+        <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <label>Nhóm quyền</label>
                             <select class="form-control" id="ddl-role">
                                 <option value="all">Tất cả</option>
@@ -84,24 +73,20 @@
                                 }
                             </select>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <label>Tìm theo SĐT/tên/email</label>
                             <input type="text" class="form-control" id="txtkeyword" />
                         </div>
-                        <div class="col-sm-1">
-                            <button id="btn-search" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                        <div class="col-sm-3">
+                            <button id="btn-search" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV()"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
                         </div>
-                        <div class="col-sm-5">
-                            <div class="text-right btn-filter">
-                                <a class="btn btn-sm btn-primary" href="/account/detail"><i class="fa fa-plus-circle"></i>&nbsp;Tạo NV mới</a>
-                              
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
                 <div class="card-body ">
-                    <table class="table table-bordered table-hover dataTable" id="table-userinfo" width="1400px">
+                    <table class="table table-bordered table-hover dataTable" id="table-userinfo" width="100%">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -111,7 +96,7 @@
                                 <th>Email</th>
                                 <th width="150px">Nhóm quyền</th>
                                 <th width="150px">Chức danh</th>
-                                <th width="70px">Hoạt động?</th>
+                                <th width="100px">Hoạt động</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -127,7 +112,12 @@
 </section>
 
 
-
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_add_nv" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_nv">
+       
+    </div>
+</div>
 
 
 
@@ -150,11 +140,31 @@
 
             { "data": "userName" },
             { "data": "fullName" },
-            { "data": "phone" },
+            {
+                "data": "phone", "render": function (data, type, row, meta) {
+                    if (data == "NULL" || data == null) {
+                        return ""
+                    }
+                    else {
+                        return data
+                    }
+
+                }
+            },
             { "data": "email" },
             { "data": "roleName" },
             { "data": "title" },
-            { "data": "isActive" },
+
+            {
+                "data": "isActive", "render": function (data, type, row, meta) {
+                    if (data == "Yes") {
+                        return "<i class='text-success' >Hoạt động</i>"
+                    }
+                    else {
+                        return "<i class='text-danger' >Ngưng hoạt động</i>"
+                    }
+                }
+            },
             {
                 "data": "id", "render": function (data, type, row, meta) {
                     return RenderTableAction(data);
@@ -176,10 +186,6 @@
             $("#btn-search").click(function () {
                 SearchUserInfo();
             });
-            
-            LoadSaleTeamTree();
-            InitTreeViewSaleTeam();
-
 
         });
         function RenderTableAction(userId) {
@@ -199,38 +205,24 @@
 
         }
 
+        function showModalCreateNV() {
+            $.ajax({
+                url: '/account/Add', // Đảm bảo đường dẫn này đúng với action của bạn
+                type: 'GET',
+                success: function (response) {
+                    // Chèn HTML trả về vào phần tử có id "dailog_nv"
+                    $('#dailog_nv').html(response);
 
-        /*================== Sale Team ======================================*/
-
-        function LoadSaleTeamTree() {
-            $("#load-saleteam-tree").load("/SaleTeam/_PartialSaleTeamTree", function () {
-
-
-            });
-        }
-
-
-
-        function InitTreeViewSaleTeam() {
-            $('.tree li').each(function () {
-                if ($(this).children('ul').length > 0) {
-                    $(this).addClass('parent');
+                    // Hiển thị modal
+                    $("#modal_add_nv").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
                 }
             });
-
-            $('.tree li.parent > a').click(function () {
-                $(this).parent().toggleClass('active');
-                $(this).parent().children('ul').slideToggle('fast');
-            });
-
-            $('#all').click(function () {
-
-                $('.tree li').each(function () {
-                    $(this).toggleClass('active');
-                    $(this).children('ul').slideToggle('fast');
-                });
-            });
         }
+        
     </script>
 }
 

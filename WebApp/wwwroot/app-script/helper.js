@@ -6,7 +6,7 @@
         "responsive": true,
         "searching": false,
         "lengthChange": false,
-        "iDisplayLength": 20,
+        "iDisplayLength": 10,
         "columns": columnsData,
         "scrollY": "400px",
         "scrollX": true,
