@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -12,7 +13,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
-                        <input type="button" value="Lưu" class="btn bg-primary" id="btn-save" />
+                        <input type="button" value="Lưu" class="btn bg-primary" id="btn-save" onclick="CreateProject()" />
                     </li>
 
                 </ol>
@@ -38,32 +39,44 @@
         <div class="card-body">
 
             <div class="tab-content">
-                <div class="tab-pane fade active show" id="project-detail-tab-content" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
-                    <form class="form-horizontal">
+                <div class="tab-pane fade active show" id="project-detail-tab-content" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">   
+                    <form class="form-horizontal" id="frmCreateProject">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Mã dự án</label>
+                                    <label class="col-md-4 col-form-label">Mã dự án <span class="text-red">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" value="DA.131124.0001" />
+                                        <input type="text" class="form-control" value="" name="ma_du_an"  id="a_ma_du_an" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Tên dự án</label>
+                                    <label class="col-md-4 col-form-label">Tên dự án <span class="text-red">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" value="Dự án dự toán kinh phí tổ chức hội thảo" />
+                                        <input type="text" class="form-control" id="ten_du_an" name="ten_du_an" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Căn cứ pháp lý</label>
+                                    <label class="col-md-4 col-form-label">Căn cứ pháp lý <span class="text-red">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" value="Quyết định 124/QĐ" />
+                                        <input type="text" class="form-control" value="" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" value="2024-2025" />
+                                    <div class="input-group-append col-md-8">
+                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
+                                          <option>2022</option>
+                                          <option>2023</option>
+                                            <option selected>2024</option>
+                                          <option>2025</option>
+                                      </select>
+                                      <h3>-</h3>
+                                        <select class="form-control" name="thoi_gian_ket_thuc" id="thoi_gian_ket_thuc">
+                                            <option>2022</option>
+                                            <option>2023</option>
+                                            <option selected>2024</option>
+                                            <option>2025</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -86,9 +99,9 @@
                             <div class="col-sm-6">
 
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Tổng hạn mức</label>
+                                    <label class="col-md-4 col-form-label">Tổng hạn mức <span class="text-red">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" value="47,000,000" style="font-weight:bold;" />
+                                        <input type="text" class="form-control" style="font-weight:bold;" name="tong_han_muc" id="a_tong_han_muc" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -103,7 +116,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">Ghi chú</label>
                                     <div class="col-md-8">
-                                        <textarea class="form-control" rows="3">Năm 2025: 50.000.000</textarea>
+                                        <textarea class="form-control" rows="3"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -115,7 +128,9 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label">
 
-                                        <input type="button" value="Đính kèm" class="btn btn-warning" />
+                                        <input type="button" value="Đính kèm" class="btn btn-warning"  onclick="UploadFileProject()"/>
+                                        <!-- Input file ẩn -->
+                                        <input type="file" id="fileInputProject" style="display: none;" />
                                     </label>
                                     <div class="col-md-8">
                                         <table class="table" width="100%">
@@ -300,16 +315,126 @@
     <!-- /.modal-dialog -->
 </div>
 
-
 @section scripts{
+    <!-- Thêm jQuery Validate -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
     <script>
         $(document).ready(function ()
         {
+          
             $("#btn-add-project-item").click(function () {
                 $("#modal-project-itemline").modal();
             });
 
-        });
+            // Khi người dùng chọn file
+            $('#fileInputProject').on('change', function () {
+                const file = this.files[0]; // Lấy file được chọn
+                if (file) {
+                 // Upload file
+                    const fileData = new FormData();
+                    fileData.append('file', this.files[0]);
 
+                    $.ajax({
+                        url: '/FileUpload/UploadFile', // Đường dẫn đến API xử lý file
+                        type: 'POST',
+                        data: fileData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            console.log(response)
+                            alert('Tải file thành công!');
+                        },
+                        error: function () {
+                            alert('Có lỗi khi tải file!');
+                        }
+                    });
+                } 
+            });
+        });
+        function CreateProject()
+        {
+            
+            var isValidate = validateData();
+            if (isValidate == true) {
+                debugger
+                var dataPost = {
+                    Id: 0,
+                    ProjectName: $("#a_ten_du_an").val(),
+                    LegalBasis: $("#a_can_cu_phap_ly").val(),
+                    ExecutionPeriod: $("#a_thoigian_thuchien").val(),
+                    TotalAmount: $("#tong_tien").val(),
+                    StatusText: $("#trang_thai").val(),
+                    Notes: $("#a_ghichu").val()
+                };
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    url: '/ProjectFinancialSummar/CreateProjectFinancialSummar',
+                    type: 'POST',
+                    data: JSON.stringify(dataPost),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Dự án đã được tạo thành công!');
+
+                            closeModal_AddProjectFinancial();
+
+                        } else {
+                            alert('Có lỗi khi tạo dự án. Vui lòng thử lại!');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
+                        alert('Có lỗi khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+        function UploadFileProject() {
+            $('#fileInputProject').click();
+        }
+
+        function validateData() {
+            var resultValid = $("#frmCreateProject").validate({
+                rules: {
+                    "ten_du_an": {
+                        required: true,
+                    },
+                    "ma_du_an": {
+                        required: true,
+                    },
+                    "can_cu_phap_ly": {
+                        required: true,
+                    },
+                    "thoi_gian_bat_dau": {
+                        required: true,
+                    },
+                    "thoi_gian_ket_thuc": {
+                        required: true,
+                    },
+                    "tong_han_muc": {
+                        required: true,
+                        number: true,
+                        min: 1
+                    },
+
+                },
+                messages: {
+                    "ten_du_an": "Tên chương trình/dự án/dịch vụ không được để trống!",
+                    "ma_du_an": "Mã chương trình/dự án/dịch vụ không được để trống!",
+                    "can_cu_phap_ly": "Căn cứ pháp lý không được để trống!",
+                    "thoi_gian_bat_dau": "Thời gian thực hiện không được để trống!",
+                    "thoi_gian_ket_thuc": "Thời gian thực hiện không được để trống!",
+                    "tong_han_muc": {
+                        required: "Tổng tiền không được để trống!",
+                        number: "Tổng tiền phải là số!",
+                        min: "Tổng tiền phải lớn hơn 0!"
+                    }
+                },
+
+            }).form();
+
+            return resultValid;
+        }
     </script>
  }
