@@ -1,0 +1,199 @@
+﻿
+@{
+    ViewData["Title"] = "Yêu cầu thanh toán: YC.191124.0001";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <input type="button" value="Lưu" class="btn btn-primary" id="btn-cancel" style="margin-right:5px;" />
+                        <input type="button" value="Gửi duyệt" class="btn btn-warning" id="btn-sentchecked" style="margin-right:5px;" />
+                        <input type="button" value="Duyệt" class="btn btn-success" id="btn-cancel" style="margin-right:5px;" />
+                        <input type="button" value="Từ chối" class="btn btn-danger" id="btn-sentchecked" style="margin-right:5px;" />
+                    </li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Mã yêu cầu</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" value="YC.191124.0001" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Ngày yêu cầu</label>
+                        <div class="col-md-9">
+                            <div class="input-group date">
+                                <input type="text" id="DateRequest" name="DateRequest" value="@(DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
+                                <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Trạng thái</label>
+                        <div class="col-md-9">
+                            <span class='badge badge-warning badge-status'>Chờ duyệt</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Người yêu cầu</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" value="Nguyễn Văn Sinh" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Khoa/Phòng ban</label>
+                        <div class="col-md-9">
+                            <select class="form-control">
+                                <option value="">Khoa PCBTN</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td colspan="12">
+                            <div class="row">
+                                <div class="col-sm-6"><h5>Nội dung đề nghị</h5></div>
+                                <div class="col-sm-6 text-right">
+                                    <button id="btn-chose-thanhtoan-item" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Mã dự án</th>
+                        <th>Tên dự án</th>
+                        <th>Nhóm hoạt động</th>
+                        <th>Mục chi</th>
+                        <th>Tiêu chuẩn</th>
+                        <th>SL</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                        <th>Hạn mức còn</th>
+                        <th>Ghi chú</th>
+                        <th>HS đính kèm</th>
+                        <th width="60px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DA.2024.001</td>
+                        <td>CT1</td>
+                        <td>Hoạt động tập huấn</td>
+                        <td>Báo cáo viên</td>
+                        <td>Thạc sĩ trở lên</td>
+                        <td>1</td>
+                        <td>800,000</td>
+                        <td>800,000</td>
+                        <td>1,200,000</td>
+                        <td></td>
+                        <td style="text-align:center;"><img class="img" style="width:30px;height:20px;" src="https://www.svgrepo.com/show/7884/attachment.svg" /></td>
+                        <td style="text-align:center;"><span class="fa fa-edit"></span>&nbsp; <span class="fa fa-trash"></span></td>
+                    </tr>
+                    <tr>
+                        <td>DA.2024.002</td>
+                        <td>DA1</td>
+                        <td>Mua sắm chuyên môn</td>
+                        <td>Băng rôn</td>
+                        <td></td>
+                        <td>2</td>
+                        <td>14,000,000</td>
+                        <td>28,000,000</td>
+                        <td>29,000,000</td>
+                        <td></td>
+                        <td style="text-align:center;"><img class="img" style="width:30px;height:20px;" src="https://www.svgrepo.com/show/7884/attachment.svg" /></td>
+                        <td style="text-align:center;"><span class="fa fa-edit"></span>&nbsp; <span class="fa fa-trash"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</section>
+
+
+<div class="modal fade show" id="modal-attach-upload" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Hồ sơ đính kèm</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Dự án</strong>: DA.2024.001</p>
+                <p><strong>Nhóm hoạt động</strong>: Hoạt động tập huấn</p>
+                <p><strong>Mục chi</strong>: Báo cáo viên</p>
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Hợp đồng</td>
+                        <td><a href="#">HopDong-324624.pdf</a></td>
+                        <td width="100px" style="text-align:center;">
+                            <i class="fa fa-download" style="color:#0094ff;"></i>&nbsp;
+                            <i class="fa fa-trash" style="color:#ff0000;"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nghiệm thu</td>
+                        <td><a href="#">NghiemThu-324624.pdf</a></td>
+                        <td width="100px" style="text-align:center;">
+                            <i class="fa fa-download" style="color:#0094ff;"></i>&nbsp;
+                            <i class="fa fa-trash" style="color:#ff0000;"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Bài luận báo cáo</td>
+                        <td><a href="#">bailuan-324624.doc</a></td>
+                        <td width="70px" style="text-align:center;">
+                            <i class="fa fa-download" style="color:#0094ff;"></i>&nbsp;
+                            <i class="fa fa-trash" style="color:#ff0000;"></i>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts{
+    <script src="~/js/jquery.validate.js"></script>
+    <script src="~/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/custom-thousands-separator/dist/number-divider.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#btn-chose-thanhtoan-item").click(function () {
+                $("#modal-attach-upload").modal();
+            });
+        });
+    </script>
+}
