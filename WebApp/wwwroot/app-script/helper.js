@@ -6,7 +6,7 @@
         "responsive": true,
         "searching": false,
         "lengthChange": false,
-        "iDisplayLength": 20,
+        "iDisplayLength": 10,
         "columns": columnsData,
         "scrollY": "400px",
         "scrollX": true,
@@ -89,4 +89,12 @@ function SubStrinColumn(data, len) {
         textReturn = data;
     }
     return "<span title='" + data+"'>" + textReturn+"</span>";
+}
+
+function RenderNumerFormat(data) {
+    var res = "";
+    if (data !== undefined && data > 0) {
+        res = data.toLocaleString('de-DE')
+    }
+    return "<div style='width:100%;'>" + res + "</div>";
 }

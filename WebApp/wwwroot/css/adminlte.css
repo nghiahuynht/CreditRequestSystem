@@ -302,7 +302,7 @@ textarea {
 
 fieldset {
   min-width: 0;
-  padding: 0;
+  padding: 10px;
   margin: 0;
   border: 0;
 }
@@ -313,7 +313,7 @@ legend {
   max-width: 100%;
   padding: 0;
   margin-bottom: .5rem;
-  font-size: 1.5rem;
+  font-size: 1.0rem;
   line-height: inherit;
   color: inherit;
   white-space: normal;
@@ -6084,16 +6084,17 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 }
 
 .modal-header {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: start;
-  align-items: flex-start;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid #e9ecef;
-  border-top-left-radius: calc(0.3rem - 1px);
-  border-top-right-radius: calc(0.3rem - 1px);
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: calc(0.3rem - 1px);
+    border-top-right-radius: calc(0.3rem - 1px);
+    background-color: #ffc107;
 }
 
 .modal-header .close, .modal-header .mailbox-attachment-close {
@@ -31357,4 +31358,10 @@ input.error {
 
 .fa-trash{
     color:#dc3545;
+}
+.fa-check {
+    color: #28a745;
+}
+.fa-eye {
+    color: #28a745;
 }

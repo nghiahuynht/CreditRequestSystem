@@ -1,10 +1,14 @@
 ﻿using DAL.Entities;
 using DAL.IService;
 using DAL.Models;
+using DAL.Models.Category;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL.Service
 {
@@ -109,6 +113,114 @@ namespace DAL.Service
 
         }
 
+        public List<CategoryActiveGroupViewModel> LstAllCategoryActiveGroup()
+        {
+            var res = new List<CategoryActiveGroupViewModel>();
+            try
+            {
+                
+                res = dtx.CategoryActiveGroupViewModel.FromSql("EXEC sp_GetAllCategoryActiveGroup").ToList();
+            }
+            catch (Exception ex)
+            {
 
+            }
+            return res;
+        }
+
+        public List<CategoryPaymentProfileViewModel> LstAllCategoryPaymentProfile(int activeGroupId)
+        {
+            var res = new List<CategoryPaymentProfileViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@ActiveGroupId",activeGroupId),
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryPaymentProfileViewModel.FromSql("EXEC sp_GetAllCategoryPaymentProfileByActiveGroup @ActiveGroupId", param).ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public CategoryActiveGroupViewModel GetActiveGroupById(int Id)
+        {
+            var res = new CategoryActiveGroupViewModel();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@Id",Id),
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryActiveGroupViewModel.FromSql("EXEC sp_GetActiveGroupById @Id", param).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public DataTableResultModel<CategoryActiveGroupViewModel> GetActiveGroupByFilter(CategoryFilterModel filter)
+        {
+            var res = new DataTableResultModel<CategoryActiveGroupViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Ma", filter.Code),
+                    new SqlParameter("@Ten", filter.Name),
+                    new SqlParameter("@Start", filter.start),
+                    new SqlParameter("@Length", filter.length),
+                    new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
+                };
+                ValidNullValue(param);
+                var lstData = dtx.CategoryActiveGroupViewModel.FromSql("sp_GetActiveGroupPaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
+                res.recordsTotal = Convert.ToInt16(param[4].Value);
+                res.recordsFiltered = res.recordsTotal;
+                res.data = lstData.ToList();
+            }
+            catch (Exception ex)
+            {
+                res.recordsTotal = 0;
+                res.recordsFiltered = 0;
+                res.data = new List<CategoryActiveGroupViewModel>();
+            }
+
+            return res;
+        }
+
+        public async Task<SaveResultModel<object>> CreateActiveGroup(CategoryActiveGroupViewModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@Id", model.Id),
+                    new SqlParameter("@Code", model.Code),
+                    new SqlParameter("@Name", model.Name),
+                    new SqlParameter("@Notes", model.Notes),
+                    new SqlParameter("@ActionBy", userName),
+                    new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateActiveGroup @Id,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
     }
 }

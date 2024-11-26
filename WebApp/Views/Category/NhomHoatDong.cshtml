@@ -1,0 +1,249 @@
+﻿
+@{
+    ViewData["Title"] = "Danh sách nhóm hoạt động";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<DAL.Models.ComboBoxModel>
+@section styles{
+
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .div-member {
+            margin-left: 20px;
+        }
+
+            .div-member .nav .nav-link {
+                margin: 4px 0 !important;
+            }
+
+        .card .nav.flex-column > li {
+            border-bottom: 0px;
+        }
+
+        .span-team-name {
+            font-weight: bold
+        }
+
+        .i-edit-saleteam {
+            color: #555;
+        }
+
+        .i-delete-saleteam {
+            color: #ff0000;
+        }
+
+        .typeahead {
+            width: 100% !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                            <label>Mã nhóm hoạt động</label>
+                            <input type="text" class="form-control" id="txtMa" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Tên nhóm hoạt động</label>
+                            <input type="text" class="form-control" id="txtTen" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button onclick="SearchNhomHoatDong()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateActiveGroup(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body ">
+                    <table class="table table-bordered table-hover dataTable" id="table-activegroup" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Mã nhóm hoạt động</th>
+                                <th>Tên nhóm hoạt động</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_add_activegroup" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_activegroup">
+
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script src="~/plugins/mdb-treeview/forms-free.js"></script>
+    <script src="~/plugins/mdb-treeview/scrolling-navbar.js"></script>
+    <script src="~/plugins/mdb-treeview/treeview.js"></script>
+    <script src="~/plugins/mdb-treeview/wow.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script>
+        var tableId = "#table-activegroup";
+        var ajaxURL = "/Category/GetDataActiveGroup";
+        var columnData = [
+            { "data": "id", visible: false },
+            { "data": "code" },
+            { "data": "name" },
+            { "data": "notes" },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(data);
+                }
+            },
+
+
+        ];
+
+        var arrMembers = [];
+
+
+        $(document).ready(function () {
+
+            SearchNhomHoatDong();
+
+           
+        });
+        function RenderTableAction(userId) {
+            var html = "<div class='div-table-action'><i class='fa fa-edit' onclick='showModalCreateActiveGroup(" + userId + ")'></i></div>";
+            return html;
+        }
+
+        function SearchNhomHoatDong() {
+
+            var dataSearch = {
+                Code: $("#txtMa").val(),
+                Name: $("#txtTen").val()
+            };
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
+
+        }
+
+        function showModalCreateActiveGroup(id) {
+            $.ajax({
+                url: '/Category/_AddNhomHoatDong/' + id, // Đảm bảo đường dẫn này đúng với action của bạn
+                type: 'GET',
+                success: function (response) {
+                    // Chèn HTML trả về vào phần tử có id "dailog_nv"
+                    $('#dailog_activegroup').html(response);
+
+                    // Hiển thị modal
+                    $("#modal_add_activegroup").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function CreateActiveGroup() {
+
+            var isValidate = validateData();
+
+            if (isValidate == true) {
+
+
+                var dataPost = {
+                    Id: $("#a_active_group_id").val(),
+                    Code: $("#a_code").val(),
+                    Name: $("#a_name").val(),
+                    Notes: $("#a_ghi_chu").val(),
+                };
+                console.log("dataPost", dataPost)
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/Category/CreateActiveGroup",
+                    dataType: 'json',
+                    data: JSON.stringify(dataPost),
+                    beforeSend: function () {
+
+                    },
+                    success: function (res) {
+                        if (res.isSuccess === true) {
+                            toastr.success('Thêm nhóm hoạt động thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            SearchNhomHoatDong();
+                            $("#modal_add_activegroup").modal("hide")
+                        } else {
+                            toastr.error('Có lỗi khi thêm nhóm hoạt động. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+
+                    }
+                });
+            }
+        }
+
+        function validateData() {
+            var resultValid = $("#frmCreateActiveGroup").validate({
+                rules: {
+                    "code": {
+                        required: true,
+                    },
+                    "name": {
+                        required: true,
+                    }
+
+                },
+                messages: {
+                    "code": "Mã không được để trống!",
+                    "name": "Tên không được để trống!"
+                },
+
+            }).form();
+
+            return resultValid;
+        }
+
+        function closeModal_ActiveGroup() {
+
+            $("#modal_add_activegroup").modal("hide")
+
+        }
+    </script>
+}
+
+
