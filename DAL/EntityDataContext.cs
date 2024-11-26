@@ -1,6 +1,9 @@
 ﻿using DAL.Entities;
 using DAL.Models;
+using DAL.Models.Category;
 using DAL.Models.CreditRequest;
+using DAL.Models.ProjectFinancialDetail;
+using DAL.Models.ProjectFinancialSummar;
 using DAL.Models.UserInfo;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -44,8 +47,12 @@ namespace DAL
 
         public DbSet<CreditRequestMatrixModel> CreditRequestMatrixModel { get; set; }
 
+        public DbSet<CategoryActiveGroupViewModel> CategoryActiveGroupViewModel { get; set; }
+        public DbSet<CategoryPaymentProfileViewModel> CategoryPaymentProfileViewModel { get; set; }
+        public DbSet<ProjectFinancialDetailModel> ProjectFinancialDetailModel { get; set; }
+        public DbSet<ProjectFinancialSummarGridModel> ProjectFinancialSummarGridModel { get; set; }
+        public DbSet<PaymentInfoProjectDetailModel> PaymentInfoProjectDetailModel { get; set; }
 
-      
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

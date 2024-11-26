@@ -67,6 +67,47 @@ namespace WebApp.Controllers
             return Json(res);
         }
 
+        #region DM Nhóm hoạt động
 
+        public IActionResult NhomHoatDong()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        // [Authorize(Roles = "Admin")]
+        public DataTableResultModel<CategoryActiveGroupViewModel> GetDataActiveGroup(CategoryFilterModel filter)
+        {
+            var res = categoryService.GetActiveGroupByFilter(filter);
+            return res;
+        }
+        public IActionResult _AddNhomHoatDong(int id = 0)
+        {
+            var viewModel = new CategoryActiveGroupViewModel();
+
+            if (id > 0)
+            {
+                viewModel=categoryService.GetActiveGroupById(id);
+                
+            }
+            else
+            {
+                viewModel.Id = 0;
+            }
+            return View(viewModel);
+
+
+        }
+
+        [HttpPost]
+        
+        public async Task<JsonResult> CreateActiveGroup([FromBody] CategoryActiveGroupViewModel model)
+        {
+            var res = new SaveResultModel<object>();
+
+            res =await categoryService.CreateActiveGroup(model, User.Identity.Name);
+            return Json(res);
+        }
+        #endregion
     }
 }

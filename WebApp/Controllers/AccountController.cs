@@ -183,7 +183,24 @@ namespace WebApp.Controllers
         }
 
 
+        public IActionResult Add(int id=0)
+        {
+            var viewModel = new UserDetailViewModel();
 
+            if (id >0)
+            {
+                viewModel.User = userService.GetUserById(id);
+                viewModel.RoleSelected = userService.GetRoleByUser(viewModel.User.UserName);
+            }
+            else
+            {
+                viewModel.User = new UserInfo();
+                viewModel.User.IsActive = true;
+            }
+            viewModel.LstRoles = userService.GetAllRoles();
+            return View(viewModel);
+           
+        }
         #endregion
 
     }

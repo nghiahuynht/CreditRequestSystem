@@ -1,0 +1,247 @@
+﻿@model DAL.Models.ProjectFinancialSummar.ProjectFinancialSummarGridModel
+@{ 
+    List<string> lstThoiGian = new List<string> { "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029" };
+}
+<div class="modal-content">
+    <div class="modal-header p-2">
+        <h5 class="modal-title" id="promotion-title">Thêm mới chương trình/dự án/dịch vụ</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <input id="ProjectFinancialSummarId" value="@Model.Id" hidden/>
+        @*<input id="a_tong_han_muc_khong_format" value="@Model.TotalAmount" hidden/>*@
+        <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+            <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-2 mb-0 text-blue">Thông tin tổng quát</legend>
+            <form class="form-horizontal" id="frmCreateProject">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Mã dự án <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" value="@Model.ProjectCode" name="ma_du_an" id="a_ma_du_an" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Tên dự án <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="a_ten_du_an" name="ten_du_an" value="@Model.ProjectName" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Căn cứ pháp lý <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" value="@Model.LegalBasis" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
+                            <div class="input-group-append col-md-8">
+                                @{
+                                    string[] arrThoiGian = Model.ExecutionPeriod != null? Model.ExecutionPeriod.Split("-"):new string[0] ;
+                                    if (arrThoiGian.Length == 2)
+                                    {
+                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
+                                            @foreach (var tg in lstThoiGian)
+                                            {
+                                                if (arrThoiGian[0] == tg)
+                                                {
+                                                    <option value="@tg" selected>@tg</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@tg">@tg</option>
+                                                }
+
+                                            }
+                                        </select>
+                                        <h3>-</h3>
+                                        <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc">
+                                            @foreach (var tg in lstThoiGian)
+                                            {
+                                                if (arrThoiGian[1] == tg)
+                                                {
+                                                    <option value="@tg" selected>@tg</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@tg">@tg</option>
+                                                }
+
+                                            }
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
+                                            @foreach (var tg in lstThoiGian)
+                                            {
+                                                <option value="@tg" selected>@tg</option>
+
+                                            }
+                                        </select>
+                                        <h3>-</h3>
+                                        <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc">
+                                            @foreach (var tg in lstThoiGian)
+                                            {
+                                                <option value="@tg" selected>@tg</option>
+
+                                            }
+                                        </select>
+
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Người tạo</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" value="@Model.CreatedBy" disabled="disabled" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Ngày tạo</label>
+                            <div class="col-md-8">
+                                <div class="input-group date">
+                                    <input type="text" id="DateRequest" disabled="disabled" name="DateRequest" value="@Model.CreatedDate.ToString("dd/MM/yyyy")" class="form-control">
+                                    <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Tổng hạn mức <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" style="font-weight:bold;"
+                                       name="tong_han_muc" id="a_tong_han_muc" onblur="formatTotalAmount()" value="@Model.TotalAmount"  autocomplete="off"/>
+                                <input type="hidden"  id="a_tong_han_muc_khong_format" value="@Model.TotalAmount" />
+                               
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Đã sử dụng (luỹ kế)</label>
+                            <div class="col-md-7">
+                                <input type="text" id="a_luy_ke" data-value="show" class="form-control" disabled="disabled" style="font-weight:bold;" />
+                            </div>
+                            <div class="col-md-1">
+                                <span onclick="showhideSoTienDaSuDung()" class="fa fa-eye" style="font-size:16pt;" id="icon_show_hide"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Ghi chú</label>
+                            <div class="col-md-8">
+                                <textarea class="form-control" id="a_ghi_chu" rows="3">@Model.Notes</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Trạng thái</label>
+                            <div class="col-md-8">
+                                <span class='badge badge-primary badge-status' id="a_trang_thai">Đang hiệu lực</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 pt-3">
+
+                                <input type="button" value="Đính kèm" class="btn btn-warning" onclick="UploadFileProject()" />
+                                <!-- Input file ẩn -->
+                                <input type="file" id="fileInputProject" style="display: none;" />
+                            </div>
+                            <div class="col-md-8">
+                                <table class="table" width="100%" id="table_Attact_File">
+                                    <tbody id="table_phan_bo_chi_tiet">
+                                        @if (ViewBag.DataFileAttach != null )
+                                        {
+                                            foreach (var file in ViewBag.DataFileAttach)
+                                            {
+                                        <tr>
+                                            <td width="10%" style="text-align:center;">
+                                                <a>
+                                                    <span class="fa fa-download"></span>
+                                                </a>
+                                            </td>
+                                            <td width="70%">
+                                                <a href="@file.URLPath" target="_blank">@file.FileName</a>
+                                            </td>
+                                            <td width="10%" style="text-align:center;color:crimson;">
+                                                <span class="fa fa-trash delete-file"
+                                                      data-id="@file.Id"
+                                                      style="cursor:pointer;"
+                                                      onclick="RemoveFile(@file.Id)"></span>
+                                            </td>
+
+                                        </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" onclick="CreateProject()">Lưu</button>
+
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        formatTotalAmount()
+        // Khi người dùng chọn file
+        $('#fileInputProject').on('change', function () {
+            const file = this.files[0]; // Lấy file được chọn
+            if (file) {
+                // Upload file
+                const fileData = new FormData();
+                fileData.append('file', this.files[0]);
+
+                $.ajax({
+                    url: '/FileUpload/UploadFile', // Đường dẫn đến API xử lý file
+                    type: 'POST',
+                    data: fileData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+
+                        if (response.success == true && response.fileNameAttactId > 0) {
+                            const html = `
+                                                <tr>
+                                                    <td width="40px" style="text-align:center;">
+                                                        <a  target="_blank">
+                                                            <span class="fa fa-download"></span>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="${response.filePath}" target="_blank">${response.fileName}</a>
+                                                    </td>
+                                                     <td width="40px" style="text-align:center;color:crimson;">
+                                                        <span class="fa fa-trash delete-file"
+                                                              data-id="${response.fileNameAttactId}"
+                                                              style="cursor:pointer;"
+                                                              onclick="RemoveFile(${response.fileNameAttactId})"></span>
+                                                    </td>
+                                                </tr>
+                                            `;
+
+                            $('#table_Attact_File').append(html)
+                        }
+                        listFileAttact.push(response.fileNameAttactId)
+                        toastr.success('Tải file thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                    },
+                    error: function () {
+                        toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                });
+            }
+        });
+    });
+</script>

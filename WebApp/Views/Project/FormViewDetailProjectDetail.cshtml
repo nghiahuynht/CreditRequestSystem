@@ -1,0 +1,145 @@
+﻿
+
+@model DAL.Models.ProjectFinancialDetail.ProjectFinancialDetailViewModel
+<div class="modal-content">
+    <div class="modal-header p-2">
+        <h5 class="modal-title" id="promotion-title">Thông tin hạng mục phân bổ chi tiết</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <input value="@Model.data.Id" hidden id="PaymentProFileForProjectDetailId" />
+        <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+            <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-2 mb-0 text-blue">Thông tin hạng mục phân bổ</legend>
+            <form id="frmCreateProjectDetail">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-3 control-label">Nhóm hoạt động <span class="text-red">*</span></label>
+                        <div class="col-md-3">
+                            <select class="form-control" id="a_nhom_hoat_dong" name="nhom_hoat_dong" readonly disabled>
+                                <option></option>
+                                @foreach (var hd in Model.DM_NhomHoatDong)
+                                {
+                                    if (hd.Id == Model.data.ActivityGroupId)
+                                    {
+                                        <option value="@hd.Id" selected>@hd.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@hd.Id">@hd.Name</option>
+                                    }
+
+                                }
+                            </select>
+                        </div>
+
+                        <label class="col-md-3 control-label">Mục chi <span class="text-red">*</span></label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="a_muc_chi" name="muc_chi" value="@Model.data.ExpenseItem" readonly />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <label class="col-md-3 control-label">Tiêu chuẩn</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="a_tieu_chuan" name="tieu_chuan" value="@Model.data.Standard" readonly />
+                        </div>
+
+                        <label class="col-md-3 control-label">Số lượng</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="a_so_luong" name="so_luong" value="@Model.data.Quantity" readonly />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <label class="col-md-3 control-label">Đơn giá</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="a_don_gia" name="don_gia" value="@Model.data.Price" readonly />
+                        </div>
+
+                        <label class="col-md-3 control-label">Thành tiền <span class="text-red">*</span></label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="a_thanh_tien" name="thanh_tien" value="@Model.data.TotalAmount" readonly />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <label class="col-md-3 control-label">Ghi chú</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control" rows="3" id="a_ghi_chu_tt_chi_tiet" readonly>@Model.data.Notes</textarea>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </fieldset>
+
+        <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+            <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-2 mb-0 text-blue">Thông tin hồ sơ thanh toán</legend>
+            <table class="table table-bordered" width="100%">
+                <thead>
+                    <tr>
+                        <th>Mã hồ sơ</th>
+                        <th>Tên hồ sơ</th>
+                        <th>Ghi chú</th>
+                        <th width="60px"><button onclick="AddFormPaymentProfile()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                    </tr>
+                </thead>
+                <tbody id="table_thong_tin_hs_thanh_toan">
+                    @if (Model.HSThanhToan.Count() == 0)
+                    {
+                        foreach (var hs in Model.DM_HSThanhToan)
+                        {
+                            <tr>
+                                <td>
+                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="@hs.Code" class="form-control" />
+                                </td>
+                                <td>
+                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="@hs.Name" class="form-control" />
+                                </td>
+                                <td>
+                                    <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="@hs.Notes" class="form-control" />
+                                </td>
+                                <td style="text-align:center;">
+                                    <span class="fa fa-check" onclick="SaveProfile(@hs.Id)"></span> &nbsp;
+                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(@hs.Id)"></span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        foreach (var hs in Model.HSThanhToan)
+                        {
+                            <tr>
+                                <td>
+                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="@hs.PaymentInfoCode" class="form-control" readonly/>
+                                </td>
+                                <td>
+                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="@hs.PaymentInfoName" class="form-control" readonly/>
+                                </td>
+                                <td>
+                                    <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="@hs.Notes" class="form-control" readonly/>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(@hs.ProfileId)"></span>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+                </table>
+        </fieldset>
+
+    </div>
+    <div class="modal-footer">
+       
+        <input hidden id="ProjectDetailId" value="@Model.data.Id" />
+        <input hidden id="ActivityGroupId" value="@Model.data.ActivityGroupId" />
+    </div>
+
+</div>
+

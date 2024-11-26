@@ -4,11 +4,21 @@ using System;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using NPOI.HPSF;
+using DAL.Models;
+using DAL.IService;
+using Microsoft.Extensions.Configuration;
 
 namespace WebApp.Controllers
 {
     public class FileUploadController : AppBaseController
     {
+        private IAttachFileService attachFileService;
+        private IConfiguration config;
+        public  FileUploadController( IAttachFileService attachFileService, ICommonService commonService, IConfiguration config)
+        {
+            this.attachFileService = attachFileService;
+            this.config = config;
+        }
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
@@ -39,14 +49,46 @@ namespace WebApp.Controllers
                     {
                         await file.CopyToAsync(stream);
                     }
+                    // save db
 
-                    // Trả về kết quả JSON
-                    return Json(new
+                    long fileSizeInBytes = file.Length;
+                    int fileSizeInKB = (int)(fileSizeInBytes / 1024.0);
+                    var fName = file.FileName;
+                    string domain = config["General:Domain"];
+                    string urlPath = $"{domain}/wwwroot/{currentDateFolder}/{fName}";
+                    var attachFile = new AttactFileModel
                     {
-                        success = true,
-                        message = "Tải lên thành công.",
-                        filePath = $"/{currentDateFolder}/{fileName}" // Đường dẫn tương đối
-                    });
+                        Id = 0,
+                        ObjectType = "UploadFile",
+                        FileName = fName,
+                        FilePath = filePath,
+                        URLPath = urlPath,
+                        Size= fileSizeInKB,
+                        CreatedBy = AuthenInfo().UserName
+                    };
+                    var rs = await attachFileService.SaveAttachment(attachFile);
+                    if(rs.IsSuccess == true && rs.LongValReturn >0)
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            message = "Tải lên thành công.",
+                            filePath = $"/{currentDateFolder}/{fileName}" ,
+                            fileName = fName,
+                            fileNameAttactId= rs.LongValReturn
+                        });
+                    }    
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Lưu file thất bại",
+                           
+                        });
+                    }    
+
+                    
                 }
 
                 return Json(new
@@ -55,6 +97,31 @@ namespace WebApp.Controllers
                     message = "Không có file nào được chọn.",
                   
                 });
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult DeleteFile(long Id)
+        {
+            try
+            {
+                var rs =  attachFileService.DeleteAttactment(Id);
+                return Json(new
+                {
+                    success = true,
+                    message = "Tải lên thành công.",
+                    fileNameAttactId = Id
+                });
+
             }
             catch (Exception ex)
             {
