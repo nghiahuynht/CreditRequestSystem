@@ -1,0 +1,149 @@
+﻿
+@{
+    ViewData["Title"] = "Danh sách yêu cầu thanh toán";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using DAL
+@using DAL.Models
+@section styles{
+    <link href="~/plugins/datepicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .fa-cube {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label>Khoa/phòng ban</label>
+                    <select class="form-control" id="ddl-status">
+                        <option value="">Khoa PCBTN</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-1">
+                    <label>Từ ngày</label>
+                    <div class="input-group date">
+                        <input type="text" id="FromDate" value="@(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy"))" class="form-control">
+                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <label>Đến ngày</label>
+                    <div class="input-group date">
+                        <input type="text" id="ToDate" value="@(DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
+                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <label>Trạng thái</label>
+                    <select class="form-control" id="ddl-status">
+                        <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label>Người yêu cầu</label>
+                    <input type="text" class="form-control" placeholder="Tên hoặc tên đăng nhập" id="txtkeyword" />
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-warning btn-filter"><i class="fa fa-search" id="btn-search"></i></button>
+                </div>
+                <div class="col-sm-3">
+                    <div class="text-right">
+                        <a class="btn btn-sm btn-warning btn-filter" href=""><i class="fa fa-plus-circle"></i>&nbsp;Tạo YC mới</a>&nbsp;
+                        <a class="btn btn-sm btn-success btn-filter" href=""><i class="fa fa-download"></i>&nbsp;Xuất excel</a>&nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã yêu cầu</th>
+                    <th>Ngày yêu cầu</th>
+                    <th>Người yêu cầu</th>
+                    <th>Khoa/phòng ban</th>
+                    <th>Trạng thái</th>
+                    <th>Mã dự án</th>
+                    <th>Tên dự án</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><i class="fa fa-eye"></i>&nbsp;<a>YC.1124.0001</a></td>
+                    <td>16/11/2024</td>
+                    <td>Nguyễn Văn Toàn</td>
+                    <td>Khoa PCBTN</td>
+                    <td><span class='badge badge-warning badge-status'>Chờ duyệt</span></td>
+                    <td>DA.24.001</td>
+                    <td>DA1,dự toán năm 2024</td>
+                    <td>
+                        <div class='div-table-action'>
+                            <i class='fa fa-edit'></i>&nbsp;&nbsp;
+                            <i class='fa fa-trash'></i>&nbsp;
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-eye"></i>&nbsp;<a>YC.1124.0002</a></td>
+                    <td>14/11/2024</td>
+                    <td>Trần Ngọc Long</td>
+                    <td>Khoa PCBTN</td>
+                    <td><span class='badge badge-success badge-status'>Đã duyệt</span></td>
+                    <td>DA.24.001</td>
+                    <td>DA1,dự toán năm 2024</td>
+                    <td>
+                        <div class='div-table-action'>
+                            <i class='fa fa-edit'></i>&nbsp;&nbsp;
+                            <i class='fa fa-trash'></i>&nbsp;
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-eye"></i>&nbsp;<a>YC.1124.0003</a></td>
+                    <td>13/11/2024</td>
+                    <td>Trần Quý Thanh</td>
+                    <td>Khoa PCBTN</td>
+                    <td><span class='badge badge-danger badge-status'>Huỷ</span></td>
+                    <td>DA.24.001</td>
+                    <td>DA1,dự toán năm 2024</td>
+                    <td>
+                        <div class='div-table-action'>
+                            <i class='fa fa-edit'></i>&nbsp;&nbsp;
+                            <i class='fa fa-trash'></i>&nbsp;
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</section>
