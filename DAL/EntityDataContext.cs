@@ -52,6 +52,9 @@ namespace DAL
         public DbSet<ProjectFinancialDetailModel> ProjectFinancialDetailModel { get; set; }
         public DbSet<ProjectFinancialSummarGridModel> ProjectFinancialSummarGridModel { get; set; }
         public DbSet<PaymentInfoProjectDetailModel> PaymentInfoProjectDetailModel { get; set; }
+        public DbSet<CategoryExpenseViewModel> CategoryExpenseViewModel { get; set; }
+        public DbSet<ProjectFinancialSummarDLLModel> ProjectFinancialSummarDLLModel { get; set; }
+        public DbSet<ProjectFinancialDetailTableModel> ProjectFinancialDetailTableModel { get; set; }
 
 
 

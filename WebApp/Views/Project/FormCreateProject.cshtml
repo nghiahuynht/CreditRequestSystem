@@ -18,28 +18,10 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Mã dự án <span class="text-red">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" value="@Model.ProjectCode" name="ma_du_an" id="a_ma_du_an" />
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Tên dự án <span class="text-red">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" id="a_ten_du_an" name="ten_du_an" value="@Model.ProjectName" />
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Căn cứ pháp lý <span class="text-red">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" value="@Model.LegalBasis" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
                             <div class="input-group-append col-md-8">
                                 @{
-                                    string[] arrThoiGian = Model.ExecutionPeriod != null? Model.ExecutionPeriod.Split("-"):new string[0] ;
+                                    string[] arrThoiGian = Model.ExecutionPeriod != null ? Model.ExecutionPeriod.Split("-") : new string[0];
                                     if (arrThoiGian.Length == 2)
                                     {
                                         <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
@@ -96,6 +78,25 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Mã dự án <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" value="@Model.ProjectCode" name="ma_du_an" id="a_ma_du_an" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Tên dự án <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="a_ten_du_an" name="ten_du_an" value="@Model.ProjectName" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Căn cứ pháp lý <span class="text-red">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" value="@Model.LegalBasis" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label class="col-md-4 col-form-label">Người tạo</label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control" value="@Model.CreatedBy" disabled="disabled" />
@@ -123,7 +124,7 @@
                                
                             </div>
                         </div>
-                        <div class="form-group row">
+                        @*<div class="form-group row">
                             <label class="col-md-4 col-form-label">Đã sử dụng (luỹ kế)</label>
                             <div class="col-md-7">
                                 <input type="text" id="a_luy_ke" data-value="show" class="form-control" disabled="disabled" style="font-weight:bold;" />
@@ -131,19 +132,19 @@
                             <div class="col-md-1">
                                 <span onclick="showhideSoTienDaSuDung()" class="fa fa-eye" style="font-size:16pt;" id="icon_show_hide"></span>
                             </div>
-                        </div>
+                        </div>*@
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Ghi chú</label>
                             <div class="col-md-8">
                                 <textarea class="form-control" id="a_ghi_chu" rows="3">@Model.Notes</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        @*<div class="form-group row">
                             <label class="col-md-4 col-form-label">Trạng thái</label>
                             <div class="col-md-8">
                                 <span class='badge badge-primary badge-status' id="a_trang_thai">Đang hiệu lực</span>
                             </div>
-                        </div>
+                        </div>*@
                         <div class="form-group row">
                             <div class="col-md-4 pt-3">
 

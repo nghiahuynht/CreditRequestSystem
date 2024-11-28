@@ -119,5 +119,20 @@ namespace DAL.Service
                 return false;
             }
         }
+
+        public async Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummar()
+        {
+            var res = new List<ProjectFinancialSummarDLLModel>();
+            try
+            {
+
+                res = await dtx.ProjectFinancialSummarDLLModel.FromSql("EXEC sp_GetAllProduct").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
     }
 }

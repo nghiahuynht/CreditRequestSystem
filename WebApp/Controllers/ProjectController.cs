@@ -153,8 +153,28 @@ namespace WebApp.Controllers
 
         #region project detail
 
+        public async Task<IActionResult> ProjectDetailIndex()
+        {
+            ProjectFinancialDetailParamModel paramModel = new ProjectFinancialDetailParamModel();
+            var lstProject = await  _projectFinancialSummarService.LstAllProjectFinancialSummar();
+            var lstActiveGroup = _categoryService.LstAllCategoryActiveGroup();
+            var lstExpense = _categoryService.LstAllCategoryExpense();
+            paramModel.LstProject = lstProject;
+            paramModel.LstActiveGroup = lstActiveGroup;
+            paramModel.LstExpense = lstExpense;
+            return View(paramModel);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> CreateProjectFinancialDetail([FromBody] ProjectFinancialDetailModel data)
+        // [Authorize(Roles = "Admin")]
+        public DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectDetail(ProjectFinancialDetailFilterModel filter)
+        {
+            var res = _projectFinancialDetailService.GetDataProjectFinancialDetailPaging(filter);
+            return res;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProjectFinancialDetail([FromBody] ProjectFinancialDetailAddModel data)
         {
 
             try
@@ -163,7 +183,14 @@ namespace WebApp.Controllers
 
                 if (res.IsSuccess == true && res.LongValReturn > 0)
                 {
-
+                    if(data.PaymentInfo!= null && data.PaymentInfo.Count()>0)
+                    {
+                        foreach(var item in data.PaymentInfo)
+                        {
+                            item.ProjectDetailId = (int)res.LongValReturn;
+                             await _projectFinancialDetailService.CreateProfileForProjectDetail(item, AuthenInfo().UserName);
+                        }
+                    }
                     return Json(new
                     {
                         success = true,
@@ -202,17 +229,27 @@ namespace WebApp.Controllers
             if(Id>0)
             {
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
+                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
                 var dataDetail = await _projectFinancialDetailService.GetProjectFinancialDetailById(Id);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+                var dm_MucChi = _categoryService.LstAllCategoryExpense();
+                var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(Id);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.data = dataDetail;
+                data.LstProject = lstProject;
+                data.DM_MucChi = dm_MucChi;
+                data.DM_HSThanhToan = hsThanhToan;
                 return View(data);
             }   
             else
             {
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
+                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+                var dm_MucChi = _categoryService.LstAllCategoryExpense();
+                data.LstProject = lstProject;
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
+                data.DM_MucChi = dm_MucChi;
                 data.data = new ProjectFinancialDetailModel();
                 return View(data);
             }
@@ -254,7 +291,7 @@ namespace WebApp.Controllers
                 var dm_HSThanhToan = _categoryService.LstAllCategoryPaymentProfile(dataDetail.ActivityGroupId);
                 var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(Id);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
-                data.DM_HSThanhToan = dm_HSThanhToan;
+                data.DM_HSThanhToan = new List<PaymentInfoProjectDetailModel>();
                 data.HSThanhToan = hsThanhToan;
                 data.data = dataDetail;
                 return View(data);
@@ -265,7 +302,7 @@ namespace WebApp.Controllers
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.data = new ProjectFinancialDetailModel();
-                data.DM_HSThanhToan = new List<CategoryPaymentProfileViewModel>();
+                data.DM_HSThanhToan = new List<PaymentInfoProjectDetailModel>();
                 return View(data);
             }
 

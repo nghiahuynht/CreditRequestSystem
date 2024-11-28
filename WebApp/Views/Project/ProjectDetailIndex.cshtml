@@ -1,0 +1,630 @@
+﻿
+@{
+    ViewData["Title"] = "Danh sách phân bổ ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model DAL.Models.ProjectFinancialDetail.ProjectFinancialDetailParamModel
+@section styles{
+
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .div-member {
+            margin-left: 20px;
+        }
+
+            .div-member .nav .nav-link {
+                margin: 4px 0 !important;
+            }
+
+        .card .nav.flex-column > li {
+            border-bottom: 0px;
+        }
+
+        .span-team-name {
+            font-weight: bold
+        }
+
+        .i-edit-saleteam {
+            color: #555;
+        }
+
+        .i-delete-saleteam {
+            color: #ff0000;
+        }
+
+        .typeahead {
+            width: 100% !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                            <label>Dự án</label>
+                            <select class="form-control" id="ddl-project">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model.LstProject)
+                                    {
+                                        <option value="@opt.Id">@opt.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Hoạt động</label>
+                            <select class="form-control" id="ddl-activegroup">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model.LstActiveGroup)
+                                    {
+                                        <option value="@opt.Id">@opt.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Mục chi</label>
+                            <select class="form-control" id="ddl-expense">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model.LstExpense)
+                                    {
+                                        <option value="@opt.Id">@opt.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <button onclick="SearchProjectDetail()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateProjectDetail(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body ">
+                    <table class="table table-bordered table-hover dataTable" id="table-projectdetail" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Tên dự án</th>
+                                <th>Tên hoạt động</th>
+                                <th>Tên mục chi</th>
+                                <th>Tiêu chuẩn</th>
+                                <th>SL</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_add_projectdetail" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_projectdetail">
+
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script src="~/plugins/mdb-treeview/forms-free.js"></script>
+    <script src="~/plugins/mdb-treeview/scrolling-navbar.js"></script>
+    <script src="~/plugins/mdb-treeview/treeview.js"></script>
+    <script src="~/plugins/mdb-treeview/wow.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script>
+        var tableId = "#table-projectdetail";
+        var ajaxURL = "/Project/GetDataProjectDetail";
+        var columnData = [
+            { "data": "id", visible: false },
+            { "data": "projectName" },
+            { "data": "activeGroupName" },
+            { "data": "expenseName" },
+            { "data": "standard" },
+            { "data": "quantity" },
+            { "data": "price" },
+            { "data": "price" },
+            { "data": "totalAmount" },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(data);
+                }
+            },
+
+
+        ];
+
+        var arrPaymentProfile = [];
+
+
+        $(document).ready(function () {
+
+            SearchProjectDetail();
+
+
+        });
+        function RenderTableAction(id) {
+            var html = `
+                            <div class='div-table-action'>
+                                <i class='fa fa-edit' onclick='showModalCreateProjectDetail(${id})' title='sửa'></i>
+                                <i class='fa fa-trash' onclick='RemoveProjectDetail(${id})' title='xóa'></i>
+
+                            </div>`;
+            return html;
+
+        }
+
+        function SearchProjectDetail() {
+
+            var dataSearch = {
+                ProjectId: $("#dll-project").val(),
+                ActiveGroupId: $("#dll-activegroup").val(),
+                ExpenseId: $("#dll-expense").val(),
+
+            };
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
+
+        }
+
+        function showModalCreateProjectDetail(id) {
+            $.ajax({
+                url: '/Project/FormCreateProjectDetail/' + id, // Đảm bảo đường dẫn này đúng với action của bạn
+                type: 'GET',
+                success: function (response) {
+                    // Chèn HTML trả về vào phần tử có id "dailog_nv"
+                    $('#dailog_projectdetail').html(response);
+
+                    // Hiển thị modal
+                    $("#modal_add_projectdetail").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function CreateProjectDetail() {
+
+            var isValidateDetail = validateDataDetail();
+            if (isValidateDetail == true) {
+                console.log("arrPaymentProfile", arrPaymentProfile)
+                if (arrPaymentProfile == null || arrPaymentProfile.length==0) {
+                    toastr.error('Hồ sơ thanh toán không được để trống. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                    return;
+                }
+                var dataPost = {
+                    Id: parseInt($("#ProjectDetailId").val()),
+                    ProjectId: parseInt($("#a_du_an").val()),
+                    ActivityGroupId: parseInt($("#a_nhom_hoat_dong").val()),
+                    ExpenseId: $("#a_muc_chi").val(),
+                    Standard: $("#a_tieu_chuan").val(),
+                    Quantity: $("#a_so_luong").val() == "" ? 0 : parseInt($("#a_so_luong").val()),
+                    Price: $("#a_don_gia_khong_format").val() == "" ? 0 : parseFloat($("#a_don_gia_khong_format").val()),
+                    TotalAmount: parseFloat($("#a_thanh_tien_khong_format").val()),
+                    Notes: $("#a_ghi_chu_tt_chi_tiet").val(),
+                    PaymentInfo: arrPaymentProfile
+                };
+                // Gửi yêu cầu AJAX
+                console.log("dataPost", dataPost);
+                $.ajax({
+                    url: '/Project/CreateProjectFinancialDetail',
+                    type: 'POST',
+                    data: JSON.stringify(dataPost),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.success) {
+                           
+
+                            toastr.success('Thông tin phân bổ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            $('#modal_add_projectdetail').modal("hide");
+
+                        } else {
+                            toastr.error('Có lỗi khi tạo phân bổ. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
+                        alert('Có lỗi khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+
+        function validateDataDetail() {
+            var resultValid = $("#frmCreateProjectDetail").validate({
+                rules: {
+                    "du_an": {
+                        required: true,
+                    },
+                    "nhom_hoat_dong": {
+                        required: true,
+                    },
+                    "muc_chi": {
+                        required: true,
+                    },
+                    "so_luong": {
+                        required: false,
+                        number: true,
+                        min: 0
+                    },
+
+                    "thanh_tien": {
+                        required: true
+                    }
+
+                },
+                messages: {
+                    "du_an": "Dự án không được để trống!",
+                    "nhom_hoat_dong": "Nhóm hoạt động không được để trống!",
+                    "muc_chi": "Mục chi không được để trống!",
+                    "so_luong": {
+                        number: "Tổng tiền phải là số!"
+                    },
+
+                    "thanh_tien": {
+                        required: "Thành tiền không được để trống!"
+                    }
+                },
+
+            }).form();
+
+            return resultValid;
+
+        }
+
+        function closeModal_PrjectDetail() {
+
+            $("#modal_add_projectdetail").modal("hide")
+
+        }
+
+        function RemoveProjectDetail(projectDetailId) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // call ajax
+                    $.ajax({
+                        url: '/Project/DeleteProjectDetail',
+                        type: 'GET',
+                        data: { Id: projectDetailId },
+                        contentType: 'application/json',
+                        success: function (response) {
+                            if (response.success) {
+                                $(`#table_phan_bo_chi_tiet tr[data-id="${projectDetailId}"]`).remove();
+
+                                toastr.success('Xóa file thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            }
+                            else {
+                                toastr.error('Xóa file thất bại!', 'Lỗi', { positionClass: "toast-top-center" });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+
+                            alert('Có lỗi khi gửi yêu cầu!');
+                        }
+                    });
+
+                }
+            });
+        }
+
+        function handleMucChiChange() {
+            var id = $('#a_muc_chi').val();
+            $.ajax({
+                url: '/Category/GetPaymentInfoByExpense/' + id,
+                type: 'GET',
+                success: function (response) {
+                    if (response.isSuccess == true) {
+                        console.log(response);
+                        var htmlbody = "";
+                        response.data.forEach((item) => {
+                            htmlbody += `<tr>
+                                            <td>
+                                                <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="${item.code}" class="form-control" readonly />
+                                            </td>
+                                            <td>
+                                                <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="${item.name}" class="form-control" readonly/>
+                                            </td>
+                                            <td>
+                                                <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="${item.notes}" class="form-control"             readonly/>
+                                            </td>
+                                            <td>
+                                                ${item.fileAttachName ? `<a href="${item.urlPath}" name="tep_dinh_kem_hs_thanh_toan"                id="a_tep_dinh_kem_hs_thanh_toan" target="_blank">${item.fileAttachName}</a>` : ''}
+                                                <input type="hidden" name="tep_dinh_kem_hs_thanh_toan"  value="${item.fileAttachId}" />
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${item.id})"></span>
+                                                <span class="fa fa-trash" onclick="RemovePaymentProfile(${item.id})"></span>
+                                            </td>
+                                    </tr>`
+                        })
+                        $('#table_thong_tin_hs_thanh_toan').html(htmlbody);
+                    }
+                    else {
+                        console.error("Có lỗi khi tải dữ liệu: ", response);
+                        toastr.error('Có lỗi khi tải dữ liệu  !', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function SaveProfileForProjectDetail(profileId) {
+
+            // Find the row that contains the clicked icon
+            var row = $(`span.fa-check[onclick="SaveProfileForProjectDetail(${profileId})"]`).closest('tr');
+
+            // Retrieve values from the inputs in the row
+            var codeInput = row.find('input[name="ma_hs_thanh_toan"]');
+            var nameInput = row.find('input[name="ten_hs_thanh_toan"]');
+            var notesInput = row.find('input[name="ghi_chu_hs_thanh_toan"]');
+            var fileInput = row.find('input[name="tep_dinh_kem"]');
+            var fileAttach = row.find('input[name="tep_dinh_kem_hs_thanh_toan"]');
+            var code = codeInput.val();
+            var name = nameInput.val();
+
+            // Validation messages
+            var errors = [];
+
+            if (!code || code.trim() === "") {
+                errors.push("Mã không được để trống!");
+            }
+            if (!name || name.trim() === "") {
+                errors.push("Tên không được để trống!");
+            }
+
+            // Display validation errors if any
+            if (errors.length > 0) {
+                toastr.error(errors.join("<br>"), 'Lỗi', { positionClass: "toast-top-center" });
+                return;
+            }
+
+            // Prepare the data for submission
+            var dataPost = {
+                Id: 0,
+                ProjectDetailId: 0,
+                ActiveGroupId: $("#a_nhom_hoat_dong").val(),
+                ProfileId: profileId,
+                PaymentInfoCode: code.trim(),
+                PaymentInfoName: name.trim(),
+                Notes: row.find('input[id="a_ghi_chu_hs_thanh_toan"]').val()?.trim(),
+                FileAttach: fileAttach.val() == null ? 0 : fileAttach.val(),
+            };
+            arrPaymentProfile.push(dataPost);
+            // Set inputs to readonly
+            codeInput.prop('readonly', true);
+            nameInput.prop('readonly', true);
+            notesInput.prop('readonly', true);
+
+            // Remove the onclick event from the save icon
+            row.find('span.fa-check').remove();
+            toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+            // Log the data (optional for debugging)
+
+            //$.ajax({
+            //    url: '/Project/CreateProfileForProjectDetail',
+            //    type: 'POST',
+            //    data: JSON.stringify(dataPost),
+            //    contentType: 'application/json',
+            //    success: function (response) {
+            //        if (response.success) {
+            //            // Set inputs to readonly
+            //            codeInput.prop('readonly', true);
+            //            nameInput.prop('readonly', true);
+            //            nameNotes.prop('readonly', true);
+
+            //            // Remove the onclick event from the save icon
+            //            row.find('span.fa-check').remove();
+            //            toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+            //        } else {
+            //            toastr.error('Có lỗi khi tạo thông tin hồ sơ. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+            //        }
+            //    },
+            //    error: function (xhr, status, error) {
+            //        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
+            //        alert('Có lỗi khi gửi yêu cầu!');
+            //    }
+            //});
+        }
+
+        function AddFormPaymentProfile() {
+            // Generate a unique random number
+            var randomId = Date.now();
+            var htmthstt = ` <tr>
+                                <td>
+                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan_${randomId}" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
+                                </td>
+                                <td>
+                                    <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
+                                </td>
+                                <td>
+                                    <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
+                                     <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan_${randomId}" value="-1" />
+                                </td>
+                                <td style="text-align:center;">
+                                    <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${randomId})"></span>
+                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(${randomId})"></span>
+                                </td>
+                             </tr>`;
+            $('#table_thong_tin_hs_thanh_toan').append(htmthstt);
+        }
+
+        function uploadFilePaymentInfo(input, id) {
+            const file = input.files[0]; // Lấy file được chọn
+            if (file) {
+                // Upload file
+                const fileData = new FormData();
+                fileData.append('file', file);
+
+                $.ajax({
+                    url: '/FileUpload/UploadFile', // Đường dẫn đến API xử lý file
+                    type: 'POST',
+                    data: fileData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success == true && response.fileNameAttactId > 0) {
+                            $(`#a_tep_dinh_kem_hs_thanh_toan_${id}`).val(response.fileNameAttactId);
+                            toastr.success('Tải file thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                        }
+                        else {
+                            toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+
+
+                    },
+                    error: function () {
+                        toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                });
+            }
+        }
+
+
+        function formatThanhTien() {
+            var inputElement = document.getElementById('a_thanh_tien');
+            debugger
+            var value = inputElement.value.trim();
+            if (value && !isNaN(value) || value == "0") {
+                var rawValue = parseFloat(value);
+                $('#a_thanh_tien_khong_format').val(rawValue);
+                var formattedValue = rawValue.toLocaleString('de-DE');
+                inputElement.value = formattedValue;
+            } else {
+                // If invalid, clear both fields
+                inputElement.value = '';
+
+            }
+        }
+
+        function RemovePaymentProfile(profileId) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(`span.fa-trash[onclick="RemovePaymentProfile(${profileId})"]`).closest('tr').remove();
+                    toastr.success('Xóa thông tin hồ sơ thành công!', 'Thành công');
+                    arrPaymentProfile = arrPaymentProfile.filter(x => x.ProfileId != profileId);
+                }
+            });
+
+        }
+
+        function formatTotalAmount() {
+            var inputElement = document.getElementById('a_tong_han_muc');
+            var value = inputElement.value.trim();
+            if (value && !isNaN(value) || value == "0") {
+                var rawValue = parseFloat(value);
+
+                var formattedValue = rawValue.toLocaleString('de-DE');
+                inputElement.value = formattedValue;
+            } else {
+                // If invalid, clear both fields
+                inputElement.value = '';
+
+            }
+        }
+
+
+
+        function formatDonGia() {
+            var inputElement = document.getElementById('a_don_gia');
+            var value = inputElement.value.trim();
+            if (value && !isNaN(value) || value == "0") {
+                var rawValue = parseFloat(value);
+                $('#a_don_gia_khong_format').val(rawValue);
+                var formattedValue = rawValue.toLocaleString('de-DE');
+                inputElement.value = formattedValue;
+                changeSoLuongDonGia();
+            } else {
+                // If invalid, clear both fields
+                inputElement.value = '';
+
+            }
+        }
+
+        function changeSoLuongDonGia() {
+            var inputElementSoLuong = document.getElementById('a_so_luong').value.trim();
+            var inputElementDonGia = document.getElementById('a_don_gia_khong_format').value.trim();
+            if (inputElementSoLuong && !isNaN(inputElementSoLuong) && inputElementDonGia && !isNaN(inputElementDonGia)) {
+                var valueSoLuong = parseFloat(inputElementSoLuong);
+                var valueDonGia = parseFloat(inputElementDonGia);
+                if (valueDonGia != 0 || valueSoLuong != 0) {
+                    $('#a_thanh_tien').val(valueSoLuong * valueDonGia);
+                    formatThanhTien();
+                }
+
+            }
+        }
+
+       
+
+    </script>
+}
+
+

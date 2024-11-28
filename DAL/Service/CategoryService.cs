@@ -222,5 +222,205 @@ namespace DAL.Service
             }
             return res;
         }
+
+        public async Task<bool> DeleteActiveGroup(int Id, string userName)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id),
+                    new SqlParameter("@ActionBy", userName),
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteActiveGroup @Id,@ActionBy", param);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public CategoryExpenseViewModel GetExpenseById(int Id)
+        {
+            var res = new CategoryExpenseViewModel();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@Id",Id),
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryExpenseViewModel.FromSql("EXEC sp_GetExpenseById @Id", param).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public DataTableResultModel<CategoryExpenseViewModel> GetExpenseByFilter(CategoryFilterModel filter)
+        {
+            var res = new DataTableResultModel<CategoryExpenseViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Ma", filter.Code),
+                    new SqlParameter("@Ten", filter.Name),
+                    new SqlParameter("@Start", filter.start),
+                    new SqlParameter("@Length", filter.length),
+                    new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
+                };
+                ValidNullValue(param);
+                var lstData = dtx.CategoryExpenseViewModel.FromSql("sp_GetExpensePaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
+                res.recordsTotal = Convert.ToInt16(param[4].Value);
+                res.recordsFiltered = res.recordsTotal;
+                res.data = lstData.ToList();
+            }
+            catch (Exception ex)
+            {
+                res.recordsTotal = 0;
+                res.recordsFiltered = 0;
+                res.data = new List<CategoryExpenseViewModel>();
+            }
+
+            return res;
+        }
+
+        public async Task<SaveResultModel<object>> CreateExpense(CategoryExpenseViewModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@Id", model.Id),
+                    new SqlParameter("@Code", model.Code),
+                    new SqlParameter("@Name", model.Name),
+                    new SqlParameter("@Notes", model.Notes),
+                    new SqlParameter("@ActionBy", userName),
+                    new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+        public async Task<bool> DeleteExpense(int Id, string userName)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id),
+                    new SqlParameter("@ActionBy", userName),
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteExpense @Id,@ActionBy", param);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public  List<CategoryPaymentProfileViewModel> GetPaymentProfileByExpense(int expenseId)
+        {
+            var res = new List<CategoryPaymentProfileViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@ExpenseId",expenseId),
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryPaymentProfileViewModel.FromSql("EXEC sp_GetAllCategoryPaymentProfileByExpense @ExpenseId", param).ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public async Task<SaveResultModel<object>> CreatePaymentInfo(CategoryPaymentInfoModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@Id", model.Id),
+                    new SqlParameter("@ExpenseId", model.ExpenseId),
+                    new SqlParameter("@Code", model.PaymentInfoCode),
+                    new SqlParameter("@Name", model.PaymentInfoName),
+                    new SqlParameter("@Notes", model.Notes),
+                    new SqlParameter("@FileAttachId", model.FileAttachId),
+                    new SqlParameter("@ActionBy", userName),
+                    new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePaymentInfo @Id,@ExpenseId,@Code,@Name,@Notes,@FileAttachId,@ActionBy,@NewId OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+        public async Task<bool> DeletePaymentProfile(int Id, string userName)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id),
+                    new SqlParameter("@ActionBy", userName),
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeletePaymentProfile @Id,@ActionBy", param);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public List<CategoryExpenseViewModel> LstAllCategoryExpense()
+        {
+            var res = new List<CategoryExpenseViewModel>();
+            try
+            {
+
+                res = dtx.CategoryExpenseViewModel.FromSql("EXEC sp_GetAllCategoryExpense").ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
     }
 }

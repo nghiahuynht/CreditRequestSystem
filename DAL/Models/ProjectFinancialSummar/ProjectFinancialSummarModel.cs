@@ -41,4 +41,10 @@ namespace DAL.Models.ProjectFinancialSummar
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
     }
+    public class ProjectFinancialSummarDLLModel
+    {
+        public int Id { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+    }
 }
