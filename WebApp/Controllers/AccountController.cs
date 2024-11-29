@@ -8,6 +8,7 @@ using DAL.IService;
 using DAL.Models;
 using DAL.Models.PermissionMenu;
 using DAL.Models.UserInfo;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -18,10 +19,12 @@ namespace WebApp.Controllers
     public class AccountController : Controller
     {
         private IUserInfoService userService;
+        private ICategoryService categoryService;
 
-        public AccountController(IUserInfoService userService)
+        public AccountController(IUserInfoService userService, ICategoryService categoryService)
         {
             this.userService = userService;
+            this.categoryService = categoryService;
         }
 
         #region Login 
@@ -91,8 +94,12 @@ namespace WebApp.Controllers
        // [Authorize(Roles ="Admin")]
         public IActionResult Index()
         {
+            UserParViewModel par = new UserParViewModel();
             var lstRoles = userService.GetAllRoles();
-            return View(lstRoles);
+            var lstDepartment =categoryService.LstAllCategoryDepartment();
+            par.LstRoles = lstRoles;
+            par.LstDepartment = lstDepartment;
+            return View(par);
         }
 
         [HttpPost]
@@ -127,6 +134,7 @@ namespace WebApp.Controllers
         {
             var res = new SaveResultModel<object>();
             model.User.RoleCode = model.RoleSelected;
+            model.User.DepartmentId = Int32.Parse(model.DepartmentSelected);
             if (model.User.Id == 0)
             {
                 res = userService.CreateNewUser(model.User, User.Identity.Name);
@@ -186,20 +194,55 @@ namespace WebApp.Controllers
         public IActionResult Add(int id=0)
         {
             var viewModel = new UserDetailViewModel();
+            var lstDepartment = categoryService.LstAllCategoryDepartment();
 
             if (id >0)
             {
+                viewModel.LstDepartment = lstDepartment;
                 viewModel.User = userService.GetUserById(id);
                 viewModel.RoleSelected = userService.GetRoleByUser(viewModel.User.UserName);
+                viewModel.DepartmentSelected = viewModel.User.DepartmentId?.ToString();
             }
             else
             {
+                viewModel.LstDepartment = lstDepartment;
                 viewModel.User = new UserInfo();
                 viewModel.User.IsActive = true;
             }
             viewModel.LstRoles = userService.GetAllRoles();
             return View(viewModel);
            
+        }
+
+        [HttpGet]
+        public JsonResult  DeleteAccount(int Id)
+        {
+            try
+            {
+                var user = userService.GetUserById(Id);
+                if (user!= null)
+                {
+                    user.IsActive = false;
+                    user.UpdatedDate = DateTime.Now;
+                    user.UpdatedBy= user.UserName;
+                }
+               var res = userService.UpdateUser(user, User.Identity.Name);
+                return Json(new
+                {
+                    success = res.IsSuccess,
+                    message = res.IsSuccess == true ? "Xóa thành công." : "Xóa thất bại"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
         }
         #endregion
 

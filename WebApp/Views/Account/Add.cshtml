@@ -52,12 +52,25 @@
                             <label class="form-label col-auto">Chức danh: </label>
                             <input type="text" class="form-control" id="a_chuc_danh" name="chuc_danh" value="@Model.User.Title" />
                         </div>
-                        <div class="col-md-4">
+                    @*     <div class="col-md-4">
                             <div class="pt-4">
                                 <input type="checkbox" id="a_active" name="active" @(Model.User.IsActive ? "checked" : "") />
                                 <label > Hoạt động</label><br>
                             </div>
 
+                        </div> *@
+                        <div class="col-md-4">
+                            <label class="form-label">Bộ phận: <span class="text-red">*</span></label>
+                            <select class="form-control" id="a_department" name="department">
+                                <option value=""></option>
+                                @{
+                                    foreach (var item in Model.LstDepartment)
+                                    {
+                                        string selected = item.Id.ToString() == Model.DepartmentSelected ? "selected='selected'" : "";
+                                        <option value="@item.Id" @(selected)>@item.Name</option>
+                                    }
+                                }
+                            </select>
                         </div>
 
                     </div>

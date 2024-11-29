@@ -65,6 +65,7 @@ namespace DAL.Service
                 currentUser.FullName = entity.FullName;
                 currentUser.RoleCode = entity.RoleCode;
                 currentUser.IsActive = entity.IsActive;
+                currentUser.DepartmentId = entity.DepartmentId;
                 currentUser.UpdatedBy = userName;
                 currentUser.UpdatedDate = DateTime.Now;
 

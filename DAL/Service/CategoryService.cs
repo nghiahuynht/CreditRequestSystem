@@ -422,5 +422,20 @@ namespace DAL.Service
             }
             return res;
         }
+
+        public List<CategoryDepartmentViewModel> LstAllCategoryDepartment()
+        {
+            var res = new List<CategoryDepartmentViewModel>();
+            try
+            {
+
+                res = dtx.CategoryDepartmentViewModel.FromSql("EXEC sp_GetAllCategoryDepartment").ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
     }
 }

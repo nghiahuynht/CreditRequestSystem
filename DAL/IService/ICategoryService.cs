@@ -32,5 +32,7 @@ namespace DAL.IService
         Task<SaveResultModel<object>> CreatePaymentInfo(CategoryPaymentInfoModel model, string userName);
         Task<bool> DeletePaymentProfile(int Id, string userName);
 
+        List<CategoryDepartmentViewModel> LstAllCategoryDepartment();
+
     }
 }
