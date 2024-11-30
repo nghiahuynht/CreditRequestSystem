@@ -103,12 +103,24 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    return Json(new
+                    if(res.LongValReturn == -409)
                     {
-                        success = false,
-                        message = "Tạo dữ liệu thất bại",
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Mã dự án đã có trong hệ thống",
+                        });
+                    }  
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Tạo dữ liệu thất bại",
 
-                    });
+                        });
+                    }    
+                    
                 }
 
             }

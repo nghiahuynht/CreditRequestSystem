@@ -295,7 +295,10 @@
             var isValidate = validateData();
 
             if (isValidate == true) {
-
+                if (listFileAttact == null || listFileAttact.length == 0) {
+                    toastr.error("Chưa đính kèm file căn cứ pháp lý", 'Lỗi', { positionClass: "toast-top-center" });
+                    return;
+                }
                 var dataPost = {
                     Id: $("#ProjectFinancialSummarId").val(),
                     ProjectCode: $("#a_ma_du_an").val(),
@@ -308,7 +311,6 @@
                     FileAttach: listFileAttact
                 };
                 // Gửi yêu cầu AJAX
-                console.log("dataPost", dataPost);
                 $.ajax({
                     url: '/Project/CreateProjectFinancialSummar',
                     type: 'POST',
@@ -324,7 +326,7 @@
                             SearchProjectFinancialSummar()
 
                         } else {
-                            toastr.error('Có lỗi khi tạo dự án. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                            toastr.error(response.message, 'Lỗi', { positionClass: "toast-top-center" });
                         }
                     },
                     error: function (xhr, status, error) {
