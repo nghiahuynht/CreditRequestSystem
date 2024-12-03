@@ -214,7 +214,7 @@
                             SearchNhomHoatDong();
                             $("#modal_add_activegroup").modal("hide")
                         } else {
-                            toastr.error('Có lỗi khi thêm nhóm hoạt động. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                            toastr.error(res.errorMessage, 'Lỗi', { positionClass: "toast-top-center" });
                         }
 
                     }

@@ -43,6 +43,7 @@ namespace DAL.Models.Category
     public class CategoryExpenseViewModel
     {
         public int Id { get; set; }
+        public int ActiveGroupId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }
@@ -69,6 +70,15 @@ namespace DAL.Models.Category
     public class CategoryDepartmentViewModel
     {
         public int Id { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string Notes { get; set; }
+    }
+
+    public class CategoryExpenseTableViewModel
+    {
+        public int Id { get; set; }
+        public string ActiveGroupName { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }

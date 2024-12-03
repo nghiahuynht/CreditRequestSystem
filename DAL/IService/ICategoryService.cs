@@ -25,7 +25,7 @@ namespace DAL.IService
 
         CategoryExpenseViewModel GetExpenseById(int Id);
         List<CategoryExpenseViewModel> LstAllCategoryExpense();
-        DataTableResultModel<CategoryExpenseViewModel> GetExpenseByFilter(CategoryFilterModel filter);
+        DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter);
         Task<SaveResultModel<object>> CreateExpense(CategoryExpenseViewModel model, string userName);
         Task<bool> DeleteExpense(int categoryId, string userName);
         List<CategoryPaymentProfileViewModel> GetPaymentProfileByExpense(int expenseId);
@@ -33,6 +33,7 @@ namespace DAL.IService
         Task<bool> DeletePaymentProfile(int Id, string userName);
 
         List<CategoryDepartmentViewModel> LstAllCategoryDepartment();
+        List<CategoryExpenseViewModel> GetExpenseByActiveGroup(int Id);
 
     }
 }

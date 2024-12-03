@@ -10,7 +10,8 @@ namespace DAL.Models.ProjectFinancialSummar
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string LegalBasis { get; set; }
-        public string ExecutionPeriod { get; set; }
+        public DateTime TimeStart { get; set; }
+        public DateTime TimeEnd { get; set; }
         public decimal TotalAmount { get; set; }
         public string StatusText { get; set; }
         public string Notes { get; set; }
@@ -26,8 +27,9 @@ namespace DAL.Models.ProjectFinancialSummar
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string LegalBasis { get; set; }
-        public string ExecutionPeriod { get; set; }
-        public decimal TotalAmount { get; set; }
+        public DateTime?TimeStart { get; set; }
+        public DateTime?TimeEnd { get; set; }
+        public decimal? TotalAmount { get; set; }
         public string StatusText { get; set; }
         public string Notes { get; set; }
         public string CreatedBy { get; set; }
@@ -46,5 +48,14 @@ namespace DAL.Models.ProjectFinancialSummar
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+    }
+
+    public class ProjectOverviewModel
+    {
+        public int Id { get; set; }
+        public string ProjectCode { get; set; }
+        public string ProjectName { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal TotalAllocatedAmount { get; set; }
     }
 }

@@ -1,7 +1,5 @@
 ﻿@model DAL.Models.ProjectFinancialSummar.ProjectFinancialSummarGridModel
-@{ 
-    List<string> lstThoiGian = new List<string> { "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029" };
-}
+
 <div class="modal-content">
     <div class="modal-header p-2">
         <h5 class="modal-title" id="promotion-title">Thêm mới chương trình/dự án/dịch vụ</h5>
@@ -20,61 +18,9 @@
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
                             <div class="input-group-append col-md-8">
-                                @{
-                                    string[] arrThoiGian = Model.ExecutionPeriod != null ? Model.ExecutionPeriod.Split("-") : new string[0];
-                                    if (arrThoiGian.Length == 2)
-                                    {
-                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                if (arrThoiGian[0] == tg)
-                                                {
-                                                    <option value="@tg" selected>@tg</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@tg">@tg</option>
-                                                }
-
-                                            }
-                                        </select>
-                                        <h3>-</h3>
-                                        <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                if (arrThoiGian[1] == tg)
-                                                {
-                                                    <option value="@tg" selected>@tg</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@tg">@tg</option>
-                                                }
-
-                                            }
-                                        </select>
-                                    }
-                                    else
-                                    {
-                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                <option value="@tg" selected>@tg</option>
-
-                                            }
-                                        </select>
-                                        <h3>-</h3>
-                                        <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                <option value="@tg" selected>@tg</option>
-
-                                            }
-                                        </select>
-
-                                    }
-                                }
-
+                                <input type="date" class="form-control" value="@Model.TimeStart?.ToString("yyyy-MM-dd")" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau" />
+                                <h3>-</h3>
+                                <input type="date" class="form-control" value="@Model.TimeEnd?.ToString("yyyy-MM-dd")" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc" />
                             </div>
                         </div>
                         <div class="form-group row">
@@ -196,7 +142,25 @@
 </div>
 <script>
     $(document).ready(function () {
-        formatTotalAmount()
+        if ($("#ProjectFinancialSummarId").val() != "0") {
+            listFileAttact = [];
+            formatTotalAmount();
+            var items = @Html.Raw(Json.Serialize(ViewBag.DataFileAttach));
+            items.forEach(function (item) {
+                listFileAttact.push(item.id)
+            });
+            console.log("items", items)
+            $('#a_ma_du_an').prop('readonly', true);
+        }
+        else {
+            var projectCode = generateCode("DA");
+            if (projectCode != "") {
+                $('#a_ma_du_an').val(projectCode);
+                $('#a_ma_du_an').prop('readonly', true);
+            }
+            
+        }
+
         // Khi người dùng chọn file
         $('#fileInputProject').on('change', function () {
             const file = this.files[0]; // Lấy file được chọn

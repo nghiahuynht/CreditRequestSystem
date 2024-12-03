@@ -83,6 +83,7 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Nhóm hoạt động</th>
                                 <th>Mã mục chi</th>
                                 <th>Tên mục chi</th>
                                 <th>Ghi chú</th>
@@ -133,6 +134,7 @@
         var ajaxURL = "/Category/GetDataExpense";
         var columnData = [
             { "data": "id", visible: false },
+            { "data": "activeGroupName" },
             { "data": "code" },
             { "data": "name" },
             { "data": "notes" },
@@ -202,6 +204,7 @@
 
                 var dataPost = {
                     Id: $("#a_active_group_id").val(),
+                    ActiveGroupId: $("#a_nhom_hoat_dong").val(),
                     Code: $("#a_code").val(),
                     Name: $("#a_name").val(),
                     Notes: $("#a_ghi_chu").val(),
@@ -221,7 +224,7 @@
                             SearchMucChi();
                             $("#modal_add_expense").modal("hide")
                         } else {
-                            toastr.error('Có lỗi khi thêm nhóm hoạt động. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                            toastr.error(res.errorMessage, 'Lỗi', { positionClass: "toast-top-center" });
                         }
 
                     }
@@ -232,6 +235,9 @@
         function validateData() {
             var resultValid = $("#frmCreateExpense").validate({
                 rules: {
+                    "nhom_hoat_dong": {
+                        required: true,
+                    },
                     "code": {
                         required: true,
                     },
@@ -241,6 +247,7 @@
 
                 },
                 messages: {
+                    "nhom_hoat_dong": "Nhóm hoạt động không được để trống!",
                     "code": "Mã không được để trống!",
                     "name": "Tên không được để trống!"
                 },

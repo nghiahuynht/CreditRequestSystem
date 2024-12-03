@@ -106,6 +106,12 @@ namespace WebApp.Controllers
             var res = new SaveResultModel<object>();
 
             res =await categoryService.CreateActiveGroup(model, User.Identity.Name);
+            if(res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã nhóm hoạt động đã tồn tại!";
+
+            }    
             return Json(res);
         }
 
@@ -145,7 +151,7 @@ namespace WebApp.Controllers
 
         [HttpPost]
         // [Authorize(Roles = "Admin")]
-        public DataTableResultModel<CategoryExpenseViewModel> GetDataExpense(CategoryFilterModel filter)
+        public DataTableResultModel<CategoryExpenseTableViewModel> GetDataExpense(CategoryFilterModel filter)
         {
             var res = categoryService.GetExpenseByFilter(filter);
             return res;
@@ -153,7 +159,7 @@ namespace WebApp.Controllers
         public IActionResult _AddMucChi(int id = 0)
         {
             var viewModel = new CategoryExpenseViewModel();
-
+            var lstNhomHoatDong = categoryService.LstAllCategoryActiveGroup();
             if (id > 0)
             {
                 viewModel = categoryService.GetExpenseById(id);
@@ -163,6 +169,7 @@ namespace WebApp.Controllers
             {
                 viewModel.Id = 0;
             }
+            ViewBag.LstActiveGroup = lstNhomHoatDong;
             return View(viewModel);
 
 
@@ -175,6 +182,12 @@ namespace WebApp.Controllers
             var res = new SaveResultModel<object>();
 
             res = await categoryService.CreateExpense(model, User.Identity.Name);
+            if (res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã mục chi đã tồn tại!";
+
+            }
             return Json(res);
         }
 
@@ -203,7 +216,30 @@ namespace WebApp.Controllers
             }
         }
 
-        
+        public JsonResult GetExpenseByActiveGroup(int Id)
+        {
+
+            try
+            {
+                var rs = categoryService.GetExpenseByActiveGroup(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data = rs
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+
+                });
+            }
+            
+        }
 
         #endregion
 

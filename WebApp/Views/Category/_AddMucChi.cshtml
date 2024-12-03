@@ -15,23 +15,37 @@
     <div class="content-body">
         <div class="modal-body p-3">
             <form id="frmCreateExpense">
-                <input id="a_active_group_id" hidden value="@Model.Id" />
+                <input id="a_expense_id" hidden value="@Model.Id" />
                 <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
                     <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin mục chi</legend>
 
                     <div class="row">
                         <div class="col-md-6">
+                            <label class="form-label">Nhóm hoạt động: <span class="text-red">*</span></label>
+                            <select class="form-control" id="a_nhom_hoat_dong" name="nhom_hoat_dong">
+                                <option value=""></option>
+                                @{
+                                    foreach (var item in ViewBag.LstActiveGroup)
+                                    {
+                                        string selected = item.Id == Model.ActiveGroupId ? "selected='selected'" : "";
+                                        <option value="@item.Id" @(selected)>@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label">Mã mục chi: <span class="text-red">*</span></label>
                             <input type="text" class="form-control" id="a_code" name="code" value="@Model.Code" />
                         </div>
-                        <div class="col-md-6 ">
-                            <label class="form-label col-auto">Tên mục chi: <span class="text-red">*</span></label>
-                            <input type="text" class="form-control" id="a_name" name="name" value="@Model.Name" />
-                        </div>
+                       
 
 
                     </div>
                     <div class="row">
+                        <div class="col-md-6 ">
+                            <label class="form-label col-auto">Tên mục chi: <span class="text-red">*</span></label>
+                            <input type="text" class="form-control" id="a_name" name="name" value="@Model.Name" />
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label">Ghi chú:</label>
                             <textarea class="form-control" id="a_ghi_chu" name="ghi_chu">@Model.Notes</textarea>
@@ -50,3 +64,19 @@
         <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_Expense();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>&nbsp;Đóng</button>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        if ($("#a_expense_id").val() == "0") {
+            var projectCode = generateCode("MC");
+            if (projectCode != "") {
+                $('#a_code').val(projectCode);
+                $('#a_code').prop('readonly', true);
+            }
+
+        }
+        else {
+            $('#a_code').prop('readonly', true);
+        }
+    });
+</script>

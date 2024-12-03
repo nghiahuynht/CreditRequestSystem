@@ -47,10 +47,10 @@ namespace WebApp.Controllers
             ProjectFinancialSummarGridModel model = new ProjectFinancialSummarGridModel();
             if (Id == 0)
             {
-                var yearNow = DateTime.Now.Year.ToString();
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = AuthenInfo().UserName;
-                model.ExecutionPeriod = yearNow + "-" + yearNow;
+                model.TimeStart = DateTime.Now.Date;
+                model.TimeEnd = DateTime.Now.Date;
                 return View(model);
             }
             else
@@ -160,6 +160,68 @@ namespace WebApp.Controllers
                     message = $"Đã xảy ra lỗi: {ex.Message}"
                 });
             }
+        }
+
+        public async Task<JsonResult> GetProjectOverviewById(int Id)
+        {
+
+            try
+            {
+                var rs = await _projectFinancialSummarService.GetProjectOverviewById(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data = rs
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+
+                });
+            }
+
+        }
+        public async Task<JsonResult> CheckCodeUnique(string prefix,string code)
+        {
+
+            try
+            {
+                var rs = await _projectFinancialSummarService.CheckCodeUnique(prefix,code);
+                if(rs.LongValReturn == 200)
+                {
+                    return Json(new
+                    {
+                        isSuccess = true,
+                        data = rs.LongValReturn
+
+                    });
+                }   
+                else
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        data = rs.LongValReturn
+
+                    });
+                }    
+                
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+
+                });
+            }
+
         }
         #endregion
 

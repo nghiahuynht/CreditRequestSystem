@@ -260,9 +260,9 @@ namespace DAL.Service
             return res;
         }
 
-        public DataTableResultModel<CategoryExpenseViewModel> GetExpenseByFilter(CategoryFilterModel filter)
+        public DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter)
         {
-            var res = new DataTableResultModel<CategoryExpenseViewModel>();
+            var res = new DataTableResultModel<CategoryExpenseTableViewModel>();
             try
             {
                 var param = new SqlParameter[] {
@@ -273,7 +273,7 @@ namespace DAL.Service
                     new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
                 };
                 ValidNullValue(param);
-                var lstData = dtx.CategoryExpenseViewModel.FromSql("sp_GetExpensePaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
+                var lstData = dtx.CategoryExpenseTableViewModel.FromSql("sp_GetExpensePaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
                 res.recordsTotal = Convert.ToInt16(param[4].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();
@@ -282,7 +282,7 @@ namespace DAL.Service
             {
                 res.recordsTotal = 0;
                 res.recordsFiltered = 0;
-                res.data = new List<CategoryExpenseViewModel>();
+                res.data = new List<CategoryExpenseTableViewModel>();
             }
 
             return res;
@@ -297,6 +297,7 @@ namespace DAL.Service
                 var param = new SqlParameter[]
                {
                   new SqlParameter("@Id", model.Id),
+                  new SqlParameter("@ActiveGroupId", model.ActiveGroupId),
                     new SqlParameter("@Code", model.Code),
                     new SqlParameter("@Name", model.Name),
                     new SqlParameter("@Notes", model.Notes),
@@ -308,7 +309,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@ActiveGroupId,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -430,6 +431,25 @@ namespace DAL.Service
             {
 
                 res = dtx.CategoryDepartmentViewModel.FromSql("EXEC sp_GetAllCategoryDepartment").ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public List<CategoryExpenseViewModel> GetExpenseByActiveGroup(int Id)
+        {
+            var res = new List<CategoryExpenseViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id)
+
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryExpenseViewModel.FromSql("EXEC sp_GetExpenseByActiveGroup @Id",param).ToList();
             }
             catch (Exception ex)
             {

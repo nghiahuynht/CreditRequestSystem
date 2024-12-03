@@ -18,7 +18,7 @@
                         <label class="col-md-3 control-label">Dự án <span class="text-red">*</span></label>
                         <div class="col-md-3">
 
-                            <select class="form-control" id="a_du_an" name="du_an">
+                            <select class="form-control" id="a_du_an" name="du_an" onchange="handleDuAnChange()">
                                 <option></option>
                                 @foreach (var hd in Model.LstProject)
                                 {
@@ -37,7 +37,7 @@
 
                         <label class="col-md-3 control-label">Nhóm hoạt động <span class="text-red">*</span></label>
                         <div class="col-md-3">
-                            <select class="form-control" id="a_nhom_hoat_dong" name="nhom_hoat_dong">
+                            <select class="form-control" id="a_nhom_hoat_dong" name="nhom_hoat_dong" onchange="handleNhomHoatDongChange()">
                                 <option></option>
                                 @foreach (var hd in Model.DM_NhomHoatDong)
                                 {
@@ -85,38 +85,67 @@
 
 
                     </div>
-                        <br />
-                        <div class="row">
-                            <label class="col-md-3 control-label">Số lượng</label>
-                            <div class="col-md-3">
-                                <input type="text" onchange="changeSoLuongDonGia()" class="form-control" id="a_so_luong" name="so_luong" value="@Model.data.Quantity" autocomplete="off" />
-                            </div>
-
-                            <label class="col-md-3 control-label">Đơn giá</label>
-                            <div class="col-md-3">
-                                <input type="text" onblur="formatDonGia()" class="form-control" id="a_don_gia" name="don_gia" value="@Model.data.Price" autocomplete="off" />
-                                <input type="hidden" id="a_don_gia_khong_format" value="@Model.data.Price" />
-                            </div>
-
-
+                    <br />
+                    <div class="row">
+                        <label class="col-md-3 control-label">Số lượng</label>
+                        <div class="col-md-3">
+                            <input type="text" onchange="changeSoLuongDonGia()" class="form-control" id="a_so_luong" name="so_luong" value="@Model.data.Quantity" autocomplete="off" />
                         </div>
-                        <br />
-                        <div class="row">
-                            <label class="col-md-3 control-label">Thành tiền <span class="text-red">*</span></label>
-                            <div class="col-md-3">
-                                <input type="text" onblur="formatThanhTien()" class="form-control" id="a_thanh_tien" name="thanh_tien" value="@Model.data.TotalAmount" autocomplete="off" />
-                                <input type="hidden" id="a_thanh_tien_khong_format" value="@Model.data.Price" />
-                            </div>
 
-                            <label class="col-md-3 control-label">Ghi chú</label>
-                            <div class="col-md-3">
-                                <textarea class="form-control" rows="3" id="a_ghi_chu_tt_chi_tiet">@Model.data.Notes</textarea>
-                            </div>
-
-
+                        <label class="col-md-3 control-label">Đơn giá</label>
+                        <div class="col-md-3">
+                            <input type="text" onblur="formatDonGia()" class="form-control" id="a_don_gia" name="don_gia" value="@Model.data.Price" autocomplete="off" />
+                            <input type="hidden" id="a_don_gia_khong_format" value="@Model.data.Price" />
                         </div>
+
+
                     </div>
+                    <br />
+                    <div class="row">
+                        <label class="col-md-3 control-label">Thành tiền <span class="text-red">*</span></label>
+                        <div class="col-md-3">
+                            <input type="text" onblur="formatThanhTien()" class="form-control" id="a_thanh_tien" name="thanh_tien" value="@Model.data.TotalAmount" autocomplete="off" />
+                            <input type="hidden" id="a_thanh_tien_khong_format" value="@Model.data.Price" />
+                        </div>
+
+                        <label class="col-md-3 control-label">Ghi chú</label>
+                        <div class="col-md-3">
+                            <textarea class="form-control" rows="3" id="a_ghi_chu_tt_chi_tiet">@Model.data.Notes</textarea>
+                        </div>
+
+
+                    </div>
+                </div>
             </form>
+        </fieldset>
+
+        <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3" style="display:none" id="region_thong_tin_du_an">
+            <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-2 mb-0 text-blue">Thông tin chương trình/dự án/dịch vụ</legend>
+            <div class="row">
+                <label class="col-md-3 control-label">Mã dự án</label>
+                <div class="col-md-3">
+                    <input class="form-control" id="a_ma_du_an" value="" readonly />
+                </div>
+
+                <label class="col-md-3 control-label">Tên dự án</label>
+                <div class="col-md-3">
+                    <input class="form-control" id="a_ten_du_an" value="" readonly />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <label class="col-md-3 control-label">Tổng hạn mức</label>
+                <div class="col-md-3">
+                    <input class="form-control" id="a_tong_han_muc" value="" readonly />
+                    <input hidden id="a_tong_han_muc_khong_format" value="" readonly />
+                </div>
+
+                <label class="col-md-3 control-label">Tổng số tiền đã phân bổ</label>
+                <div class="col-md-3">
+                    <input class="form-control" id="a_so_tien_da_phan_bo" value="" readonly />
+                    <input hidden id="a_so_tien_da_phan_bo_khong_format" value="" readonly />
+                </div>
+            </div>
         </fieldset>
 
         <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
@@ -167,6 +196,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" onclick="CreateProjectDetail()">Lưu</button>
         <input hidden id="ProjectDetailId" value="@Model.data.Id" />
+        <input hidden id="so_tien_truoc_khi_chinh_sua" value="@Model.data.TotalAmount" />
     </div>
    
 </div>
@@ -174,6 +204,29 @@
     $(document).ready(function () {
         formatThanhTien();
         formatDonGia();
+        if ($('#ProjectDetailId').val() != "0") {
+            handleDuAnChange();
+
+            var items = @Html.Raw(Json.Serialize(Model.DM_HSThanhToan));
+            if (items != null) {
+                arrPaymentProfile = [];
+                items.forEach(function (item) {
+                    var dataPost = {
+                        Id: item.id,
+                        ProjectDetailId: item.projectDetailId,
+                        ActiveGroupId: item.activeGroupId,
+                        ProfileId: item.profileId,
+                        PaymentInfoCode: item.paymentInfoCode.trim(),
+                        PaymentInfoName: item.paymentInfoName.trim(),
+                        Notes: item.notes ? item.notes.trim() : "",
+                        FileAttach: item.fileAttach != null ? item.fileAttach : 0,
+                        IsUpdate: true
+                    };
+                    arrPaymentProfile.push(dataPost);
+                });
+            }
+        }
        
+        
     });
 </script>

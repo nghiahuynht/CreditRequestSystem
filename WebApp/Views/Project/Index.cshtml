@@ -84,10 +84,10 @@
                                 <th>Id</th>
                                 <th width="100px">Mã dự án </th>
                                 <th width="200px">Tên dự án</th>
-                                <th>Căn cứ pháp lý</th>
-                                <th>Thời gian thực hiện</th>
-                                <th width="150px">Tổng hạn mức</th>
-                                <th width="150px">Đã sử dụng</th>
+                                <th width="200px">Căn cứ pháp lý</th>
+                                <th width="140px">Thời gian thực hiện</th="150px">
+                                <th width="120px">Tổng hạn mức</th>
+                                <th width="120px">Đã sử dụng</th>
                                 <th width="100px">Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -128,7 +128,17 @@
             { "data": "projectCode" },
             { "data": "projectName" },
             { "data": "legalBasis" },
-            { "data": "executionPeriod" },
+            {
+                "data": "timeStart", "render": function (data, type, row, meta) {
+                    if (data != null && row.timeEnd != null) {
+
+                         return moment(data).format('DD/MM/YYYY') + '<br>' + moment(row.timeEnd).format('DD/MM/YYYY');;
+                    }
+                    else {
+                        return "";
+                    }
+                }
+            },
             {
                 "data": "totalAmount", "render": function (data, type, row, meta) {
                     return RenderNumerFormat(data);
@@ -207,7 +217,7 @@
         function RenderTableAction(id) {
             var html = `
                     <div class='div-table-action'>
-                       
+                        <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
                         <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>
                         <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>
                     </div>`;
@@ -285,7 +295,7 @@
                             alert("Lỗi tải modal, vui lòng thử lại sau.");
                         }
                     });
-                    
+
                 }
             });
         }
@@ -304,7 +314,8 @@
                     ProjectCode: $("#a_ma_du_an").val(),
                     ProjectName: $("#a_ten_du_an").val(),
                     LegalBasis: $("#a_can_cu_phap_ly").val(),
-                    ExecutionPeriod: $("#a_thoi_gian_bat_dau").val() + "-" + $("#a_thoi_gian_ket_thuc").val(),
+                    TimeStart: $("#a_thoi_gian_bat_dau").val() ,
+                    TimeEnd: $("#a_thoi_gian_ket_thuc").val() ,
                     TotalAmount: $("#a_tong_han_muc_khong_format").val(),
                     StatusText: "",
                     Notes: $("#a_ghi_chu").val(),
@@ -434,17 +445,17 @@
 
                 }
             });
-            
+
         }
 
         function formatTotalAmount() {
-            var inputElement = document.getElementById('a_tong_han_muc');          
+            var inputElement = document.getElementById('a_tong_han_muc');
             var value = inputElement.value.trim();
             if (value && !isNaN(value) || value == "0") {
                 var rawValue = parseFloat(value);
                 document.getElementById('a_tong_han_muc_khong_format').value = rawValue;
-               
-                var formattedValue = rawValue.toLocaleString('de-DE'); 
+
+                var formattedValue = rawValue.toLocaleString('de-DE');
                 inputElement.value = formattedValue;
             } else {
                 // If invalid, clear both fields

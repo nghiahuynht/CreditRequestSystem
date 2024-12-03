@@ -56,6 +56,8 @@ namespace DAL
         public DbSet<ProjectFinancialSummarDLLModel> ProjectFinancialSummarDLLModel { get; set; }
         public DbSet<ProjectFinancialDetailTableModel> ProjectFinancialDetailTableModel { get; set; }
         public DbSet<CategoryDepartmentViewModel> CategoryDepartmentViewModel { get; set; }
+        public DbSet<CategoryExpenseTableViewModel> CategoryExpenseTableViewModel { get; set; }
+        public DbSet<ProjectOverviewModel> ProjectOverviewModel { get; set; }
 
 
 

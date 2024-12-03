@@ -51,19 +51,9 @@
                                     <div class="form-group row">
                                         <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
                                         <div class="input-group-append col-md-8">
-                                            <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau" readonly disabled>
-                                                <option>2022</option>
-                                                <option>2023</option>
-                                                <option selected>2024</option>
-                                                <option>2025</option>
-                                            </select>
+                                            <input type="date" class="form-control" value="@Model.ProjectInfo.TimeStart?.ToString("yyyy-MM-dd")" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau" readonly/>
                                             <h3>-</h3>
-                                            <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc" readonly disabled>
-                                                <option>2022</option>
-                                                <option>2023</option>
-                                                <option selected>2024</option>
-                                                <option>2025</option>
-                                            </select>
+                                            <input type="date" class="form-control" value="@Model.ProjectInfo.TimeEnd?.ToString("yyyy-MM-dd")" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc" readonly/>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -174,7 +164,7 @@
                                     <th>Đơn giá</th>
                                     <th>Thành tiền</th>
                                     <th>Ghi chú</th>
-                                    <th width="90px"><button id="btn-add-project-item" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                                    <th width="90px"></th>
                                 </tr>
                             </thead>
                             <tbody id="table_phan_bo_chi_tiet">
@@ -190,7 +180,6 @@
                                         <td>@detail.Notes</td>
                                         <td style="text-align:center;">
                                             <span class="fa fa-eye" onclick="ViewDetail(@detail.Id)"></span>&nbsp;
-                                            <span class="fa fa-edit" onclick="EditProjectDetail(@detail.Id)"></span>&nbsp;
                                             <span class="fa fa-trash" onclick="RemoveProjectDetail(@detail.Id)"></span>
                                         </td>
                                     </tr>
@@ -365,7 +354,8 @@
                     ProjectCode: $("#a_ma_du_an").val(),
                     ProjectName: $("#a_ten_du_an").val(),
                     LegalBasis: $("#a_can_cu_phap_ly").val(),
-                    ExecutionPeriod: $("#a_thoi_gian_bat_dau").val() + "-" + $("#a_thoi_gian_ket_thuc").val(),
+                    TimeStart: $("#a_thoi_gian_bat_dau").val(),
+                    TimeEnd: $("#a_thoi_gian_ket_thuc").val(),
                     TotalAmount: $("#a_tong_han_muc").val(),
                     StatusText: document.getElementById("a_trang_thai").innerText,
                     Notes: $("#a_ghi_chu").val(),

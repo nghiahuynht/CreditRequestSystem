@@ -64,7 +64,7 @@
 
                         <div class="col-sm-3">
                             <label>Dự án</label>
-                            <select class="form-control" id="ddl-project">
+                            <select class="form-control" id="dll-project">
                                 <option value="all">Tất cả</option>
                                 @{
                                     foreach (var opt in Model.LstProject)
@@ -76,7 +76,7 @@
                         </div>
                         <div class="col-sm-3">
                             <label>Hoạt động</label>
-                            <select class="form-control" id="ddl-activegroup">
+                            <select class="form-control" id="dll-activegroup">
                                 <option value="all">Tất cả</option>
                                 @{
                                     foreach (var opt in Model.LstActiveGroup)
@@ -88,7 +88,7 @@
                         </div>
                         <div class="col-sm-3">
                             <label>Mục chi</label>
-                            <select class="form-control" id="ddl-expense">
+                            <select class="form-control" id="dll-expense">
                                 <option value="all">Tất cả</option>
                                 @{
                                     foreach (var opt in Model.LstExpense)
@@ -165,9 +165,18 @@
             { "data": "expenseName" },
             { "data": "standard" },
             { "data": "quantity" },
-            { "data": "price" },
-            { "data": "price" },
-            { "data": "totalAmount" },
+
+            {
+                "data": "price", "render": function (data, type, row, meta) {
+                    return RenderNumerFormat(data);
+                }
+            },
+            {
+                "data": "totalAmount", "render": function (data, type, row, meta) {
+                    return RenderNumerFormat(data);
+                }
+            },
+            { "data": "notes" },
             {
                 "data": "id", "render": function (data, type, row, meta) {
                     return RenderTableAction(data);
@@ -236,6 +245,30 @@
                     toastr.error('Hồ sơ thanh toán không được để trống. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
                     return;
                 }
+                // check tổng tiền phân bổ có vướt quá hạn mức
+                var tonghanmuc = parseFloat($('#a_tong_han_muc_khong_format').val());
+                var sotiendaphanbo = parseFloat($('#a_so_tien_da_phan_bo_khong_format').val());
+                var thanhtien = parseFloat($("#a_thanh_tien_khong_format").val());
+                if ($("#ProjectDetailId").val() == "0") // Tạo mới: lấy số tiền đã phân bổ + số tiền mới thêm
+                {
+                    if (tonghanmuc < (sotiendaphanbo + thanhtien)) {
+                        toastr.error('Số tiền phân bổ đã vượt quá hạn mức', 'Lỗi', { positionClass: "toast-top-center" });
+                        return;
+                    }
+
+
+                }
+                else {
+                    debugger
+                    var sotientruocchinhsua = parseFloat($("#so_tien_truoc_khi_chinh_sua").val());
+                    sotiendaphanbo = sotiendaphanbo - sotientruocchinhsua;
+                    if (tonghanmuc < (sotiendaphanbo + thanhtien)) {
+                        toastr.error('Số tiền phân bổ đã vượt quá hạn mức', 'Lỗi', { positionClass: "toast-top-center" });
+                        return;
+                    }
+                }
+                // chỉ lấy nhưng file isUpdate = false
+                arrPaymentProfile = arrPaymentProfile.filter(x => x.IsUpdate == false);
                 var dataPost = {
                     Id: parseInt($("#ProjectDetailId").val()),
                     ProjectId: parseInt($("#a_du_an").val()),
@@ -257,9 +290,9 @@
                     contentType: 'application/json',
                     success: function (response) {
                         if (response.success) {
-                           
 
                             toastr.success('Thông tin phân bổ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            SearchProjectDetail();
                             $('#modal_add_projectdetail').modal("hide");
 
                         } else {
@@ -404,6 +437,66 @@
             });
         }
 
+        function handleNhomHoatDongChange() {
+            var id = $('#a_nhom_hoat_dong').val();
+            $.ajax({
+                url: '/Category/GetExpenseByActiveGroup/' + id,
+                type: 'GET',
+                success: function (response) {
+                    if (response.isSuccess == true) {
+                        var htmlbody = "<option></option>";
+                        response.data.forEach((item) => {
+                            htmlbody += `<option value="${item.id}">${item.name}</option>`
+                        })
+                        $('#a_muc_chi').html(htmlbody);
+                        $('#table_thong_tin_hs_thanh_toan').html("");
+                    }
+                    else {
+                        console.error("Có lỗi khi tải dữ liệu: ", response);
+                        toastr.error('Có lỗi khi tải dữ liệu  !', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function handleDuAnChange() {
+            var id = $('#a_du_an').val();
+            $.ajax({
+                url: '/Project/GetProjectOverviewById/' + id,
+                type: 'GET',
+                success: function (response) {
+                    if (response.isSuccess == true) {
+                        if (response.data == null) {
+                            document.getElementById("region_thong_tin_du_an").style.display = "none";
+                            return;
+                        }
+                        console.log(response);
+                        $('#a_ma_du_an').val(response.data.projectCode);
+                        $('#a_ten_du_an').val(response.data.projectName);
+                        $('#a_tong_han_muc').val(RenderNumerFormat_NotHTML(response.data.totalAmount));
+                      
+                        $('#a_so_tien_da_phan_bo').val(RenderNumerFormat_NotHTML(response.data.totalAllocatedAmount));
+                        $('#a_tong_han_muc_khong_format').val(response.data.totalAmount);
+                        $('#a_so_tien_da_phan_bo_khong_format').val(response.data.totalAllocatedAmount);
+                        // set display 
+                        document.getElementById("region_thong_tin_du_an").style.display = "block";
+                    }
+                    else {
+                        console.error("Có lỗi khi tải dữ liệu: ", response);
+                        toastr.error('Có lỗi khi tải dữ liệu  !', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
         function SaveProfileForProjectDetail(profileId) {
 
             // Find the row that contains the clicked icon
@@ -444,6 +537,7 @@
                 PaymentInfoName: name.trim(),
                 Notes: row.find('input[id="a_ghi_chu_hs_thanh_toan"]').val()?.trim(),
                 FileAttach: fileAttach.val() == null ? 0 : fileAttach.val(),
+                IsUpdate: false,
             };
             arrPaymentProfile.push(dataPost);
             // Set inputs to readonly
@@ -456,30 +550,7 @@
             toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
             // Log the data (optional for debugging)
 
-            //$.ajax({
-            //    url: '/Project/CreateProfileForProjectDetail',
-            //    type: 'POST',
-            //    data: JSON.stringify(dataPost),
-            //    contentType: 'application/json',
-            //    success: function (response) {
-            //        if (response.success) {
-            //            // Set inputs to readonly
-            //            codeInput.prop('readonly', true);
-            //            nameInput.prop('readonly', true);
-            //            nameNotes.prop('readonly', true);
-
-            //            // Remove the onclick event from the save icon
-            //            row.find('span.fa-check').remove();
-            //            toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
-            //        } else {
-            //            toastr.error('Có lỗi khi tạo thông tin hồ sơ. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
-            //        }
-            //    },
-            //    error: function (xhr, status, error) {
-            //        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
-            //        alert('Có lỗi khi gửi yêu cầu!');
-            //    }
-            //});
+           
         }
 
         function AddFormPaymentProfile() {
@@ -622,7 +693,7 @@
             }
         }
 
-       
+
 
     </script>
 }
