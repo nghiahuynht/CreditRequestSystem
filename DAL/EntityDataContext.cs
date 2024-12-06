@@ -2,6 +2,7 @@
 using DAL.Models;
 using DAL.Models.Category;
 using DAL.Models.CreditRequest;
+using DAL.Models.Permission;
 using DAL.Models.ProjectFinancialDetail;
 using DAL.Models.ProjectFinancialSummar;
 using DAL.Models.UserInfo;
@@ -58,6 +59,7 @@ namespace DAL
         public DbSet<CategoryDepartmentViewModel> CategoryDepartmentViewModel { get; set; }
         public DbSet<CategoryExpenseTableViewModel> CategoryExpenseTableViewModel { get; set; }
         public DbSet<ProjectOverviewModel> ProjectOverviewModel { get; set; }
+        public DbSet<PermissionInChargeTableModel> PermissionInChargeTableModel { get; set; }
 
 
 
@@ -66,6 +68,7 @@ namespace DAL
             modelBuilder.Entity<ComboBoxModel>().HasKey(o => o.Value);
             modelBuilder.Entity<RoleInfo>().HasKey(o => o.Code);
             modelBuilder.Entity<Unit>().HasKey(o => o.Code);
+            modelBuilder.Entity<PermissionInChargeTableModel>().HasKey(o => o.Id);
         }
 
 

@@ -201,7 +201,7 @@ namespace DAL.Service
                 };
                 ValidNullValue(param);
                 var lstData = dtx.ProjectFinancialDetailTableModel.FromSql("sp_GetProjectDetailPaging @projectId,@activeGroupId,@expenseId,@Start,@Length,@TotalRow OUT", param).ToList();
-                res.recordsTotal = Convert.ToInt16(param[4].Value);
+                res.recordsTotal = Convert.ToInt16(param[5].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();
             }

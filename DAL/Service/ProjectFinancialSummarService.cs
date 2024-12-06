@@ -112,8 +112,8 @@ namespace DAL.Service
 
                 };
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteProjectFinancialSummar @Id,@ActionBy", param);
-                return true;
+               var rs= await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteProjectFinancialSummar @Id,@ActionBy", param);
+                return rs>0?true:false;
             }
             catch (Exception ex)
             {

@@ -25,5 +25,6 @@ namespace DAL.IService
         Task SavePermissionMenu(string roleCode, int MenuId);
         ListResultModel<ComboBoxModel> GetListUserByRoles(string roles);
         SaveResultModel<object> ChangePass(ChangePassModel model);
+        List<UserInfoGridModel> GetAllUserByDepartment (int departmentId);
     }
 }
