@@ -7,5 +7,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>F:\Deploy\Ichi-Web</_PublishTargetUrl>
+    <History>False|2024-11-26T17:15:07.7654764Z;</History>
   </PropertyGroup>
 </Project>

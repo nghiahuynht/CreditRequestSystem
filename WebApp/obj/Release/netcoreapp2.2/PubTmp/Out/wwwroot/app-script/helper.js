@@ -6,7 +6,7 @@
         "responsive": true,
         "searching": false,
         "lengthChange": false,
-        "iDisplayLength": 20,
+        "iDisplayLength": 10,
         "columns": columnsData,
         "scrollY": "400px",
         "scrollX": true,
@@ -73,13 +73,13 @@ function ConverFormatDate(currentFormatDate) {
    
 }
 
-function RenderNumerFormat(data) {
-    var res = "";
-    if (data !== undefined && data != null) {
-        res = data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-    }
-    return "<div style='width:100%;text-align:right;'>" + res + "</div>";
-}
+//function RenderNumerFormat(data) {
+//    var res = "";
+//    if (data !== undefined && data != null) {
+//        res = data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+//    }
+//    return "<div style='width:100%;text-align:right;'>" + res + "</div>";
+//}
 
 function SubStrinColumn(data, len) {
     let textReturn = "";
@@ -89,4 +89,72 @@ function SubStrinColumn(data, len) {
         textReturn = data;
     }
     return "<span title='" + data+"'>" + textReturn+"</span>";
+}
+
+function RenderNumerFormat(data) {
+    var res = "";
+    if (data !== undefined && data > 0) {
+        res = data.toLocaleString('de-DE')
+    }
+    else {
+        res = "0";
+    }
+    return "<div style='width:100%;'>" + res + "</div>";
+}
+
+function RenderNumerFormat_NotHTML(data) {
+    var res = "";
+    if (data !== undefined && data > 0) {
+        res = data.toLocaleString('de-DE')
+    }
+    return res;
+}
+
+function generateCode(prefix) {
+    let attempts = 0;
+    let code = prefix + '-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+
+    // Retry the uniqueness check until it succeeds or max attempts are reached
+    while (attempts < 3) {
+        let isUnique = checkProjectCodeUniqueness(prefix, code);
+
+        if (isUnique) {
+            return code;  // Return the code if it's unique
+        } else {
+            attempts++;  // Increment the retry counter
+            console.log(`Attempt ${attempts}: Code is not unique. Retrying...`);
+            code = prefix + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();  // Generate a new code
+        }
+    }
+
+    // If the code is still not unique after 3 attempts, return a message or an empty string
+    toast.error("Failed to generate a unique code after 3 attempts.");
+    return '';  // You can also return a default value or throw an error if necessary
+}
+
+function checkProjectCodeUniqueness(prefix,code) {
+    let isUnique = false;  // Default value
+
+    $.ajax({
+        url: '/Project/CheckCodeUnique',
+        type: 'POST',
+        data: {
+            prefix: prefix,
+            code: code
+        },
+        async: false,  // Make the request synchronous
+        success: function (response) {
+            if (response.isSuccess === true) {
+                isUnique = true;  // Set the flag to true if code is unique
+            } else {
+                isUnique = false;  // Set to false if code is not unique
+            }
+        },
+        error: function () {
+            console.log("Error checking code uniqueness");
+            isUnique = false;  // Set to false on error
+        }
+    });
+
+    return isUnique;  // Return the result
 }
