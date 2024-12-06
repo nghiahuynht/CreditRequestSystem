@@ -146,7 +146,7 @@ namespace WebApp.Controllers
                 return Json(new
                 {
                     success = rs,
-                    message = rs== true?"Xóa thành công.": "Xóa thất bại",
+                    message = rs== true?"Xóa thành công.": "Xóa thất bại.Đã phát sinh hồ sơ thanh toán",
                     projectId = Id
                 });
 

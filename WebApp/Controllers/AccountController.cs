@@ -244,6 +244,32 @@ namespace WebApp.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        public JsonResult GetUserByDepartment(int Id)
+        {
+            try
+            {
+
+                var rs = userService.GetAllUserByDepartment(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data = rs
+
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
         #endregion
 
     }
