@@ -61,7 +61,7 @@ namespace DAL.Service
                   new SqlParameter("@RequestId",id),
                 };
                 ValidNullValue(param);
-                res = await dtx.PaymentRequestModel.FromSql("EXEC sp_GetPaymentRequestById @Id", param).FirstOrDefaultAsync();
+                res = await dtx.PaymentRequestModel.FromSql("EXEC sp_GetPaymentRequestById @RequestId", param).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

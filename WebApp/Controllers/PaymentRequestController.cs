@@ -35,15 +35,25 @@ namespace WebApp.Controllers
             }
             else
             {
-                //viewModel.RequestHeader.Status = Contanst.pay
+
+
                 viewModel.RequestHeader.CreatedBy = AuthenInfo().UserName;
                 viewModel.RequestHeader.CreatedByName = AuthenInfo().FullName;
+                viewModel.RequestHeader.Status = Contanst.PaymentRequesStatus_Draft;
+                var departmenList = await commonService.ListAllDepartment();
+                var departmentUser = departmenList.Where(x => x.Id.ToString() == AuthenInfo().DepartmentId).FirstOrDefault();
+                viewModel.RequestHeader.CreatedByDepartment = departmentUser != null ? departmentUser.Name : string.Empty;
+
             }
-            ViewBag.ListDepartment = commonService.ListAllDepartment();
             return View(viewModel);
         }
 
-
+        [HttpPost]
+        public async Task<JsonResult> SavePaymentRequest([FromBody] RequestViewModel model)
+        {
+            var request = await paymentRequestService.SavePaymentRequest(model.RequestHeader,AuthenInfo().UserName);
+            return Json(request);
+        }
 
 
     }
