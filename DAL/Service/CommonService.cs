@@ -18,7 +18,24 @@ namespace DAL.Service
             this.dtx = dtx;
         }
 
-       
+        public async Task<List<DepartmentModel>> ListAllDepartment()
+        {
+            var res = new List<DepartmentModel>();
+            try
+            {
+                var param = new SqlParameter[] { };
+                ValidNullValue(param);
+                res = await dtx.DepartmentModel.FromSql("EXEC sp_ListAllDepartment", param).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                res = new List<DepartmentModel>();
+            }
+            return res;
+
+
+        }
 
     }
 }

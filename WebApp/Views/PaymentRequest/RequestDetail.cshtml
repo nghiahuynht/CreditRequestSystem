@@ -1,6 +1,7 @@
-﻿
+﻿@using DAL
+@model DAL.Models.PaymentRequqest.RequestViewModel
 @{
-    ViewData["Title"] = "Yêu cầu thanh toán: YC.191124.0001";
+    ViewData["Title"] = Model.RequestHeader.Id==0?"Nhập thông tin yêu cầu thanh toán":"Yêu cầu thanh toán: "+Model.RequestHeader.Code;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -29,18 +30,19 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
+                @Html.HiddenFor(x => x.RequestHeader.Id)
                 <div class="col-md-6">
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">Mã yêu cầu</label>
                         <div class="col-md-9">
-                            <input type="text" class="form-control" value="YC.191124.0001" />
+                            <span>@(Model.RequestHeader.Code)</span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">Ngày yêu cầu</label>
                         <div class="col-md-9">
                             <div class="input-group date">
-                                <input type="text" id="DateRequest" name="DateRequest" value="@(DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
+                                <input type="text" id="RequestHeader_DateRequest" name="RequestHeader.DateRequest" value="@(Model.RequestHeader.Id != 0?Model.RequestHeader.DateRequest.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
                                 <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
                             </div>
                         </div>
@@ -48,7 +50,29 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">Trạng thái</label>
                         <div class="col-md-9">
-                            <span class='badge badge-warning badge-status'>Chờ duyệt</span>
+                            @{
+                                if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
+                                {
+                                    <span class='badge badge-primary badge-status'>Chờ duyệt</span>
+                                }
+                                else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
+                                {
+                                    <span class='badge badge-warning badge-status'>Chờ duyệt</span>
+                                }
+                                else if (Model.RequestHeader.Status == DAL.Contanst.CreditRequestStatus_Approved)
+                                {
+                                    <span class='badge badge-success badge-status'>Chờ duyệt</span>
+                                }
+                                else if (Model.RequestHeader.Status == DAL.Contanst.CreditRequestStatus_Rejected)
+                                {
+                                    <span class='badge badge-success badge-status'>Từ chối</span>
+                                }
+                                else if (Model.RequestHeader.Status == DAL.Contanst.CreditRequestStatus_Canceled)
+                                {
+                                    <span class='badge badge-success badge-status'>Huỷ</span>
+                                }
+                            }
+
                         </div>
                     </div>
                 </div>
@@ -57,7 +81,7 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">Người yêu cầu</label>
                         <div class="col-md-9">
-                            <input type="text" class="form-control" value="Nguyễn Văn Sinh" />
+                            <span>@(Model.RequestHeader.CreatedByName) (@(Model.RequestHeader.CreatedBy))</span>
                         </div>
                     </div>
                     <div class="form-group row">

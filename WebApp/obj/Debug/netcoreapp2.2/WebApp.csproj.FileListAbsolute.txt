@@ -568,3 +568,13 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\SearchRequest.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\ChangeLimitRequest\ChangeLimitRequestDetail.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\ChangeLimitRequest\SearchChangLimitRequest.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Account\Add.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\MucChi.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\NhomHoatDong.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddMucChi.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddNhomHoatDong.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddThongTinThanhToan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormCreateProject.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormCreateProjectDetail.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormViewDetailProjectDetail.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\ProjectDetailIndex.g.cshtml.cs
