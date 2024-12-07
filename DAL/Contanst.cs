@@ -63,5 +63,19 @@ namespace DAL
         public static string Role_Sale = "Sale";
         public static string Role_KeToan = "KeToan";
         public static string Role_GiaoVien = "GV";
+
+
+
+
+
+        public static string PaymentRequesStatus_Draft = "draft";
+        public static string PaymentRequesStatus_Waiting= "waiting";
+        public static string PaymentRequesStatus_Approved = "approved";
+        public static string PaymentRequesStatus_Rejected = "rejected";
+        public static string PaymentRequesStatus_Canceled = "canceled";
+
+
+
+
     }
 }

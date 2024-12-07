@@ -2,6 +2,7 @@
 using DAL.Models;
 using DAL.Models.Category;
 using DAL.Models.CreditRequest;
+using DAL.Models.PaymentRequqest;
 using DAL.Models.Permission;
 using DAL.Models.ProjectFinancialDetail;
 using DAL.Models.ProjectFinancialSummar;
@@ -62,6 +63,13 @@ namespace DAL
         public DbSet<PermissionInChargeTableModel> PermissionInChargeTableModel { get; set; }
 
 
+
+        /*======================= Payment request ============================================*/
+
+
+        public DbSet<PaymentRequestModel> PaymentRequestModel { get; set; }
+        public DbSet<PaymentRequestItemModel> PaymentRequestItemModel { get; set; }
+        public DbSet<DepartmentModel> DepartmentModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -9,6 +9,6 @@ namespace DAL.IService
 {
     public interface ICommonService
     {
-
+        Task<List<DepartmentModel>> ListAllDepartment();
     }
 }

@@ -17,6 +17,7 @@ namespace WebApp.Controllers
             {
                 authen.UserName = User.Identity.Name;
                 authen.FullName = User.Claims.FirstOrDefault(x => x.Type == "FullName").Value;
+                authen.DepartmentId = User.Claims.FirstOrDefault(x => x.Type == "DepartmentId").Value;
                 authen.Role = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
             }
            

@@ -52,6 +52,7 @@ namespace WebApp.Controllers
                     identity = new ClaimsIdentity(new[] {
                         new Claim(ClaimTypes.Name,model.UserName),
                         new Claim("FullName",userInfo.FullName),
+                        new Claim("DepartmentId",userInfo.DepartmentId.HasValue?userInfo.DepartmentId.Value.ToString():"0"),
                         new Claim(ClaimTypes.Role,roleName)
                     },CookieAuthenticationDefaults.AuthenticationScheme);
                     IsAuthenticated = true;
