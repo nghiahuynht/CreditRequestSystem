@@ -50,3 +50,18 @@
         <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_ActiveGroup();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>&nbsp;Đóng</button>
     </div>
 </div>
+<script>
+    
+    $(document).ready(function () {
+        if ($("#a_active_group_id").val() == "0") {
+            var projectCode = generateCode("NHD");
+            if (projectCode != "") {
+                $('#a_code').val(projectCode);
+                // $('#a_code').prop('readonly', true);
+            }
+        }
+        else {
+            // $('#a_code').prop('readonly', true);
+        }
+    });
+</script>

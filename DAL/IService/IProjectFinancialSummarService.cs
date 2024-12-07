@@ -13,7 +13,9 @@ namespace DAL.IService
         DataTableResultModel<ProjectFinancialSummarGridModel> SearchProjectFinancialSummar(ProjectFinancialSummarFilterModel filter);
         Task<ProjectFinancialSummarGridModel> GetProjectById(int Id);
         Task<bool> DeleteProjectFinancialSummar(int Id, string userName);
-
+        Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummar();
+        Task<ProjectOverviewModel> GetProjectOverviewById(int Id);
+        Task<SaveResultModel<object>> CheckCodeUnique(string prefix, string code);
 
     }
 }

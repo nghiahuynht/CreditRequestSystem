@@ -9,12 +9,14 @@ namespace DAL.IService
 {
    public interface IProjectFinancialDetailService
     {
-        Task<SaveResultModel<object>> CreateProjectFinancialDetail(ProjectFinancialDetailModel model, string userName);
+        Task<SaveResultModel<object>> CreateProjectFinancialDetail(ProjectFinancialDetailAddModel model, string userName);
         Task<bool> DeleteProjectFinancialDetail(int Id, string userName);
         Task<ProjectFinancialDetailModel> GetProjectFinancialDetailById(int Id);
         Task<List<ProjectFinancialDetailModel>> GetAllProjectDetailByProjectId(int Id);
         Task<SaveResultModel<object>> CreateProfileForProjectDetail(PaymentInfoProjectDetailModel model, string userName);
         Task<List<PaymentInfoProjectDetailModel>> GetAllProfieForProjectId(int Id);
         Task<bool> DeletePaymentProfileOfProjectDetail(int ProjectDetailId, long ProfileId, string userName);
+
+        DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter);
     }
 }

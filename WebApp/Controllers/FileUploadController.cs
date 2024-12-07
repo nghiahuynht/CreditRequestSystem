@@ -55,7 +55,7 @@ namespace WebApp.Controllers
                     int fileSizeInKB = (int)(fileSizeInBytes / 1024.0);
                     var fName = file.FileName;
                     string domain = config["General:Domain"];
-                    string urlPath = $"{domain}/wwwroot/{currentDateFolder}/{fName}";
+                    string urlPath = $"{domain}/{currentDateFolder}/{fName}";
                     var attachFile = new AttactFileModel
                     {
                         Id = 0,

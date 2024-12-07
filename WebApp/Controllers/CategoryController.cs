@@ -99,15 +99,243 @@ namespace WebApp.Controllers
 
         }
 
+
         [HttpPost]
-        
         public async Task<JsonResult> CreateActiveGroup([FromBody] CategoryActiveGroupViewModel model)
         {
             var res = new SaveResultModel<object>();
 
             res =await categoryService.CreateActiveGroup(model, User.Identity.Name);
+            if(res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã nhóm hoạt động đã tồn tại!";
+
+            }    
             return Json(res);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteActiveGroup( int Id)
+        {
+            try
+            {
+                var rs = await categoryService.DeleteActiveGroup(Id, AuthenInfo().UserName);
+                return Json(new
+                {
+                    success = rs,
+                    message = rs == true ? "Xóa thành công." : "Xóa thất bại.Đã phát sinh hồ sơ thanh toán",
+                    projectId = Id
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+        #endregion
+
+        #region DM  mục chi
+
+        public IActionResult MucChi()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        // [Authorize(Roles = "Admin")]
+        public DataTableResultModel<CategoryExpenseTableViewModel> GetDataExpense(CategoryFilterModel filter)
+        {
+            var res = categoryService.GetExpenseByFilter(filter);
+            return res;
+        }
+        public IActionResult _AddMucChi(int id = 0)
+        {
+            var viewModel = new CategoryExpenseViewModel();
+            var lstNhomHoatDong = categoryService.LstAllCategoryActiveGroup();
+            if (id > 0)
+            {
+                viewModel = categoryService.GetExpenseById(id);
+
+            }
+            else
+            {
+                viewModel.Id = 0;
+            }
+            ViewBag.LstActiveGroup = lstNhomHoatDong;
+            return View(viewModel);
+
+
+        }
+
+
+        [HttpPost]
+        public async Task<JsonResult> CreateExpense([FromBody] CategoryExpenseViewModel model)
+        {
+            var res = new SaveResultModel<object>();
+
+            res = await categoryService.CreateExpense(model, User.Identity.Name);
+            if (res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã mục chi đã tồn tại!";
+
+            }
+            return Json(res);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteExpense(int Id)
+        {
+            try
+            {
+                var rs = await categoryService.DeleteExpense(Id, AuthenInfo().UserName);
+                return Json(new
+                {
+                    success = rs,
+                    message = rs == true ? "Xóa thành công." : "Xóa thất bại",
+                    projectId = Id
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+        public JsonResult GetExpenseByActiveGroup(int Id)
+        {
+
+            try
+            {
+                var rs = categoryService.GetExpenseByActiveGroup(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data = rs
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+
+                });
+            }
+            
+        }
+
+        #endregion
+
+        #region DM Thong Tin Thanh Toan
+        [HttpGet]
+        public IActionResult _AddThongTinThanhToan(int id = 0)
+        {
+            var viewModel = new PaymentProfileModel();
+
+            if (id > 0)
+            {
+                var lstHoSoThanhToan = categoryService.GetPaymentProfileByExpense(id);
+                var mucChi = categoryService.GetExpenseById(id);
+                viewModel.TTHoSoThanhToan = lstHoSoThanhToan;
+                viewModel.MucChi = mucChi;
+
+            }
+            else
+            {
+                viewModel.TTHoSoThanhToan = new List<CategoryPaymentProfileViewModel>();
+                viewModel.MucChi = new CategoryExpenseViewModel();
+            }
+            return View(viewModel);
+
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreatePaymentInfo ([FromBody] CategoryPaymentInfoModel model)
+        {
+            var res = new SaveResultModel<object>();
+
+            res = await categoryService.CreatePaymentInfo(model, User.Identity.Name);
+            if (res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã hồ sơ đã tồn tại!";
+
+            }
+            return Json(res);
+        }
+
+        [HttpGet]
+        public JsonResult GetPaymentInfoByExpense(int Id)
+        {
+            try
+            {
+
+                var rs =  categoryService.GetPaymentProfileByExpense(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data= rs
+                    
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeletePaymentProfile(int Id)
+        {
+            try
+            {
+                var rs = await categoryService.DeletePaymentProfile(Id, AuthenInfo().UserName);
+                return Json(new
+                {
+                    success = rs,
+                    message = rs == true ? "Xóa thành công." : "Xóa thất bại",
+                    projectId = Id
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+        #endregion
+
+        #region DM Phong Ban
         #endregion
     }
 }

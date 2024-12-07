@@ -47,10 +47,10 @@ namespace WebApp.Controllers
             ProjectFinancialSummarGridModel model = new ProjectFinancialSummarGridModel();
             if (Id == 0)
             {
-                var yearNow = DateTime.Now.Year.ToString();
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = AuthenInfo().UserName;
-                model.ExecutionPeriod = yearNow + "-" + yearNow;
+                model.TimeStart = DateTime.Now.Date;
+                model.TimeEnd = DateTime.Now.Date;
                 return View(model);
             }
             else
@@ -103,12 +103,24 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    return Json(new
+                    if(res.LongValReturn == -409)
                     {
-                        success = false,
-                        message = "Tạo dữ liệu thất bại",
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Mã dự án đã có trong hệ thống",
+                        });
+                    }  
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Tạo dữ liệu thất bại",
 
-                    });
+                        });
+                    }    
+                    
                 }
 
             }
@@ -134,7 +146,7 @@ namespace WebApp.Controllers
                 return Json(new
                 {
                     success = rs,
-                    message = rs== true?"Xóa thành công.": "Xóa thất bại",
+                    message = rs== true?"Xóa thành công.": "Xóa thất bại.Đã phát sinh hồ sơ thanh toán",
                     projectId = Id
                 });
 
@@ -149,12 +161,94 @@ namespace WebApp.Controllers
                 });
             }
         }
+
+        public async Task<JsonResult> GetProjectOverviewById(int Id)
+        {
+
+            try
+            {
+                var rs = await _projectFinancialSummarService.GetProjectOverviewById(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data = rs
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+
+                });
+            }
+
+        }
+        public async Task<JsonResult> CheckCodeUnique(string prefix,string code)
+        {
+
+            try
+            {
+                var rs = await _projectFinancialSummarService.CheckCodeUnique(prefix,code);
+                if(rs.LongValReturn == 200)
+                {
+                    return Json(new
+                    {
+                        isSuccess = true,
+                        data = rs.LongValReturn
+
+                    });
+                }   
+                else
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        data = rs.LongValReturn
+
+                    });
+                }    
+                
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = ex.Message
+
+                });
+            }
+
+        }
         #endregion
 
         #region project detail
 
+        public async Task<IActionResult> ProjectDetailIndex()
+        {
+            ProjectFinancialDetailParamModel paramModel = new ProjectFinancialDetailParamModel();
+            var lstProject = await  _projectFinancialSummarService.LstAllProjectFinancialSummar();
+            var lstActiveGroup = _categoryService.LstAllCategoryActiveGroup();
+            var lstExpense = _categoryService.LstAllCategoryExpense();
+            paramModel.LstProject = lstProject;
+            paramModel.LstActiveGroup = lstActiveGroup;
+            paramModel.LstExpense = lstExpense;
+            return View(paramModel);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> CreateProjectFinancialDetail([FromBody] ProjectFinancialDetailModel data)
+        // [Authorize(Roles = "Admin")]
+        public DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectDetail(ProjectFinancialDetailFilterModel filter)
+        {
+            var res = _projectFinancialDetailService.GetDataProjectFinancialDetailPaging(filter);
+            return res;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProjectFinancialDetail([FromBody] ProjectFinancialDetailAddModel data)
         {
 
             try
@@ -163,7 +257,14 @@ namespace WebApp.Controllers
 
                 if (res.IsSuccess == true && res.LongValReturn > 0)
                 {
-
+                    if(data.PaymentInfo!= null && data.PaymentInfo.Count()>0)
+                    {
+                        foreach(var item in data.PaymentInfo)
+                        {
+                            item.ProjectDetailId = (int)res.LongValReturn;
+                             await _projectFinancialDetailService.CreateProfileForProjectDetail(item, AuthenInfo().UserName);
+                        }
+                    }
                     return Json(new
                     {
                         success = true,
@@ -202,17 +303,27 @@ namespace WebApp.Controllers
             if(Id>0)
             {
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
+                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
                 var dataDetail = await _projectFinancialDetailService.GetProjectFinancialDetailById(Id);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+                var dm_MucChi = _categoryService.LstAllCategoryExpense();
+                var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(Id);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.data = dataDetail;
+                data.LstProject = lstProject;
+                data.DM_MucChi = dm_MucChi;
+                data.DM_HSThanhToan = hsThanhToan;
                 return View(data);
             }   
             else
             {
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
+                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+                var dm_MucChi = _categoryService.LstAllCategoryExpense();
+                data.LstProject = lstProject;
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
+                data.DM_MucChi = dm_MucChi;
                 data.data = new ProjectFinancialDetailModel();
                 return View(data);
             }
@@ -254,7 +365,7 @@ namespace WebApp.Controllers
                 var dm_HSThanhToan = _categoryService.LstAllCategoryPaymentProfile(dataDetail.ActivityGroupId);
                 var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(Id);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
-                data.DM_HSThanhToan = dm_HSThanhToan;
+                data.DM_HSThanhToan = new List<PaymentInfoProjectDetailModel>();
                 data.HSThanhToan = hsThanhToan;
                 data.data = dataDetail;
                 return View(data);
@@ -265,7 +376,7 @@ namespace WebApp.Controllers
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.data = new ProjectFinancialDetailModel();
-                data.DM_HSThanhToan = new List<CategoryPaymentProfileViewModel>();
+                data.DM_HSThanhToan = new List<PaymentInfoProjectDetailModel>();
                 return View(data);
             }
 

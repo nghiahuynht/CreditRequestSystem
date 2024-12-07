@@ -30,7 +30,8 @@ namespace DAL.Service
                     new SqlParameter("@ProjectCode", model.ProjectCode),
                     new SqlParameter("@ProjectName", model.ProjectName),
                     new SqlParameter("@LegalBasis", model.LegalBasis),
-                    new SqlParameter("@ExecutionPeriod", model.ExecutionPeriod),
+                    new SqlParameter("@TimeStart", model.TimeStart),
+                    new SqlParameter("@TimeEnd", model.TimeEnd),
                     new SqlParameter("@TotalAmount", model.TotalAmount),
                     new SqlParameter("@StatusText", model.StatusText),
                     new SqlParameter("@Notes", model.Notes),
@@ -42,7 +43,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateProjectFinancial @Id,@ProjectCode,@ProjectName,@LegalBasis,@ExecutionPeriod,@TotalAmount,@StatusText,@Notes,@ActionBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateProjectFinancial @Id,@ProjectCode,@ProjectName,@LegalBasis,@TimeStart,@TimeEnd,@TotalAmount,@StatusText,@Notes,@ActionBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -111,13 +112,74 @@ namespace DAL.Service
 
                 };
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteProjectFinancialSummar @Id,@ActionBy", param);
-                return true;
+               var rs= await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteProjectFinancialSummar @Id,@ActionBy", param);
+                return rs>0?true:false;
             }
             catch (Exception ex)
             {
                 return false;
             }
+        }
+
+        public async Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummar()
+        {
+            var res = new List<ProjectFinancialSummarDLLModel>();
+            try
+            {
+
+                res = await dtx.ProjectFinancialSummarDLLModel.FromSql("EXEC sp_GetAllProduct").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public async Task<ProjectOverviewModel> GetProjectOverviewById(int Id)
+        {
+            var res = new ProjectOverviewModel();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@Id",Id),
+                };
+                ValidNullValue(param);
+                res = await dtx.ProjectOverviewModel.FromSql("EXEC sp_GetProjectOverviewById @Id", param).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public async Task<SaveResultModel<object>> CheckCodeUnique(string prefix, string code)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                    new SqlParameter("@Prefix", prefix),
+                    new SqlParameter("@Code", code),
+                    new SqlParameter { ParameterName = "@Status", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_checkCodeUnique @Prefix,@Code,@Status OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
         }
     }
 }

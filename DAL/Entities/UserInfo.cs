@@ -14,5 +14,6 @@ namespace DAL.Entities
         public string Phone { get; set; }
         public string Title { get; set; }
         public string RoleCode { get; set; }
+        public int?DepartmentId { get; set; }
     }
 }

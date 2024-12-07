@@ -1,7 +1,5 @@
 ﻿@model DAL.Models.ProjectFinancialSummar.ProjectFinancialSummarGridModel
-@{ 
-    List<string> lstThoiGian = new List<string> { "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029" };
-}
+
 <div class="modal-content">
     <div class="modal-header p-2">
         <h5 class="modal-title" id="promotion-title">Thêm mới chương trình/dự án/dịch vụ</h5>
@@ -17,6 +15,14 @@
             <form class="form-horizontal" id="frmCreateProject">
                 <div class="row">
                     <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
+                            <div class="input-group-append col-md-8">
+                                <input type="date" class="form-control" value="@Model.TimeStart?.ToString("yyyy-MM-dd")" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau" />
+                                <h3>-</h3>
+                                <input type="date" class="form-control" value="@Model.TimeEnd?.ToString("yyyy-MM-dd")" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc" />
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Mã dự án <span class="text-red">*</span></label>
                             <div class="col-md-8">
@@ -35,66 +41,7 @@
                                 <input type="text" class="form-control" value="@Model.LegalBasis" id="a_can_cu_phap_ly" name="can_cu_phap_ly" />
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Thời gian thực hiện</label>
-                            <div class="input-group-append col-md-8">
-                                @{
-                                    string[] arrThoiGian = Model.ExecutionPeriod != null? Model.ExecutionPeriod.Split("-"):new string[0] ;
-                                    if (arrThoiGian.Length == 2)
-                                    {
-                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                if (arrThoiGian[0] == tg)
-                                                {
-                                                    <option value="@tg" selected>@tg</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@tg">@tg</option>
-                                                }
 
-                                            }
-                                        </select>
-                                        <h3>-</h3>
-                                        <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                if (arrThoiGian[1] == tg)
-                                                {
-                                                    <option value="@tg" selected>@tg</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@tg">@tg</option>
-                                                }
-
-                                            }
-                                        </select>
-                                    }
-                                    else
-                                    {
-                                        <select class="form-control" name="thoi_gian_bat_dau" id="a_thoi_gian_bat_dau">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                <option value="@tg" selected>@tg</option>
-
-                                            }
-                                        </select>
-                                        <h3>-</h3>
-                                        <select class="form-control" name="thoi_gian_ket_thuc" id="a_thoi_gian_ket_thuc">
-                                            @foreach (var tg in lstThoiGian)
-                                            {
-                                                <option value="@tg" selected>@tg</option>
-
-                                            }
-                                        </select>
-
-                                    }
-                                }
-
-                            </div>
-                        </div>
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Người tạo</label>
                             <div class="col-md-8">
@@ -123,7 +70,7 @@
                                
                             </div>
                         </div>
-                        <div class="form-group row">
+                        @*<div class="form-group row">
                             <label class="col-md-4 col-form-label">Đã sử dụng (luỹ kế)</label>
                             <div class="col-md-7">
                                 <input type="text" id="a_luy_ke" data-value="show" class="form-control" disabled="disabled" style="font-weight:bold;" />
@@ -131,19 +78,19 @@
                             <div class="col-md-1">
                                 <span onclick="showhideSoTienDaSuDung()" class="fa fa-eye" style="font-size:16pt;" id="icon_show_hide"></span>
                             </div>
-                        </div>
+                        </div>*@
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Ghi chú</label>
                             <div class="col-md-8">
                                 <textarea class="form-control" id="a_ghi_chu" rows="3">@Model.Notes</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        @*<div class="form-group row">
                             <label class="col-md-4 col-form-label">Trạng thái</label>
                             <div class="col-md-8">
                                 <span class='badge badge-primary badge-status' id="a_trang_thai">Đang hiệu lực</span>
                             </div>
-                        </div>
+                        </div>*@
                         <div class="form-group row">
                             <div class="col-md-4 pt-3">
 
@@ -195,7 +142,25 @@
 </div>
 <script>
     $(document).ready(function () {
-        formatTotalAmount()
+        if ($("#ProjectFinancialSummarId").val() != "0") {
+            listFileAttact = [];
+            formatTotalAmount();
+            var items = @Html.Raw(Json.Serialize(ViewBag.DataFileAttach));
+            items.forEach(function (item) {
+                listFileAttact.push(item.id)
+            });
+            console.log("items", items)
+            $('#a_ma_du_an').prop('readonly', true);
+        }
+        else {
+            var projectCode = generateCode("DA");
+            if (projectCode != "") {
+                $('#a_ma_du_an').val(projectCode);
+                //$('#a_ma_du_an').prop('readonly', true);
+            }
+            
+        }
+
         // Khi người dùng chọn file
         $('#fileInputProject').on('change', function () {
             const file = this.files[0]; // Lấy file được chọn

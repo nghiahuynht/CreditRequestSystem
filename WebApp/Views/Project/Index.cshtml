@@ -84,10 +84,10 @@
                                 <th>Id</th>
                                 <th width="100px">Mã dự án </th>
                                 <th width="200px">Tên dự án</th>
-                                <th>Căn cứ pháp lý</th>
-                                <th>Thời gian thực hiện</th>
-                                <th width="150px">Tổng hạn mức</th>
-                                <th width="150px">Đã sử dụng</th>
+                                <th width="200px">Căn cứ pháp lý</th>
+                                <th width="140px">Thời gian thực hiện</th="150px">
+                                <th width="120px">Tổng hạn mức</th>
+                                <th width="120px">Đã sử dụng</th>
                                 <th width="100px">Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -128,7 +128,17 @@
             { "data": "projectCode" },
             { "data": "projectName" },
             { "data": "legalBasis" },
-            { "data": "executionPeriod" },
+            {
+                "data": "timeStart", "render": function (data, type, row, meta) {
+                    if (data != null && row.timeEnd != null) {
+
+                         return moment(data).format('DD/MM/YYYY') + '<br>' + moment(row.timeEnd).format('DD/MM/YYYY');;
+                    }
+                    else {
+                        return "";
+                    }
+                }
+            },
             {
                 "data": "totalAmount", "render": function (data, type, row, meta) {
                     return RenderNumerFormat(data);
@@ -207,7 +217,7 @@
         function RenderTableAction(id) {
             var html = `
                     <div class='div-table-action'>
-                        <i class='fa fa-eye' onclick='GotoProjectDetail(${id})' title='Xem'></i>
+                        <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
                         <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>
                         <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>
                     </div>`;
@@ -285,7 +295,7 @@
                             alert("Lỗi tải modal, vui lòng thử lại sau.");
                         }
                     });
-                    
+
                 }
             });
         }
@@ -295,20 +305,23 @@
             var isValidate = validateData();
 
             if (isValidate == true) {
-
+                if (listFileAttact == null || listFileAttact.length == 0) {
+                    toastr.error("Chưa đính kèm file căn cứ pháp lý", 'Lỗi', { positionClass: "toast-top-center" });
+                    return;
+                }
                 var dataPost = {
                     Id: $("#ProjectFinancialSummarId").val(),
                     ProjectCode: $("#a_ma_du_an").val(),
                     ProjectName: $("#a_ten_du_an").val(),
                     LegalBasis: $("#a_can_cu_phap_ly").val(),
-                    ExecutionPeriod: $("#a_thoi_gian_bat_dau").val() + "-" + $("#a_thoi_gian_ket_thuc").val(),
+                    TimeStart: $("#a_thoi_gian_bat_dau").val() ,
+                    TimeEnd: $("#a_thoi_gian_ket_thuc").val() ,
                     TotalAmount: $("#a_tong_han_muc_khong_format").val(),
-                    StatusText: document.getElementById("a_trang_thai").innerText,
+                    StatusText: "",
                     Notes: $("#a_ghi_chu").val(),
                     FileAttach: listFileAttact
                 };
                 // Gửi yêu cầu AJAX
-                console.log("dataPost", dataPost);
                 $.ajax({
                     url: '/Project/CreateProjectFinancialSummar',
                     type: 'POST',
@@ -324,7 +337,7 @@
                             SearchProjectFinancialSummar()
 
                         } else {
-                            toastr.error('Có lỗi khi tạo dự án. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                            toastr.error(response.message, 'Lỗi', { positionClass: "toast-top-center" });
                         }
                     },
                     error: function (xhr, status, error) {
@@ -421,7 +434,7 @@
                             }
                             else {
                                 console.error(response);
-                                toastr.error('Có lỗi xảy ra khi xóa dự án !', 'Lỗi', { positionClass: "toast-top-center" });
+                                toastr.error('Xóa thất bại.Đã phát sinh hồ sơ thanh toán!', 'Lỗi', { positionClass: "toast-top-center" });
                             }
                         },
                         error: function (xhr, status, error) {
@@ -432,17 +445,17 @@
 
                 }
             });
-            
+
         }
 
         function formatTotalAmount() {
-            var inputElement = document.getElementById('a_tong_han_muc');          
+            var inputElement = document.getElementById('a_tong_han_muc');
             var value = inputElement.value.trim();
             if (value && !isNaN(value) || value == "0") {
                 var rawValue = parseFloat(value);
                 document.getElementById('a_tong_han_muc_khong_format').value = rawValue;
-               
-                var formattedValue = rawValue.toLocaleString('de-DE'); 
+
+                var formattedValue = rawValue.toLocaleString('de-DE');
                 inputElement.value = formattedValue;
             } else {
                 // If invalid, clear both fields

@@ -36,7 +36,7 @@
 
                         <label class="col-md-3 control-label">Mục chi <span class="text-red">*</span></label>
                         <div class="col-md-3">
-                            <input type="text" class="form-control" id="a_muc_chi" name="muc_chi" value="@Model.data.ExpenseItem" readonly />
+                            <input type="text" class="form-control" id="a_muc_chi" name="muc_chi" value="@Model.data.ExpenseId" readonly />
                         </div>
                     </div>
                     <br />
@@ -84,7 +84,7 @@
                         <th>Mã hồ sơ</th>
                         <th>Tên hồ sơ</th>
                         <th>Ghi chú</th>
-                        <th width="60px"><button onclick="AddFormPaymentProfile()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                        <th width="60px"></th>
                     </tr>
                 </thead>
                 <tbody id="table_thong_tin_hs_thanh_toan">
@@ -94,10 +94,10 @@
                         {
                             <tr>
                                 <td>
-                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="@hs.Code" class="form-control" />
+                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="@hs.PaymentInfoCode" class="form-control" />
                                 </td>
                                 <td>
-                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="@hs.Name" class="form-control" />
+                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="@hs.PaymentInfoName" class="form-control" />
                                 </td>
                                 <td>
                                     <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="@hs.Notes" class="form-control" />
@@ -123,8 +123,9 @@
                                 <td>
                                     <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="@hs.Notes" class="form-control" readonly/>
                                 </td>
-                                <td style="text-align:center;">
-                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(@hs.ProfileId)"></span>
+                                <td>
+                                    <a href="@hs.URLPath" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan" target="_blank">@hs.FileName</a>
+                                    @*<span class="fa fa-trash" onclick="RemovePaymentProfile(@hs.ProfileId)"></span>*@
                                 </td>
                             </tr>
                         }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,7 @@ namespace DAL.Service
                   new SqlParameter("@ProjectDetailId", model.ProjectDetailId),
                     new SqlParameter("@ActiveGroupId", model.ActiveGroupId),
                     new SqlParameter("@ProfileId", model.ProfileId),
+                    new SqlParameter("@FileAttach", model.FileAttach),
                     new SqlParameter("@PaymentInfoCode", model.PaymentInfoCode),
                     new SqlParameter("@PaymentInfoName", model.PaymentInfoName),
                     new SqlParameter("@Notes", model.Notes),
@@ -40,7 +42,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertPaymentProfileForProjectDetail @ProjectDetailId,@ActiveGroupId,@ProfileId,@PaymentInfoCode,@PaymentInfoName,@Notes,@CreatedBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertPaymentProfileForProjectDetail @ProjectDetailId,@ActiveGroupId,@ProfileId,@FileAttach,@PaymentInfoCode,@PaymentInfoName,@Notes,@CreatedBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -51,7 +53,7 @@ namespace DAL.Service
             return res;
         }
 
-        public async Task<SaveResultModel<object>> CreateProjectFinancialDetail(ProjectFinancialDetailModel model, string userName)
+        public async Task<SaveResultModel<object>> CreateProjectFinancialDetail(ProjectFinancialDetailAddModel model, string userName)
         {
             var res = new SaveResultModel<object>();
             res.Data = null;
@@ -62,7 +64,7 @@ namespace DAL.Service
                   new SqlParameter("@Id", model.Id),
                     new SqlParameter("@ProjectId", model.ProjectId),
                     new SqlParameter("@ActivityGroupId", model.ActivityGroupId),
-                    new SqlParameter("@ExpenseItem", model.ExpenseItem),
+                    new SqlParameter("@ExpenseId", model.ExpenseId),
                     new SqlParameter("@Standard", model.Standard),
                     new SqlParameter("@Quantity", model.Quantity),
                     new SqlParameter("@Unit", ""),
@@ -77,7 +79,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateProjectFinancialDetail @Id,@ProjectId,@ActivityGroupId,@ExpenseItem,@Standard,@Quantity,@Unit,@Price,@TotalAmount,@Notes,@ActionBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateProjectFinancialDetail @Id,@ProjectId,@ActivityGroupId,@ExpenseId,@Standard,@Quantity,@Unit,@Price,@TotalAmount,@Notes,@ActionBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -182,6 +184,35 @@ namespace DAL.Service
             {
                 return false;
             }
+        }
+
+        public  DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter)
+        {
+            var res = new DataTableResultModel<ProjectFinancialDetailTableModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@projectId", filter.ProjectId),
+                    new SqlParameter("@activeGroupId", filter.ActiveGroupId),
+                    new SqlParameter("@expenseId", filter.ExpenseId),
+                    new SqlParameter("@Start", filter.start),
+                    new SqlParameter("@Length", filter.length),
+                    new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
+                };
+                ValidNullValue(param);
+                var lstData = dtx.ProjectFinancialDetailTableModel.FromSql("sp_GetProjectDetailPaging @projectId,@activeGroupId,@expenseId,@Start,@Length,@TotalRow OUT", param).ToList();
+                res.recordsTotal = Convert.ToInt16(param[5].Value);
+                res.recordsFiltered = res.recordsTotal;
+                res.data = lstData.ToList();
+            }
+            catch (Exception ex)
+            {
+                res.recordsTotal = 0;
+                res.recordsFiltered = 0;
+                res.data = new List<ProjectFinancialDetailTableModel>();
+            }
+
+            return res;
         }
     }
 }
