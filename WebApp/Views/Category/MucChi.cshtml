@@ -481,7 +481,7 @@
                         row.find('span.fa-trash').attr('onclick', `RemovePaymentProfile(${response.longValReturn})`);
                         toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
                     } else {
-                        toastr.error('Có lỗi khi tạo thông tin hồ sơ. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        toastr.error(response.errorMessage, 'Lỗi', { positionClass: "toast-top-center" });
                     }
                 },
                 error: function (xhr, status, error) {

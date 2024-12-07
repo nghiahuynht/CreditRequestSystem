@@ -273,7 +273,13 @@ namespace WebApp.Controllers
             var res = new SaveResultModel<object>();
 
             res = await categoryService.CreatePaymentInfo(model, User.Identity.Name);
-                return Json(res);
+            if (res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã hồ sơ đã tồn tại!";
+
+            }
+            return Json(res);
         }
 
         [HttpGet]
