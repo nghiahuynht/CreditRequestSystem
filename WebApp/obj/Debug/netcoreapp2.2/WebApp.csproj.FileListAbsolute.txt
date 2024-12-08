@@ -633,3 +633,4 @@ D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\
 D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\ProjectDetailIndex.cshtml.g.cs
 D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\PermisonInChargeIndex.cshtml.g.cs
 D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\FormPermissionInCharge.cshtml.g.cs
+D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Account\FormPermissonUser.cshtml.g.cs
