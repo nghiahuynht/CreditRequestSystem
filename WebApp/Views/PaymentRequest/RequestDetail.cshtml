@@ -1,7 +1,8 @@
 ﻿@using DAL
+@using DAL.Models
 @model DAL.Models.PaymentRequqest.RequestViewModel
 @{
-    ViewData["Title"] = Model.RequestHeader.Id==0?"Nhập thông tin yêu cầu thanh toán":"Yêu cầu thanh toán: "+Model.RequestHeader.Code;
+    ViewData["Title"] = Model.RequestHeader.Id == 0 ? "Nhập thông tin yêu cầu thanh toán" : "Yêu cầu thanh toán: " + Model.RequestHeader.Code;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -15,7 +16,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
-                        <input type="button" value="Lưu" class="btn btn-primary" id="btn-cancel" style="margin-right:5px;" />
+                        <input type="button" value="Lưu" class="btn btn-primary" id="btn-save" style="margin-right:5px;" />
                         <input type="button" value="Gửi duyệt" class="btn btn-warning" id="btn-sentchecked" style="margin-right:5px;" />
                         <input type="button" value="Duyệt" class="btn btn-success" id="btn-cancel" style="margin-right:5px;" />
                         <input type="button" value="Từ chối" class="btn btn-danger" id="btn-sentchecked" style="margin-right:5px;" />
@@ -29,73 +30,83 @@
 <section class="content">
     <div class="card">
         <div class="card-body">
-            <div class="row">
-                @Html.HiddenFor(x => x.RequestHeader.Id)
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">Mã yêu cầu</label>
-                        <div class="col-md-9">
-                            <span>@(Model.RequestHeader.Code)</span>
+            <form id="form-paymentrequest" class="form-horizontal">
+                <div class="row">
+                    @Html.HiddenFor(x => x.RequestHeader.Id)
+                    @Html.HiddenFor(x => x.RequestHeader.Code)
+                    @Html.HiddenFor(x => x.RequestHeader.Status)
+                    @Html.HiddenFor(x => x.RequestHeader.CreatedBy)
+                    @Html.HiddenFor(x => x.RequestHeader.CreatedByDepartment)
+
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Mã yêu cầu</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Tự động" value="@(Model.RequestHeader.Code)" disabled="disabled" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">Ngày yêu cầu</label>
-                        <div class="col-md-9">
-                            <div class="input-group date">
-                                <input type="text" id="RequestHeader_DateRequest" name="RequestHeader.DateRequest" value="@(Model.RequestHeader.Id != 0?Model.RequestHeader.DateRequest.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
-                                <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Ngày yêu cầu</label>
+                            <div class="col-md-6">
+                                <div class="input-group date">
+                                    <input type="text" id="RequestHeader_DateRequest" name="RequestHeader.DateRequest" value="@(Model.RequestHeader.Id != 0?Model.RequestHeader.DateRequest.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
+                                    <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Trạng thái</label>
+                            <div class="col-md-6">
+                                @{
+                                    if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
+                                    {
+                                        <span class='badge badge-secondary badge-status'>Chờ duyệt</span>
+                                    }
+                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
+                                    {
+                                        <span class='badge badge-warning badge-status'>Chờ duyệt</span>
+                                    }
+                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Approved)
+                                    {
+                                        <span class='badge badge-success badge-status'>Đã duyệt</span>
+                                    }
+                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
+                                    {
+                                        <span class='badge badge-success badge-status'>Từ chối</span>
+                                    }
+                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
+                                    {
+                                        <span class='badge badge-success badge-status'>Huỷ</span>
+                                    }
+                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Unc)
+                                    {
+                                        <span class='badge badge-success badge-status'>Đã uỷ nhiệm chi</span>
+                                    }
+                                }
+
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">Trạng thái</label>
-                        <div class="col-md-9">
-                            @{
-                                if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
-                                {
-                                    <span class='badge badge-primary badge-status'>Chờ duyệt</span>
-                                }
-                                else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
-                                {
-                                    <span class='badge badge-warning badge-status'>Chờ duyệt</span>
-                                }
-                                else if (Model.RequestHeader.Status == DAL.Contanst.CreditRequestStatus_Approved)
-                                {
-                                    <span class='badge badge-success badge-status'>Chờ duyệt</span>
-                                }
-                                else if (Model.RequestHeader.Status == DAL.Contanst.CreditRequestStatus_Rejected)
-                                {
-                                    <span class='badge badge-success badge-status'>Từ chối</span>
-                                }
-                                else if (Model.RequestHeader.Status == DAL.Contanst.CreditRequestStatus_Canceled)
-                                {
-                                    <span class='badge badge-success badge-status'>Huỷ</span>
-                                }
-                            }
 
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Người yêu cầu</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" value="@(Model.RequestHeader.CreatedByName)" disabled="disabled" />
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Khoa/Phòng ban</label>
+                            <div class="col-md-6">
+                                @Html.TextBoxFor(x => x.RequestHeader.CreatedByDepartment, new { @class = "form-control", @disabled = "disabled" })
+                            </div>
+                        </div>
 
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">Người yêu cầu</label>
-                        <div class="col-md-9">
-                            <span>@(Model.RequestHeader.CreatedByName) (@(Model.RequestHeader.CreatedBy))</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">Khoa/Phòng ban</label>
-                        <div class="col-md-9">
-                            <select class="form-control">
-                                <option value="">Khoa PCBTN</option>
-                            </select>
-                        </div>
                     </div>
 
                 </div>
-
-            </div>
+            </form>
+           
 
             <table class="table table-bordered">
                 <thead>
@@ -218,6 +229,73 @@
             $("#btn-chose-thanhtoan-item").click(function () {
                 $("#modal-attach-upload").modal();
             });
+
+
+            $("#btn-save").click(function () {
+                saveRequest();
+            });
+
+
+
         });
+
+        function validateSaveRequest() {
+            return true;
+        }
+        function saveRequest()
+        {
+
+            var valid = validateSaveRequest();
+            if (valid) {
+
+                debugger;
+                var headerRequestData = FormToObject("#form-paymentrequest", "RequestHeader.");
+                headerRequestData.DateRequest = ConverFormatDate($("#RequestHeader_DateRequest").val());
+
+                var saveData = {
+                    "RequestHeader": headerRequestData,
+                    "ListRequestItems":[]
+                };
+               
+
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/PaymentRequest/SavePaymentRequest",
+                    dataType: 'json',
+                    data: JSON.stringify(saveData),
+                    beforeSend: function () {
+                        ShowWaiting();
+                    },
+                    success: function (res) {
+                        HideWaiting();
+                        if (res.isSuccess === true) {
+                            bootbox.alert(AlertSuccess("Lưu dữ liệu thành công"), function () {
+
+                                location.href = "/PaymentRequest/RequestDetail/" + res.longValReturn;
+                            });
+                        } else {
+                            bootbox.alert(AlertFail(res.errorMessage));
+                        }
+
+                    }
+                });
+
+
+            }
+
+        }
+        function FormatNumberDevide() {
+            $('.number-divide').divide({
+                delimiter: ',',
+                divideThousand: true,
+                delimiterRegExp: /[\.\,\s]/g
+
+            });
+        }
+
+
+
+
     </script>
 }
