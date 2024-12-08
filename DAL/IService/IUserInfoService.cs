@@ -19,12 +19,18 @@ namespace DAL.IService
         DataTableResultModel<UserInfoGridModel> SearchUserInfo(UserInfoFilterModel filter);
         Task<List<MenuRole>> GetMenuByRole(string roleCode);
         Task<List<Menu>> LstMenu();
-        Task<List<Menu>> LstMenuNavigationByRole(string roleCode);
+        Task<List<Menu>> LstMenuNavigationByRole(int roleCode);
         Task<UserInfo> GetUserByUserName(string userName);
         Task<List<UserInfo>> SearchUserAutocomplete(string keyword);
         Task SavePermissionMenu(string roleCode, int MenuId);
         ListResultModel<ComboBoxModel> GetListUserByRoles(string roles);
         SaveResultModel<object> ChangePass(ChangePassModel model);
         List<UserInfoGridModel> GetAllUserByDepartment (int departmentId);
+        Task<SaveResultModel<object>> CreatePermissionUser (PermissionUserModel model,string userName);
+
+        Task<List<PermissionMenuModel>> GetPermissionMenuByUserId(int UserId);
+        Task<List<PermissionMenuInfoModel>> GetPermissionByUserIdMenuId(int UserId,int MenuId);
+
+        Task<bool> DeletePermissionByUserIdMenuId(int UserId, int MenuId);
     }
 }

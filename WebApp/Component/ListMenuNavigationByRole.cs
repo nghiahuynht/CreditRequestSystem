@@ -16,9 +16,9 @@ namespace WebApp.Component
             this.userService = userService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string roleCode)
+        public async Task<IViewComponentResult> InvokeAsync(string UserId)
         {
-            var lstMenu = await userService.LstMenuNavigationByRole(roleCode);
+            var lstMenu = await userService.LstMenuNavigationByRole(Int32.Parse(UserId));
             return await Task.FromResult((IViewComponentResult)View("LeftMenuNavigation", lstMenu));
         }
 
