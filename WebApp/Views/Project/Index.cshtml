@@ -1,7 +1,12 @@
-﻿
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
 @{
     ViewData["Title"] = "Danh sách chương trình/dự án/dịch vụ";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.KhaiBaoDuAn.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.KhaiBaoDuAn.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.KhaiBaoDuAn.Edit);
 }
 
 @section styles{
@@ -71,7 +76,11 @@
                         </div>
                         <div class="col-sm-3">
                             <button id="btn-search" onclick="SearchProjectFinancialSummar()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
-                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            @if (isAdd == true)
+                            {
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            }
+
                         </div>
 
                     </div>
@@ -85,7 +94,7 @@
                                 <th width="100px">Mã dự án </th>
                                 <th width="200px">Tên dự án</th>
                                 <th width="200px">Căn cứ pháp lý</th>
-                                <th width="140px">Thời gian thực hiện</th="150px">
+                                <th width="140px">Thời gian thực hiện</th>
                                 <th width="120px">Tổng hạn mức</th>
                                 <th width="120px">Đã sử dụng</th>
                                 <th width="100px">Ghi chú</th>
@@ -120,6 +129,8 @@
     <!-- Thêm jQuery Validate -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script>
+        const isEdit = @isEdit.ToString().ToLower();
+        const isDelete = @isDelete.ToString().ToLower();
         var tableId = "#table-project";
         var ajaxURL = "/Project/SearchProjectFinancialSummar";
 
@@ -132,7 +143,7 @@
                 "data": "timeStart", "render": function (data, type, row, meta) {
                     if (data != null && row.timeEnd != null) {
 
-                         return moment(data).format('DD/MM/YYYY') + '<br>' + moment(row.timeEnd).format('DD/MM/YYYY');;
+                        return moment(data).format('DD/MM/YYYY') + '<br>' + moment(row.timeEnd).format('DD/MM/YYYY');;
                     }
                     else {
                         return "";
@@ -184,23 +195,23 @@
                         success: function (response) {
                             if (response.success == true && response.fileNameAttactId > 0) {
                                 const html = `
-                                                <tr>
-                                                    <td width="40px" style="text-align:center;">
-                                                        <a  target="_blank">
-                                                            <span class="fa fa-download"></span>
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="${response.filePath}" target="_blank">${response.fileName}</a>
-                                                    </td>
-                                                     <td width="40px" style="text-align:center;color:crimson;">
-                                                        <span class="fa fa-trash delete-file"
-                                                              data-id="${response.fileNameAttactId}"
-                                                              style="cursor:pointer;"
-                                                              onclick="RemoveFile(${response.fileNameAttactId})"></span>
-                                                    </td>
-                                                </tr>
-                                            `;
+                                                    <tr>
+                                                        <td width="40px" style="text-align:center;">
+                                                            <a  target="_blank">
+                                                                <span class="fa fa-download"></span>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="${response.filePath}" target="_blank">${response.fileName}</a>
+                                                        </td>
+                                                         <td width="40px" style="text-align:center;color:crimson;">
+                                                            <span class="fa fa-trash delete-file"
+                                                                  data-id="${response.fileNameAttactId}"
+                                                                  style="cursor:pointer;"
+                                                                  onclick="RemoveFile(${response.fileNameAttactId})"></span>
+                                                        </td>
+                                                    </tr>
+                                                `;
 
                                 $('#table_Attact_File').append(html)
                             }
@@ -215,12 +226,20 @@
             });
         });
         function RenderTableAction(id) {
-            var html = `
-                    <div class='div-table-action'>
-                        <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
-                        <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>
-                        <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>
-                    </div>`;
+            let html = `<div class='div-table-action'>`;
+
+            html += `<i class="fa fa-eye" onclick="GotoProjectDetail(${id})"></i>&nbsp`;
+
+            // Check if Edit action 
+            if (isEdit) {
+                html += `<i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>`;
+            }
+
+            // Check if Delete action
+            if (isDelete) {
+                html += `<i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>`;
+            }
+            html += `</div>`;
             return html;
         }
         function GotoProjectDetail(id) {
@@ -243,7 +262,7 @@
                 url: '/Project/FormCreateProject', // Đảm bảo đường dẫn này đúng với action của bạn
                 type: 'GET',
                 data: {
-                    Id:id
+                    Id: id
                 },
                 success: function (response) {
                     // Chèn HTML trả về vào phần tử có id "dailog_nv"
@@ -283,7 +302,7 @@
                         success: function (response) {
                             if (response.success) {
                                 $(`span[data-id="${fileId}"]`).closest('tr').remove();
-                                listFileAttact = listFileAttact.filter(x =>x != fileId);
+                                listFileAttact = listFileAttact.filter(x => x != fileId);
                                 toastr.success('Xóa file thành công!', 'Thành công', { positionClass: "toast-top-center" });
                             }
                             else {
@@ -314,8 +333,8 @@
                     ProjectCode: $("#a_ma_du_an").val(),
                     ProjectName: $("#a_ten_du_an").val(),
                     LegalBasis: $("#a_can_cu_phap_ly").val(),
-                    TimeStart: $("#a_thoi_gian_bat_dau").val() ,
-                    TimeEnd: $("#a_thoi_gian_ket_thuc").val() ,
+                    TimeStart: $("#a_thoi_gian_bat_dau").val(),
+                    TimeEnd: $("#a_thoi_gian_ket_thuc").val(),
                     TotalAmount: $("#a_tong_han_muc_khong_format").val(),
                     StatusText: "",
                     Notes: $("#a_ghi_chu").val(),

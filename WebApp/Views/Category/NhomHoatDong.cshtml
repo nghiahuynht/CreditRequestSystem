@@ -1,7 +1,13 @@
-﻿
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
 @{
     ViewData["Title"] = "Danh sách nhóm hoạt động";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.NhomHoatDong.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.NhomHoatDong.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.NhomHoatDong.Edit);
 }
 @model List<DAL.Models.ComboBoxModel>
 @section styles{
@@ -72,7 +78,10 @@
                         </div>
                         <div class="col-sm-3">
                             <button onclick="SearchNhomHoatDong()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
-                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateActiveGroup(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            @if (isAdd == true)
+                            {
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateActiveGroup(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            }
                         </div>
 
                     </div>
@@ -122,6 +131,9 @@
     <script src="~/plugins/mdb-treeview/wow.js"></script>
     <script src="~/js/jquery.validate.js"></script>
     <script>
+
+        const isEdit = @isEdit.ToString().ToLower();
+        const isDelete = @isDelete.ToString().ToLower();
         var tableId = "#table-activegroup";
         var ajaxURL = "/Category/GetDataActiveGroup";
         var columnData = [
@@ -145,14 +157,27 @@
 
             SearchNhomHoatDong();
 
-           
+
         });
         function RenderTableAction(id) {
-            var html = `
-                    <div class='div-table-action'>
-                        <i class='fa fa-edit' onclick='showModalCreateActiveGroup(${id})' title='sửa'></i>
-                        <i class='fa fa-trash' onclick='DeleteActiveGroup(${id})' title='xóa'></i>
-                    </div>`;
+            let html = `<div class='div-table-action'>`;
+
+            // Check if Edit action should be added
+            if (isEdit) {
+                html += `<i class='fa fa-edit' onclick='showModalCreateActiveGroup(${id})' title='sửa'></i>&nbsp`;
+            }
+
+            // Check if Delete action should be added
+            if (isDelete) {
+                html += `<i class='fa fa-trash' onclick='DeleteActiveGroup(${id})' title='xóa'></i>`;
+            }
+            html += `</div>`;
+            
+            //var html = `
+            //            <div class='div-table-action'>
+            //                <i class='fa fa-edit' onclick='showModalCreateActiveGroup(${id})' title='sửa'></i>
+            //                <i class='fa fa-trash' onclick='DeleteActiveGroup(${id})' title='xóa'></i>
+            //            </div>`;
             return html;
 
         }

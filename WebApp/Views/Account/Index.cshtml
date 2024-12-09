@@ -4,9 +4,9 @@
     ViewData["Title"] = "Danh sách nhân viên";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
-    bool isDelete = AuthHelper.GetPermissionHelper(Permission).FindIndex(x => x.Trim() == PermissionHelper.DanhSachNhanVien.Delete) > 0 ? true : false;
-    bool isAdd = AuthHelper.GetPermissionHelper(Permission).FindIndex(x => x.Trim() == PermissionHelper.DanhSachNhanVien.Add) > 0 ? true : false;
-    bool isEdit = AuthHelper.GetPermissionHelper(Permission).FindIndex(x => x.Trim() == PermissionHelper.DanhSachNhanVien.Edit) > 0 ? true : false;
+    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.DanhSachNhanVien.Delete) ;
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.DanhSachNhanVien.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains( PermissionHelper.DanhSachNhanVien.Edit);
 }
 @model DAL.Models.UserInfo.UserParViewModel
 @section styles{
@@ -222,7 +222,7 @@
 
             // Check if Edit action should be added
             if (isEdit) {
-                html += `<i class='fa fa-edit' onclick='showModalCreateNV(${userId})' title='Sửa'></i>`;
+                html += `<i class='fa fa-edit' onclick='showModalCreateNV(${userId})' title='Sửa'></i>&nbsp`;
             }
 
             // Check if Delete action should be added
@@ -282,7 +282,7 @@
                         Title: $("#a_chuc_danh").val(),
                         IsActive: true,
                     },
-                    RoleSelected: $("#Role").val(),
+                    RoleSelected: '',
                     DepartmentSelected: $("#a_department").val(),
                     LstRoles: [],
                     LstDepartment: [],
@@ -321,9 +321,6 @@
                         required: true,
                     },
                     "email": {
-                        required: true,
-                    },
-                    "role": {
                         required: true,
                     },
                     "department": {
@@ -419,6 +416,7 @@
                 // Get selected menu
                 const menuElement = document.getElementById('menu');
                 const menuId = menuElement.value; // Get the selected menu's value (Id)
+                const menuText = menuElement.options[menuElement.selectedIndex].text; // Get the selected menu's text (Id)
                 const menuPrefix = menuElement.options[menuElement.selectedIndex]?.getAttribute('data-prefix'); // Get the prefix attribute
 
                 //// Get all checked checkboxes
@@ -455,8 +453,21 @@
                     success: function (res) {
                         if (res.isSuccess === true) {
                             toastr.success('Phân quyền thành công!', 'Thành công', { positionClass: "toast-top-center" });
-                            SearchUserInfo();
-                            $("#modal_permission_user").modal("hide")
+                            const permissionNames = checkedPermissions.map(p => p.PermissionName).join(',');
+                            var html =`<tr>
+                                        <td>
+                                            ${menuText}
+                                        </td>
+                                        <td>
+                                            ${permissionNames}
+                                        </td>
+                                        <td style="text-align:center;">
+
+                                            <span class="fa fa-trash" onclick="RemovePermissionByUserIdMenuId(${res.longValReturn})"></span>
+                                        </td>
+                                     </tr>`
+                            $('#table_thong_tin_quyen_theo_menu').append(html);
+                            //$("#modal_permission_user").modal("hide")
                         } else {
                             toastr.error('Có lỗi khi phân quyền. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
                         }

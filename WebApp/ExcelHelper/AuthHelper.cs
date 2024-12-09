@@ -9,8 +9,11 @@ namespace WebApp.ExcelHelper
     {
         public static List<string> GetPermissionHelper(string input)
         {
-            // Tách chuỗi input theo dấu phẩy và trả về List<string>
-            List<string> resultList = new List<string>(input.Split(','));
+            // Split the input string by commas and trim each element
+            List<string> resultList = input
+                .Split(',')
+                .Select(item => item.Trim()) // Trim each string
+                .ToList();
             return resultList;
         }
     }

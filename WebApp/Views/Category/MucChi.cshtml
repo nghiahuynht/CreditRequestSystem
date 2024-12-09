@@ -1,7 +1,12 @@
-﻿
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
 @{
     ViewData["Title"] = "Danh sách mục chi";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Edit);
 }
 @model List<DAL.Models.ComboBoxModel>
 @section styles{
@@ -72,7 +77,10 @@
                         </div>
                         <div class="col-sm-3">
                             <button onclick="SearchMucChi()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
-                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateExpense(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            @if (isAdd == true)
+                            {
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateExpense(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            }
                         </div>
 
                     </div>
@@ -130,6 +138,8 @@
     <script src="~/plugins/mdb-treeview/wow.js"></script>
     <script src="~/js/jquery.validate.js"></script>
     <script>
+        const isEdit = @isEdit.ToString().ToLower();
+       const isDelete = @isDelete.ToString().ToLower();
         var tableId = "#table-expense";
         var ajaxURL = "/Category/GetDataExpense";
         var columnData = [
@@ -157,12 +167,20 @@
 
         });
         function RenderTableAction(id) {
-            var html = `
-                        <div class='div-table-action'>
-                            <i class='fa fa-edit' onclick='showModalCreateExpense(${id})' title='sửa'></i>
-                            <i class='fa fa-trash' onclick='DeleteExpense(${id})' title='xóa'></i>
-                            <i class='fa fa-eye' onclick='showModalCreatePaymentInfo(${id})' title='xóa'></i>
-                        </div>`;
+            let html = `<div class='div-table-action'>`;
+
+            // Check if Edit action should be added
+            if (isEdit) {
+                html += `<i class='fa fa-edit' onclick='showModalCreateExpense(${id})' title='sửa'></i>&nbsp`;
+            }
+
+            // Check if Delete action should be added
+            if (isDelete) {
+                html += `<i class='fa fa-trash' onclick='DeleteExpense(${id})' title='xóa'></i>`;
+            }
+            html += `<i class='fa fa-eye' onclick='showModalCreatePaymentInfo(${id})' title='xóa'></i>`
+            html += `</div>`;
+           
             return html;
 
         }
@@ -326,24 +344,24 @@
             // Generate a unique random number
             var randomId = Date.now();
             var htmthstt = ` <tr>
-                                <td>
-                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan_${randomId}" class="form-control"/>
-                                </td>
-                                <td>
-                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
-                                </td>
-                                <td>
-                                    <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
-                                     <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan_${randomId}" value="-1" />
-                                </td>
-                                <td style="text-align:center;">
-                                    <span class="fa fa-check" onclick="SaveProfile(${randomId})"></span>
-                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(${randomId})"></span>
-                                </td>
-                             </tr>`;
+                                    <td>
+                                        <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan_${randomId}" class="form-control"/>
+                                    </td>
+                                    <td>
+                                        <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
+                                         <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan_${randomId}" value="-1" />
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <span class="fa fa-check" onclick="SaveProfile(${randomId})"></span>
+                                        <span class="fa fa-trash" onclick="RemovePaymentProfile(${randomId})"></span>
+                                    </td>
+                                 </tr>`;
             $('#table_thong_tin_hs_thanh_toan').append(htmthstt);
         }
 
@@ -368,8 +386,8 @@
                         else {
                             toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });
                         }
-                       
-                       
+
+
                     },
                     error: function () {
                         toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });

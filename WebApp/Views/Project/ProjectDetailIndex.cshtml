@@ -1,7 +1,12 @@
-﻿
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
 @{
     ViewData["Title"] = "Danh sách phân bổ ";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanBoKinhPhi.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanBoKinhPhi.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanBoKinhPhi.Edit);
 }
 @model DAL.Models.ProjectFinancialDetail.ProjectFinancialDetailParamModel
 @section styles{
@@ -100,7 +105,10 @@
                         </div>
                         <div class="col-sm-3">
                             <button onclick="SearchProjectDetail()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
-                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateProjectDetail(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            @if (isAdd == true)
+                            {
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateProjectDetail(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            }
                         </div>
 
                     </div>
@@ -156,6 +164,8 @@
     <script src="~/plugins/mdb-treeview/wow.js"></script>
     <script src="~/js/jquery.validate.js"></script>
     <script>
+        const isEdit = @isEdit.ToString().ToLower();
+        const isDelete = @isDelete.ToString().ToLower();
         var tableId = "#table-projectdetail";
         var ajaxURL = "/Project/GetDataProjectDetail";
         var columnData = [
@@ -196,13 +206,21 @@
 
         });
         function RenderTableAction(id) {
-            var html = `
-                            <div class='div-table-action'>
-                                <i class='fa fa-edit' onclick='showModalCreateProjectDetail(${id})' title='sửa'></i>
-                                <i class='fa fa-trash' onclick='RemoveProjectDetail(${id})' title='xóa'></i>
+            let html = `<div class='div-table-action'>`;
 
-                            </div>`;
+            // Check if Edit action should be added
+            if (isEdit) {
+                html += `<i class='fa fa-edit' onclick='showModalCreateProjectDetail(${id})' title='sửa'></i>&nbsp`;
+            }
+
+            // Check if Delete action should be added
+            if (isDelete) {
+                html += ` <i class='fa fa-trash' onclick='RemoveProjectDetail(${id})' title='xóa'></i>`;
+            }
+
+            html += `</div>`;
             return html;
+
 
         }
 
@@ -241,7 +259,7 @@
             var isValidateDetail = validateDataDetail();
             if (isValidateDetail == true) {
                 console.log("arrPaymentProfile", arrPaymentProfile)
-                if (arrPaymentProfile == null || arrPaymentProfile.length==0) {
+                if (arrPaymentProfile == null || arrPaymentProfile.length == 0) {
                     toastr.error('Hồ sơ thanh toán không được để trống. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
                     return;
                 }
@@ -404,24 +422,24 @@
                         var htmlbody = "";
                         response.data.forEach((item) => {
                             htmlbody += `<tr>
-                                            <td>
-                                                <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="${item.code}" class="form-control" readonly />
-                                            </td>
-                                            <td>
-                                                <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="${item.name}" class="form-control" readonly/>
-                                            </td>
-                                            <td>
-                                                <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="${item.notes}" class="form-control"             readonly/>
-                                            </td>
-                                            <td>
-                                                ${item.fileAttachName ? `<a href="${item.urlPath}" name="tep_dinh_kem_hs_thanh_toan"                id="a_tep_dinh_kem_hs_thanh_toan" target="_blank">${item.fileAttachName}</a>` : ''}
-                                                <input type="hidden" name="tep_dinh_kem_hs_thanh_toan"  value="${item.fileAttachId}" />
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${item.id})"></span>
-                                                <span class="fa fa-trash" onclick="RemovePaymentProfile(${item.id})"></span>
-                                            </td>
-                                    </tr>`
+                                                <td>
+                                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="${item.code}" class="form-control" readonly />
+                                                </td>
+                                                <td>
+                                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="${item.name}" class="form-control" readonly/>
+                                                </td>
+                                                <td>
+                                                    <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="${item.notes}" class="form-control"             readonly/>
+                                                </td>
+                                                <td>
+                                                    ${item.fileAttachName ? `<a href="${item.urlPath}" name="tep_dinh_kem_hs_thanh_toan"                id="a_tep_dinh_kem_hs_thanh_toan" target="_blank">${item.fileAttachName}</a>` : ''}
+                                                    <input type="hidden" name="tep_dinh_kem_hs_thanh_toan"  value="${item.fileAttachId}" />
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${item.id})"></span>
+                                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(${item.id})"></span>
+                                                </td>
+                                        </tr>`
                         })
                         $('#table_thong_tin_hs_thanh_toan').html(htmlbody);
                     }
@@ -478,11 +496,11 @@
                         $('#a_ma_du_an').val(response.data.projectCode);
                         $('#a_ten_du_an').val(response.data.projectName);
                         $('#a_tong_han_muc').val(RenderNumerFormat_NotHTML(response.data.totalAmount));
-                      
+
                         $('#a_so_tien_da_phan_bo').val(RenderNumerFormat_NotHTML(response.data.totalAllocatedAmount));
                         $('#a_tong_han_muc_khong_format').val(response.data.totalAmount);
                         $('#a_so_tien_da_phan_bo_khong_format').val(response.data.totalAllocatedAmount);
-                        // set display 
+                        // set display
                         document.getElementById("region_thong_tin_du_an").style.display = "block";
                     }
                     else {
@@ -550,31 +568,31 @@
             toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
             // Log the data (optional for debugging)
 
-           
+
         }
 
         function AddFormPaymentProfile() {
             // Generate a unique random number
             var randomId = Date.now();
             var htmthstt = ` <tr>
-                                <td>
-                                    <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan_${randomId}" class="form-control"/>
-                                </td>
-                                <td>
-                                    <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
-                                </td>
-                                <td>
-                                    <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
-                                     <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan_${randomId}" value="-1" />
-                                </td>
-                                <td style="text-align:center;">
-                                    <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${randomId})"></span>
-                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(${randomId})"></span>
-                                </td>
-                             </tr>`;
+                                    <td>
+                                        <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan_${randomId}" class="form-control"/>
+                                    </td>
+                                    <td>
+                                        <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
+                                         <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan_${randomId}" value="-1" />
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${randomId})"></span>
+                                        <span class="fa fa-trash" onclick="RemovePaymentProfile(${randomId})"></span>
+                                    </td>
+                                 </tr>`;
             $('#table_thong_tin_hs_thanh_toan').append(htmthstt);
         }
 
