@@ -6,17 +6,29 @@ using DAL;
 using DAL.IService;
 using DAL.Models.PaymentRequqest;
 using Microsoft.AspNetCore.Mvc;
+using DAL.Models.ProjectFinancialSummar;
 
 namespace WebApp.Controllers
 {
     public class PaymentRequestController : AppBaseController
     {
         private IPaymentRequestService paymentRequestService;
+        private IProjectFinancialSummarService projectFinancialSummarService;
+        private IProjectFinancialDetailService projectFinancialDetailService;
+        private ICategoryService categoryService;
+
+
         private ICommonService commonService;
 
-        public PaymentRequestController(IPaymentRequestService paymentRequestService, ICommonService commonService)
+        public PaymentRequestController(IPaymentRequestService paymentRequestService, IProjectFinancialSummarService projectFinancialSummarService
+            , IProjectFinancialDetailService projectFinancialDetailService
+            , ICategoryService categoryService
+            , ICommonService commonService)
         {
             this.paymentRequestService = paymentRequestService;
+            this.projectFinancialSummarService = projectFinancialSummarService;
+            this.projectFinancialDetailService = projectFinancialDetailService;
+            this.categoryService = categoryService;
             this.commonService = commonService;
         }
 
@@ -43,8 +55,17 @@ namespace WebApp.Controllers
                 var departmenList = await commonService.ListAllDepartment();
                 var departmentUser = departmenList.Where(x => x.Id.ToString() == AuthenInfo().DepartmentId).FirstOrDefault();
                 viewModel.RequestHeader.CreatedByDepartment = departmentUser != null ? departmentUser.Name : string.Empty;
-
+                viewModel.ListRequestItems = new List<PaymentRequestItemModel>
+                {
+                    new PaymentRequestItemModel
+                    {
+                        Id=0,ProjectId=0,ActivityId=0,ExpenseId=0,Price=null,Quanti=null,Note=null,Total=null
+                    }
+                };
             }
+
+            ViewBag.DDLProject = await paymentRequestService.GetProjectByUser(AuthenInfo().UserName);
+
             return View(viewModel);
         }
 
@@ -52,9 +73,31 @@ namespace WebApp.Controllers
         public async Task<JsonResult> SavePaymentRequest([FromBody] RequestViewModel model)
         {
             var request = await paymentRequestService.SavePaymentRequest(model.RequestHeader,AuthenInfo().UserName);
+            if (request.IsSuccess && request.LongValReturn != 0)
+            {
+                await paymentRequestService.SavePaymentRequestLineItems(request.LongValReturn,model.ListRequestItems);
+            }
             return Json(request);
         }
+        [HttpGet]
+        public async Task<JsonResult> GetProjectById(int projectId)
+        {
+            var res = await projectFinancialSummarService.GetProjectById(projectId);
+            return Json(res);
+        }
 
+        [HttpGet]
+        public async Task<JsonResult> GetActivityByProject(int projectId)
+        {
+            var lstActivity = await projectFinancialDetailService.GetAllProjectDetailByProjectId(projectId);
+            return Json(lstActivity);
+        }
 
+        [HttpGet]
+        public JsonResult GetExpenseByActivity(int activityId)
+        {
+            var lstExpense = categoryService.GetExpenseByActiveGroup(activityId);
+            return Json(lstExpense);
+        }
     }
 }

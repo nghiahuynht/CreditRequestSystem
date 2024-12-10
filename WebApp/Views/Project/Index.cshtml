@@ -89,7 +89,7 @@
                                 <th width="120px">Tổng hạn mức</th>
                                 <th width="120px">Đã sử dụng</th>
                                 <th width="100px">Ghi chú</th>
-                                <th></th>
+                                <th width="100px"></th>
                             </tr>
                         </thead>
                     </table>
@@ -218,8 +218,8 @@
             var html = `
                     <div class='div-table-action'>
                         <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
-                        <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>
-                        <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>
+                        <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>&nbsp;
+                        <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>&nbsp;
                     </div>`;
             return html;
         }

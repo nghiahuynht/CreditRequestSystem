@@ -111,3 +111,4 @@ F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyIn
 F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
 F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.dll
 F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache

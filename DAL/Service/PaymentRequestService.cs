@@ -1,6 +1,7 @@
 ﻿using DAL.IService;
 using DAL.Models;
 using DAL.Models.PaymentRequqest;
+using DAL.Models.ProjectFinancialSummar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,39 @@ namespace DAL.Service
 
 
 
+        public async Task SavePaymentRequestLineItems(long requestHeaderId, List<PaymentRequestItemModel> model)
+        {
+            foreach (var item in model)
+            {
+                try
+                {
+                    var param = new SqlParameter[]
+                       {
+                        new SqlParameter("@Id", item.Id),
+                        new SqlParameter("@RequestId", requestHeaderId),
+                        new SqlParameter("@ProjectId", item.ProjectId),
+                        new SqlParameter("@ActivityId", item.ActivityId),
+                        new SqlParameter("@ExpenseId", item.ExpenseId),
+                        new SqlParameter("@Price", item.Price),
+                        new SqlParameter("@Quanti", item.Quanti),
+                        new SqlParameter("@Note", item.Note),
+                       };
+
+                    ValidNullValue(param);
+                    await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_SavePaymentRequestLineItem @Id,@RequestId,@ProjectId,@ActivityId,@ExpenseId,@Price,@Quanti,@Note", param);
+                }
+                catch
+                {
+
+                }
+            }
+            
+
+        }
+
+
+
+
         public async Task<PaymentRequestModel> GetPaymentRequestHeaderById(long id)
         {
             var res = new PaymentRequestModel();
@@ -88,6 +122,28 @@ namespace DAL.Service
             }
             return res;
         }
+
+
+
+        public async Task<ListResultModel<ProjectFinancialSummarGridModel>> GetProjectByUser(string userName)
+        {
+            var res = new ListResultModel<ProjectFinancialSummarGridModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@UserName",userName),
+                };
+                ValidNullValue(param);
+                res.Results = await dtx.ProjectFinancialSummarGridModel.FromSql("EXEC sp_GetProjectByUser @UserName", param).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.Results = new List<ProjectFinancialSummarGridModel>();
+            }
+            return res;
+        }
+
 
 
 

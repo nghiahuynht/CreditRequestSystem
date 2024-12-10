@@ -169,7 +169,6 @@ namespace DAL.Service
                };
 
 
-
                 ValidNullValue(param);
                 await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_checkCodeUnique @Prefix,@Code,@Status OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);

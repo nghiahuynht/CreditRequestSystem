@@ -1,5 +1,6 @@
 ﻿@using DAL
 @using DAL.Models
+@using DAL.Models.ProjectFinancialSummar
 @model DAL.Models.PaymentRequqest.RequestViewModel
 @{
     ViewData["Title"] = Model.RequestHeader.Id == 0 ? "Nhập thông tin yêu cầu thanh toán" : "Yêu cầu thanh toán: " + Model.RequestHeader.Code;
@@ -30,193 +31,280 @@
 <section class="content">
     <div class="card">
         <div class="card-body">
+
             <form id="form-paymentrequest" class="form-horizontal">
-                <div class="row">
-                    @Html.HiddenFor(x => x.RequestHeader.Id)
-                    @Html.HiddenFor(x => x.RequestHeader.Code)
-                    @Html.HiddenFor(x => x.RequestHeader.Status)
-                    @Html.HiddenFor(x => x.RequestHeader.CreatedBy)
-                    @Html.HiddenFor(x => x.RequestHeader.CreatedByDepartment)
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-2 mb-0 text-blue">Thông tin người lập yêu cầu</legend>
+                    <div class="row">
+                        @Html.HiddenFor(x => x.RequestHeader.Id)
+                        @Html.HiddenFor(x => x.RequestHeader.Code)
+                        @Html.HiddenFor(x => x.RequestHeader.Status)
+                        @Html.HiddenFor(x => x.RequestHeader.CreatedBy)
+                        @Html.HiddenFor(x => x.RequestHeader.CreatedByDepartment)
 
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Mã yêu cầu</label>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Tự động" value="@(Model.RequestHeader.Code)" disabled="disabled" />
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Mã yêu cầu</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Tự động" value="@(Model.RequestHeader.Code)" disabled="disabled" />
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Ngày yêu cầu</label>
-                            <div class="col-md-6">
-                                <div class="input-group date">
-                                    <input type="text" id="RequestHeader_DateRequest" name="RequestHeader.DateRequest" value="@(Model.RequestHeader.Id != 0?Model.RequestHeader.DateRequest.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
-                                    <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Ngày yêu cầu</label>
+                                <div class="col-md-6">
+                                    <div class="input-group date">
+                                        <input type="text" id="RequestHeader_DateRequest" name="RequestHeader.DateRequest" value="@(Model.RequestHeader.Id != 0?Model.RequestHeader.DateRequest.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" class="form-control">
+                                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Trạng thái</label>
+                                <div class="col-md-6">
+                                    @{
+                                        if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
+                                        {
+                                            <span class='badge badge-secondary badge-status'>Chờ duyệt</span>
+                                        }
+                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
+                                        {
+                                            <span class='badge badge-warning badge-status'>Chờ duyệt</span>
+                                        }
+                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Approved)
+                                        {
+                                            <span class='badge badge-success badge-status'>Đã duyệt</span>
+                                        }
+                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
+                                        {
+                                            <span class='badge badge-success badge-status'>Từ chối</span>
+                                        }
+                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
+                                        {
+                                            <span class='badge badge-success badge-status'>Huỷ</span>
+                                        }
+                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Unc)
+                                        {
+                                            <span class='badge badge-success badge-status'>Đã uỷ nhiệm chi</span>
+                                        }
+                                    }
+
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Trạng thái</label>
-                            <div class="col-md-6">
-                                @{
-                                    if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
-                                    {
-                                        <span class='badge badge-secondary badge-status'>Chờ duyệt</span>
-                                    }
-                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
-                                    {
-                                        <span class='badge badge-warning badge-status'>Chờ duyệt</span>
-                                    }
-                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Approved)
-                                    {
-                                        <span class='badge badge-success badge-status'>Đã duyệt</span>
-                                    }
-                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
-                                    {
-                                        <span class='badge badge-success badge-status'>Từ chối</span>
-                                    }
-                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
-                                    {
-                                        <span class='badge badge-success badge-status'>Huỷ</span>
-                                    }
-                                    else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Unc)
-                                    {
-                                        <span class='badge badge-success badge-status'>Đã uỷ nhiệm chi</span>
-                                    }
-                                }
 
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Người yêu cầu</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" value="@(Model.RequestHeader.CreatedByName)" disabled="disabled" />
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Khoa/Phòng ban</label>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(x => x.RequestHeader.CreatedByDepartment, new { @class = "form-control", @disabled = "disabled" })
+                                </div>
+                            </div>
 
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Người yêu cầu</label>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" value="@(Model.RequestHeader.CreatedByName)" disabled="disabled" />
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-4 col-form-label">Khoa/Phòng ban</label>
-                            <div class="col-md-6">
-                                @Html.TextBoxFor(x => x.RequestHeader.CreatedByDepartment, new { @class = "form-control", @disabled = "disabled" })
-                            </div>
                         </div>
 
                     </div>
+                </fieldset>
 
-                </div>
+
+
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-2 mb-0 text-blue">Nội dung yêu cầu</legend>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Dự án</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="ListRequestItems_ProjectId" name="ListRequestItems.ProjectId">
+                                        <option value="0">Chọn dự án</option>
+                                        @{
+                                            var lstProject = (ListResultModel<DAL.Models.ProjectFinancialSummar.ProjectFinancialSummarGridModel>)ViewBag.DDLProject;
+                                            foreach (var item in lstProject.Results)
+                                            {
+                                                string selected = "";
+                                                if (Model.ListRequestItems.Any())
+                                                {
+                                                    selected = Model.ListRequestItems.FirstOrDefault().ProjectId == item.Id ? "selected='selected'" : string.Empty;
+                                                }
+
+                                                <option @(selected) value="@(item.Id)">@item.ProjectName</option>
+                                            }
+                                        }
+
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Mã dự án</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" id="txt-projectcode" type="text" disabled="disabled" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Thời gian từ</label>
+                                <div class="col-md-6">
+                                    <div class="input-group date">
+                                        <input type="text" disabled="disabled" id="txt-from-projectdate" value="" class="form-control">
+                                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Thời gian đến</label>
+                                <div class="col-md-6">
+                                    <div class="input-group date">
+                                        <input type="text" disabled="disabled" id="txt-to-projectdate" class="form-control">
+                                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Căn cứ pháp lý</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="txt-base-on-law" class="form-control" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Tổng hạn mức</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="txt-hanmuc" value="" class="form-control" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Đã sử dụng</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="text-used" value="" class="form-control" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Ghi chú dự án</label>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" id="txt-note-project" disabled rows="3">Tết đến ròi</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.HiddenFor(x => x.ListRequestItems.FirstOrDefault().Id)
+                            @Html.HiddenFor(x => x.ListRequestItems.FirstOrDefault().RequestId)
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Nhóm mục chi</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="ListRequestItems_ActivityId" name="ListRequestItems.ActivityId">
+                                        @{
+                                            if (Model.ListRequestItems.Any())
+                                            {
+                                                int activityId = Model.ListRequestItems.FirstOrDefault().ActivityId;
+                                                <option value="@(activityId)"></option>
+                                            }
+                                            else
+                                            {
+                                                <option value=""></option>
+                                            }
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Mục chi</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="ListRequestItems_ExpenseId" name="ListRequestItems.ExpenseId">
+                                        @{
+                                            if (Model.ListRequestItems.Any())
+                                            {
+                                                int expenseId = Model.ListRequestItems.FirstOrDefault().ExpenseId;
+                                                <option value="@(expenseId)"></option>
+                                            }
+                                            else
+                                            {
+                                                <option value=""></option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Đối tượng</label>
+                                <div class="col-md-6">
+                                    @{
+                                        string note = Model.ListRequestItems.FirstOrDefault().Note;
+                                    }
+                                    <input type="text" value="@(note)" id="ListRequestItems_Note" name="ListRequestItems.Note" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Đơn giá</label>
+                                <div class="col-md-6">
+                                    @{
+                                        decimal? price = Model.ListRequestItems.FirstOrDefault().Price;
+                                    }
+                                    <input type="text" onblur="CalculaTotal()" value="@(price.HasValue?price.Value:0)" class="form-control" id="ListRequestItems_Price" name="ListRequestItems.Price" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Số lượng</label>
+                                <div class="col-md-6">
+                                    @{
+                                        decimal? quanti = Model.ListRequestItems.FirstOrDefault().Quanti;
+                                    }
+                                    <input type="text" onblur="CalculaTotal()" value="@(quanti.HasValue?quanti.Value:0)" class="form-control number-divide" id="ListRequestItems_Quanti" name="ListRequestItems.Quanti" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Tổng tiền</label>
+                                <div class="col-md-6">
+                                    @{
+                                        decimal? total = Model.ListRequestItems.FirstOrDefault().Total;
+                                    }
+                                    <strong id="lbl-total" class="number-divide" style="margin-top:5px;">@(total.HasValue?total.Value:0)</strong>
+                                   
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Đính kèm hoá đơn</label>
+                                <div class="col-md-6">
+                                    <input type="file" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Đính kèm giáo án</label>
+                                <div class="col-md-6">
+                                    <input type="file" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Đính kèm hợp đồng</label>
+                                <div class="col-md-6">
+                                    <input type="file" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </fieldset>
             </form>
-           
 
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <td colspan="12">
-                            <div class="row">
-                                <div class="col-sm-6"><h5>Nội dung đề nghị</h5></div>
-                                <div class="col-sm-6 text-right">
-                                    <button id="btn-chose-thanhtoan-item" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Mã dự án</th>
-                        <th>Tên dự án</th>
-                        <th>Nhóm hoạt động</th>
-                        <th>Mục chi</th>
-                        <th>Tiêu chuẩn</th>
-                        <th>SL</th>
-                        <th>Đơn giá</th>
-                        <th>Thành tiền</th>
-                        <th>Hạn mức còn</th>
-                        <th>Ghi chú</th>
-                        <th>HS đính kèm</th>
-                        <th width="60px"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>DA.2024.001</td>
-                        <td>CT1</td>
-                        <td>Hoạt động tập huấn</td>
-                        <td>Báo cáo viên</td>
-                        <td>Thạc sĩ trở lên</td>
-                        <td>1</td>
-                        <td>800,000</td>
-                        <td>800,000</td>
-                        <td>1,200,000</td>
-                        <td></td>
-                        <td style="text-align:center;"><img class="img" style="width:30px;height:20px;" src="https://www.svgrepo.com/show/7884/attachment.svg" /></td>
-                        <td style="text-align:center;"><span class="fa fa-edit"></span>&nbsp; <span class="fa fa-trash"></span></td>
-                    </tr>
-                    <tr>
-                        <td>DA.2024.002</td>
-                        <td>DA1</td>
-                        <td>Mua sắm chuyên môn</td>
-                        <td>Băng rôn</td>
-                        <td></td>
-                        <td>2</td>
-                        <td>14,000,000</td>
-                        <td>28,000,000</td>
-                        <td>29,000,000</td>
-                        <td></td>
-                        <td style="text-align:center;"><img class="img" style="width:30px;height:20px;" src="https://www.svgrepo.com/show/7884/attachment.svg" /></td>
-                        <td style="text-align:center;"><span class="fa fa-edit"></span>&nbsp; <span class="fa fa-trash"></span></td>
-                    </tr>
-                </tbody>
-            </table>
+
+
+
 
         </div>
     </div>
+
+
 </section>
 
 
-<div class="modal fade show" id="modal-attach-upload" aria-modal="true" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Hồ sơ đính kèm</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Dự án</strong>: DA.2024.001</p>
-                <p><strong>Nhóm hoạt động</strong>: Hoạt động tập huấn</p>
-                <p><strong>Mục chi</strong>: Báo cáo viên</p>
-                <table class="table table-bordered">
-                    <tr>
-                        <td>Hợp đồng</td>
-                        <td><a href="#">HopDong-324624.pdf</a></td>
-                        <td width="100px" style="text-align:center;">
-                            <i class="fa fa-download" style="color:#0094ff;"></i>&nbsp;
-                            <i class="fa fa-trash" style="color:#ff0000;"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Nghiệm thu</td>
-                        <td><a href="#">NghiemThu-324624.pdf</a></td>
-                        <td width="100px" style="text-align:center;">
-                            <i class="fa fa-download" style="color:#0094ff;"></i>&nbsp;
-                            <i class="fa fa-trash" style="color:#ff0000;"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Bài luận báo cáo</td>
-                        <td><a href="#">bailuan-324624.doc</a></td>
-                        <td width="70px" style="text-align:center;">
-                            <i class="fa fa-download" style="color:#0094ff;"></i>&nbsp;
-                            <i class="fa fa-trash" style="color:#ff0000;"></i>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
+
+
+
 
 @section scripts{
     <script src="~/js/jquery.validate.js"></script>
@@ -235,6 +323,19 @@
                 saveRequest();
             });
 
+            $("#ListRequestItems_ProjectId").change(function () {
+                let projectId = $(this).val();
+                GetProjectInfo(projectId);
+                GetActivitiesByProject(projectId);
+            });
+
+            $("#ListRequestItems_ActivityId").change(function () {
+                let actId = $(this).val();
+                GetExpenseByActivity(actId);
+            });
+
+
+            InitDataOnload();
 
 
         });
@@ -242,8 +343,7 @@
         function validateSaveRequest() {
             return true;
         }
-        function saveRequest()
-        {
+        function saveRequest() {
 
             var valid = validateSaveRequest();
             if (valid) {
@@ -252,11 +352,28 @@
                 var headerRequestData = FormToObject("#form-paymentrequest", "RequestHeader.");
                 headerRequestData.DateRequest = ConverFormatDate($("#RequestHeader_DateRequest").val());
 
+                let lstItems = [];
+                var itemRequestData = FormToObject("#form-paymentrequest", "ListRequestItems.");
+                
+                let itemObject = {
+                    "Id": itemRequestData.Id,
+                    "RequestId": itemRequestData.RequestId,
+                    "ProjectId": itemRequestData.ProjectId,
+                    "ActivityId": itemRequestData.ActivityId,
+                    "ExpenseId": itemRequestData.ExpenseId,
+                    "Quanti": DeRenderNumerFormat(itemRequestData.Quanti),
+                    "Price": DeRenderNumerFormat(itemRequestData.Price),
+                    "Note": itemRequestData.Note
+                };
+
+                
+                lstItems.push(itemObject);
+
                 var saveData = {
                     "RequestHeader": headerRequestData,
-                    "ListRequestItems":[]
+                    "ListRequestItems": lstItems
                 };
-               
+
 
                 $.ajax({
                     type: "POST",
@@ -277,7 +394,7 @@
                         } else {
                             bootbox.alert(AlertFail(res.errorMessage));
                         }
-
+                        lstItems = [];
                     }
                 });
 
@@ -295,7 +412,83 @@
         }
 
 
+        function GetProjectInfo(projetId) {
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/PaymentRequest/GetProjectById?projectId=" + projetId,
+                success: function (result) {
 
+                    $("#txt-projectcode").val(result.projectCode);
+                    $("#txt-from-projectdate").val(ConverFormatDate(result.timeStart));
+                    $("#txt-to-projectdate").val(ConverFormatDate(result.timeEnd));
+                    $("#txt-base-on-law").val(result.legalBasis);
+                    $("#txt-hanmuc").val(result.totalAmount);
+                    $("#txt-note-project").val(result.notes);
+                }
+            });
+        }
+
+
+        function GetActivitiesByProject(projetId) {
+            debugger;
+            let actiSelected = $("#ListRequestItems_ActivityId").val();
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/PaymentRequest/GetActivityByProject?projectId=" + projetId,
+                success: function (result) {
+
+                    let htmlAct = "<option value='0'></option>";
+                    $.each(result, function (key, value)
+                    {
+                        let selectedAct = actiSelected == value.activityGroupId ? "selected='selected'" : "";
+                        htmlAct = htmlAct + "<option " + selectedAct+" value='" + value.activityGroupId + "'>" + value.activityGroupName+"</option>";
+                    });
+                    $("#ListRequestItems_ActivityId").html(htmlAct);
+                }
+            });
+        }
+        function GetExpenseByActivity(activityId) {
+
+            let expsenseSelected = $("#ListRequestItems_ExpenseId").val();
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/PaymentRequest/GetExpenseByActivity?activityId=" + activityId,
+                success: function (result) {
+
+                    let htmlExp = "<option value='0'>Chọn nhóm hoạt động</option>";
+                    $.each(result, function (key, value) {
+                        let selectedExp = expsenseSelected == value.id ? "selected='selected'" : "";
+                        htmlExp = htmlExp + "<option " + selectedExp + " value='" + value.id + "'>" + value.name + "</option>";
+                    });
+                    $("#ListRequestItems_ExpenseId").html(htmlExp);
+
+                }
+            });
+        }
+
+
+        function InitDataOnload() {
+            let projectId = $("#ListRequestItems_ProjectId").val();
+            if (projectId > 0)
+            {
+                GetProjectInfo(projectId);
+                GetActivitiesByProject(projectId);
+                let activityId = $("#ListRequestItems_ActivityId").val();
+                GetExpenseByActivity(activityId);
+                CalculaTotal();
+            }
+        }
+
+        function CalculaTotal() {
+            let price = $("#ListRequestItems_Price").val();
+            let quanti = $("#ListRequestItems_Quanti").val();
+            let total = (price * quanti);
+            $("#lbl-total").html(RenderNumerFormat(total));
+            
+        }
 
     </script>
 }

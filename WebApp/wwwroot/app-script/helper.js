@@ -101,7 +101,15 @@ function RenderNumerFormat(data) {
     }
     return "<div style='width:100%;'>" + res + "</div>";
 }
-
+function DeRenderNumerFormat(data) {
+    debugger
+    if (data != null || data != undefined)
+    {
+        data = data.toString().replace(".", "");
+    }
+    debugger;
+    return data;
+}
 function RenderNumerFormat_NotHTML(data) {
     var res = "";
     if (data !== undefined && data > 0) {
