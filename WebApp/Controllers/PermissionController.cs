@@ -1,6 +1,9 @@
 ﻿using DAL.IService;
 using DAL.Models;
 using DAL.Models.Permission;
+using DAL.Models.UserInfo;
+using DAL.Service;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,12 +17,14 @@ namespace WebApp.Controllers
         private IProjectFinancialSummarService _projectFinancialSummarService;
         private ICategoryService _categoryService;
         private IPermissionService _permissionService;
+        private IUserInfoService _userService;
 
-        public PermissionController(IProjectFinancialSummarService projectFinancialSummarService,  ICategoryService categoryService, IPermissionService permissionService)
+        public PermissionController(IProjectFinancialSummarService projectFinancialSummarService,  ICategoryService categoryService, IPermissionService permissionService, IUserInfoService userService)
         {
             _projectFinancialSummarService = projectFinancialSummarService;
             _categoryService = categoryService;
             _permissionService = permissionService;
+            _userService = userService;
         }
         public IActionResult Index()
         {
@@ -28,13 +33,12 @@ namespace WebApp.Controllers
         #region Phân quyền nv chịu trách nhiệm dự án 
         public async Task<IActionResult> PermisonInChargeIndex()
         {
-            PermissionInChargeParModel paramModel = new PermissionInChargeParModel();
-            var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
-            var lstActiveGroup = _categoryService.LstAllCategoryActiveGroup();
-            var lstExpense = _categoryService.LstAllCategoryExpense();
-            paramModel.LstProject = lstProject;
-            paramModel.LstActiveGroup = lstActiveGroup;
-            return View(paramModel);
+            UserParViewModel par = new UserParViewModel();
+            var lstRoles = _userService.GetAllRoles();
+            var lstDepartment = _categoryService.LstAllCategoryDepartment();
+            par.LstRoles = lstRoles;
+            par.LstDepartment = lstDepartment;
+            return View(par);
         }
 
         public DataTableResultModel<PermissionInChargeTableModel> GetDataPermissonInCharge(PermissionInChargeFilterModel filter)
@@ -44,27 +48,25 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FormPermissionInCharge(string ProjectName="",int ProjectDetailId = 0, int PermissionInChargeId=0)
+        public async Task<IActionResult> FormPermissionInCharge(int id=0,string fullName = "")
         {
             var lstDepartment = _categoryService.LstAllCategoryDepartment();
-            ViewBag.PermissionInChargeId = PermissionInChargeId;
-            ViewBag.ProjectDetailId = ProjectDetailId;
-            ViewBag.ProjectName = ProjectName;
+
             PermissionInChargeModel model = new PermissionInChargeModel();
-            if (PermissionInChargeId == 0)
+            var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
+            var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+            if (id == 0)
             {
-                model.LstDepartment = lstDepartment;
-                model.LstUser = new List<DAL.Models.UserInfo.UserInfoGridModel>();
+                model.LstProject = lstProject;
+                model.DM_NhomHoatDong = dm_NhomHoatDong;
                 model.data = new PermissionInChargeInfoModel();
-                model.UserSelected = new DAL.Entities.UserInfo();
                 return View(model);
             }
             else
             {
-                model.LstDepartment = lstDepartment;
-                model.LstUser = new List<DAL.Models.UserInfo.UserInfoGridModel>();
+                model.LstProject = lstProject;
+                model.DM_NhomHoatDong = dm_NhomHoatDong;
                 model.data = new PermissionInChargeInfoModel();
-                model.UserSelected = new DAL.Entities.UserInfo();
                 return View(model);
             }
 

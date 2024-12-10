@@ -3,7 +3,7 @@
     ViewData["Title"] = "Danh sách phân quyền nhân viên chịu trách nhiệm ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@model DAL.Models.Permission.PermissionInChargeParModel
+@model DAL.Models.UserInfo.UserParViewModel
 @section styles{
 
     <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
@@ -63,11 +63,11 @@
                     <div class="row">
 
                         <div class="col-sm-3">
-                            <label>Dự án</label>
-                            <select class="form-control" id="dll-project">
+                            <label>Phòng ban</label>
+                            <select class="form-control" id="ddl-role">
                                 <option value="all">Tất cả</option>
                                 @{
-                                    foreach (var opt in Model.LstProject)
+                                    foreach (var opt in Model.LstDepartment)
                                     {
                                         <option value="@opt.Id">@opt.Name</option>
                                     }
@@ -75,16 +75,8 @@
                             </select>
                         </div>
                         <div class="col-sm-3">
-                            <label>Hoạt động</label>
-                            <select class="form-control" id="dll-activegroup">
-                                <option value="all">Tất cả</option>
-                                @{
-                                    foreach (var opt in Model.LstActiveGroup)
-                                    {
-                                        <option value="@opt.Id">@opt.Name</option>
-                                    }
-                                }
-                            </select>
+                            <label>Tìm theo SĐT/tên/email</label>
+                            <input type="text" class="form-control" id="txtkeyword" />
                         </div>
                         
                         <div class="col-sm-3">
@@ -100,10 +92,11 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Tên dự án</th>
-                                <th>Tên hoạt động</th>
-                                <th>Tổng tiền</th>
-                                <th>Nhân viên phụ trách</th>
+                                <th width="200px">Tên đầy đủ</th>
+                                <th>SDT</th>
+                                <th>Email</th>
+                                <th width="150px">Chức danh</th>
+                                <th width="100px">Hoạt động</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -142,20 +135,37 @@
     <script src="~/js/jquery.validate.js"></script>
     <script>
         var tableId = "#table-permission-in-charge";
-        var ajaxURL = "/Permission/GetDataPermissonInCharge";
+        var ajaxURL = "/Account/SearchUserInfo";
         var columnData = [
-            { "data": "projectId", visible: false },
-            { "data": "projectName" },
-            { "data": "activeGroupName" },
+            { "data": "id", visible: false },
+            { "data": "fullName" },
             {
-                "data": "totalAmount", "render": function (data, type, row, meta) {
-                    return RenderNumerFormat(data);
+                "data": "phone", "render": function (data, type, row, meta) {
+                    if (data == "NULL" || data == null) {
+                        return ""
+                    }
+                    else {
+                        return data
+                    }
+
                 }
             },
-            { "data": "userName" },
+            { "data": "email" },
+            { "data": "title" },
+
             {
-                "data": "projectId", "render": function (data, type, row, meta) {
-                    return RenderTableAction(row.projectName, row.projectDetailId,0);
+                "data": "isActive", "render": function (data, type, row, meta) {
+                    if (data == "Yes") {
+                        return "<i class='text-success' >Hoạt động</i>"
+                    }
+                    else {
+                        return "<i class='text-danger' >Ngưng hoạt động</i>"
+                    }
+                }
+            },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(row.id, row.fullName);
                 }
             },
 
@@ -171,10 +181,10 @@
 
 
         });
-        function RenderTableAction(projectName,projectDetailId,Id) {
+        function RenderTableAction(id,fullname) {
             var html = `
                             <div class='div-table-action'>
-                                  <i class='fa fa-key' onclick='showModalPermissionInCharge("${projectName}", ${projectDetailId}, ${Id})' title='phân quyền'></i>
+                                                  <i class='fa fa-key' onclick='showModalPermissionInCharge("${id}", ${fullname})' title='phân quyền'></i>
 
                             </div>`;
             return html;
@@ -184,18 +194,17 @@
         function SearchPermissionInCharge() {
 
             var dataSearch = {
-                ProjectId: $("#dll-project").val(),
-                ActiveGroupId: $("#dll-activegroup").val(),
-                ExpenseId: $("#dll-expense").val(),
+                RoleCode: 'all',
+                Keyword: $("#txtkeyword").val()
 
             };
             GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
 
         }
 
-        function showModalPermissionInCharge(projectName, projectDetailId, Id) {
+        function showModalPermissionInCharge(id, fullName) {
             $.ajax({
-                url: `/Permission/FormPermissionInCharge?ProjectName=${encodeURIComponent(projectName)}&ProjectDetailId=${projectDetailId}&PermissionInChargeId=${Id}`,
+                url: `/Permission/FormPermissionInCharge?id=${encodeURIComponent(id)}&fullName=${fullName}`,
                 type: 'GET',
                 success: function (response) {
                     $('#dailog_permission_incharge').html(response);
