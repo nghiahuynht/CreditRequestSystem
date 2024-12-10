@@ -41,9 +41,8 @@ namespace DAL.Models.Permission
     public class PermissionInChargeModel
     {
         public PermissionInChargeInfoModel data { get; set; }
-        public List<CategoryDepartmentViewModel> LstDepartment { get; set; }
-        public List<UserInfoGridModel> LstUser { get; set; }
-        public DAL.Entities.UserInfo UserSelected {get; set; }
+        public List<ProjectFinancialSummarDLLModel> LstProject { get; set; }
+        public List<CategoryActiveGroupViewModel> DM_NhomHoatDong { get; set; }
     }
 
     public class PermissionInChargeFilterModel : DataTableDefaultParamModel

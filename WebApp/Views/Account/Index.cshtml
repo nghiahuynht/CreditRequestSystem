@@ -79,7 +79,7 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-3">
+                       @*  <div class="col-sm-3">
                             <label>Nhóm quyền</label>
                             <select class="form-control" id="ddl-role">
                                 <option value="all">Tất cả</option>
@@ -90,7 +90,7 @@
                                     }
                                 }
                             </select>
-                        </div>
+                        </div> *@
                         <div class="col-sm-3">
                             <label>Tìm theo SĐT/tên/email</label>
                             <input type="text" class="form-control" id="txtkeyword" />
@@ -240,7 +240,7 @@
         function SearchUserInfo() {
 
             var dataSearch = {
-                RoleCode: $("#ddl-role").val(),
+                RoleCode: 'all',
                 Keyword: $("#txtkeyword").val()
             };
             GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
