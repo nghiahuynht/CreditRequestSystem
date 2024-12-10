@@ -180,5 +180,26 @@ namespace DAL.Service
             }
             return res;
         }
+
+        public async Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummarByPermission(int UserId)
+        {
+            var res = new List<ProjectFinancialSummarDLLModel>();
+            try
+            {
+                var param = new SqlParameter[]
+                  {
+                    new SqlParameter("@UserId", UserId)
+
+                  };
+
+
+                res = await dtx.ProjectFinancialSummarDLLModel.FromSql("EXEC sp_GetAllProductByPermissionUser @UserId", param).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
     }
 }

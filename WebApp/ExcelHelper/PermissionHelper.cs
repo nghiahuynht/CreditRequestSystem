@@ -13,6 +13,7 @@ namespace WebApp.ExcelHelper
             public const string Edit = "DSNV_EDIT";
             public const string Delete = "DSNV_DELETE";
             public const string Approve = "DSNV_APPROVE";
+            public const string PERMISSION = "DSNV_PERMISSION";
         }
           public static class KhaiBaoDuAn
         {
@@ -43,6 +44,13 @@ namespace WebApp.ExcelHelper
             public const string Edit = "MC_EDIT";
             public const string Delete = "MC_DELETE";
             public const string Approve = "MC_APPROVE";
+        }
+        public static class PhanQuyenNhanVienPhuTrach
+        {
+            public const string Add = "NVPT_ADD";
+            public const string Edit = "NVPT_EDIT";
+            public const string Delete = "NVPT_DELETE";
+            public const string Approve = "NVPT_APPROVE";
         }
 
     }

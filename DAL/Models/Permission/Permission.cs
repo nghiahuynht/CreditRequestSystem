@@ -43,6 +43,7 @@ namespace DAL.Models.Permission
         public PermissionInChargeInfoModel data { get; set; }
         public List<ProjectFinancialSummarDLLModel> LstProject { get; set; }
         public List<CategoryActiveGroupViewModel> DM_NhomHoatDong { get; set; }
+        public List<PermissionProjectViewModel> lstPermissionProject { get; set; }
     }
 
     public class PermissionInChargeFilterModel : DataTableDefaultParamModel
@@ -53,9 +54,19 @@ namespace DAL.Models.Permission
     public class PermissionInChargeCreateModel
     {
         public int Id { get; set; }
-        public int ProjecDetailId { get; set; }
+        public int ProjectId { get; set; }
         public string ProjectName { get; set; }
-        public int UserIdId { get; set; }
+        public int UserId { get; set; }
         public string UserName { get; set; }
+    }
+
+    public class PermissionProjectViewModel
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+        public int ProjectId { get; set; }
+        public string ProjectName { get; set; }
+     
     }
 }

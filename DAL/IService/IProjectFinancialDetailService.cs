@@ -17,6 +17,6 @@ namespace DAL.IService
         Task<List<PaymentInfoProjectDetailModel>> GetAllProfieForProjectId(int Id);
         Task<bool> DeletePaymentProfileOfProjectDetail(int ProjectDetailId, long ProfileId, string userName);
 
-        DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter);
+        DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter,int userId);
     }
 }

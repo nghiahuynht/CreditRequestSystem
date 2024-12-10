@@ -6,9 +6,10 @@
 
     </div>
     <div class="content-body">
-        <input hidden id="PermissionInChargeId" value="@ViewBag.PermissionInChargeId" />
-        <input hidden id="ProjectDetailId" value="@ViewBag.ProjectDetailId" />
-        <input hidden id="ProjectName" value="@ViewBag.ProjectName" />
+
+        <input hidden id="PermissionInChargeId" value="@Model.data.Id" />
+        <input hidden id="UserName" value="@ViewBag.UserName" />
+        <input hidden id="UserId" value="@ViewBag.UserId" />
         <div class="modal-body p-3">
             <form id="frmCreatePermissionInCharge">
 
@@ -42,13 +43,24 @@
                         <thead>
                             <tr>
                                 <th>Dự án</th>
-                                <th>Hoạt động</th>
                                 <th></th>
 
                             </tr>
                         </thead>
                         <tbody id="table_thong_tin_nhan_vien_phu_trach">
-                  
+                            @foreach (var item in Model.lstPermissionProject)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.ProjectName
+                                    </td>
+
+                                    <td style="text-align:center;">
+
+                                        <span class="fa fa-trash" onclick="RemovePermissionProjectById(@item.Id)"></span>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </fieldset>

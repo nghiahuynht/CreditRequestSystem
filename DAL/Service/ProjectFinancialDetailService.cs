@@ -186,12 +186,13 @@ namespace DAL.Service
             }
         }
 
-        public  DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter)
+        public  DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter,int userId)
         {
             var res = new DataTableResultModel<ProjectFinancialDetailTableModel>();
             try
             {
                 var param = new SqlParameter[] {
+                    new SqlParameter("@userId", userId),
                     new SqlParameter("@projectId", filter.ProjectId),
                     new SqlParameter("@activeGroupId", filter.ActiveGroupId),
                     new SqlParameter("@expenseId", filter.ExpenseId),
@@ -200,7 +201,7 @@ namespace DAL.Service
                     new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
                 };
                 ValidNullValue(param);
-                var lstData = dtx.ProjectFinancialDetailTableModel.FromSql("sp_GetProjectDetailPaging @projectId,@activeGroupId,@expenseId,@Start,@Length,@TotalRow OUT", param).ToList();
+                var lstData = dtx.ProjectFinancialDetailTableModel.FromSql("sp_GetProjectDetailPaging @userId,@projectId,@activeGroupId,@expenseId,@Start,@Length,@TotalRow OUT", param).ToList();
                 res.recordsTotal = Convert.ToInt16(param[5].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();

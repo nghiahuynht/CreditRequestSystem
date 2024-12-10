@@ -41,11 +41,7 @@ namespace WebApp.Controllers
             return View(par);
         }
 
-        public DataTableResultModel<PermissionInChargeTableModel> GetDataPermissonInCharge(PermissionInChargeFilterModel filter)
-        {
-            var res = _permissionService.GetDataPermissionInChargePaging(filter);
-            return res;
-        }
+       
 
         [HttpGet]
         public async Task<IActionResult> FormPermissionInCharge(int id=0,string fullName = "")
@@ -55,6 +51,8 @@ namespace WebApp.Controllers
             PermissionInChargeModel model = new PermissionInChargeModel();
             var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
             var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+            ViewBag.UserId = id;
+            ViewBag.UserName = fullName;
             if (id == 0)
             {
                 model.LstProject = lstProject;
@@ -64,9 +62,11 @@ namespace WebApp.Controllers
             }
             else
             {
+                var lstPermission= await _permissionService.GetPermissionProjectByUserId(id);
                 model.LstProject = lstProject;
                 model.DM_NhomHoatDong = dm_NhomHoatDong;
                 model.data = new PermissionInChargeInfoModel();
+                model.lstPermissionProject = lstPermission;
                 return View(model);
             }
 
@@ -81,6 +81,30 @@ namespace WebApp.Controllers
 
             res = await _permissionService.CreatePermissionInCharge(model, User.Identity.Name);
             return Json(res);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeletePermissionProjectById(int Id)
+        {
+            try
+            {
+                var user = await _permissionService.DeletePermissionProjectById(Id);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Thành công"
+                });
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
         }
         #endregion
     }

@@ -18,6 +18,7 @@ namespace DAL.Service
         {
             this.dtx = dtx;
         }
+       
 
         public async Task<SaveResultModel<object>> CreatePermissionInCharge(PermissionInChargeCreateModel model, string userName)
         {
@@ -28,9 +29,9 @@ namespace DAL.Service
                 var param = new SqlParameter[]
                {
                   new SqlParameter("@Id", model.Id),
-                    new SqlParameter("@ProjectDetailId", model.ProjecDetailId),
+                    new SqlParameter("@ProjectId", model.ProjectId),
                     new SqlParameter("@ProjectName", model.ProjectName),
-                    new SqlParameter("@UserId", model.UserIdId),
+                    new SqlParameter("@UserId", model.UserId),
                     new SqlParameter("@UserName", model.UserName),
                     new SqlParameter("@ActionBy", userName),
                     new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
@@ -40,7 +41,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePermissionInCharge @Id,@ProjectDetailId,@ProjectName,@UserId,@UserName,@ActionBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePermissionInCharge @Id,@ProjectId,@ProjectName,@UserId,@UserName,@ActionBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -51,29 +52,41 @@ namespace DAL.Service
             return res;
         }
 
-        public DataTableResultModel<PermissionInChargeTableModel> GetDataPermissionInChargePaging(PermissionInChargeFilterModel filter)
+        public async Task<bool> DeletePermissionProjectById(int Id)
         {
-            var res = new DataTableResultModel<PermissionInChargeTableModel>();
             try
             {
                 var param = new SqlParameter[] {
-                    new SqlParameter("@projectId", filter.ProjectId),
-                    new SqlParameter("@activeGroupId", filter.ActiveGroupId),
-                    new SqlParameter("@Start", filter.start),
-                    new SqlParameter("@Length", filter.length),
-                    new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
+                    new SqlParameter("@Id", Id)
+
                 };
                 ValidNullValue(param);
-                var lstData = dtx.PermissionInChargeTableModel.FromSql("sp_GetDataPermisonInChargePaging @projectId,@activeGroupId,@Start,@Length,@TotalRow OUT", param).ToList();
-                res.recordsTotal = Convert.ToInt16(param[4].Value);
-                res.recordsFiltered = res.recordsTotal;
-                res.data = lstData.ToList();
+               var rs= await dtx.Database.ExecuteSqlCommandAsync(@"EXEC DeletePermissionProjectById @Id", param);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<PermissionProjectViewModel>> GetPermissionProjectByUserId(int userId)
+        {
+            var res = new List<PermissionProjectViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@UserId",userId),
+                    
+                };
+                ValidNullValue(param);
+                 res = dtx.PermissionProjectViewModel.FromSql("sp_GetPermissionProjectByUserId @UserId", param).ToList();
+               
+                
             }
             catch (Exception ex)
             {
-                res.recordsTotal = 0;
-                res.recordsFiltered = 0;
-                res.data = new List<PermissionInChargeTableModel>();
+                
             }
 
             return res;
