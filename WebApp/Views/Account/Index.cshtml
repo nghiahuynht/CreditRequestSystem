@@ -1,7 +1,12 @@
-﻿
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
 @{
     ViewData["Title"] = "Danh sách nhân viên";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.DanhSachNhanVien.Delete) ;
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.DanhSachNhanVien.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains( PermissionHelper.DanhSachNhanVien.Edit);
 }
 @model DAL.Models.UserInfo.UserParViewModel
 @section styles{
@@ -92,7 +97,11 @@
                         </div>
                         <div class="col-sm-3">
                             <button id="btn-search" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
-                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            @if (isAdd == true)
+                            {
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            }
+
                         </div>
 
                     </div>
@@ -128,11 +137,16 @@
 <!--modal add-->
 <div class="modal modal-blur fade" id="modal_add_nv" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl" id="dailog_nv">
-       
+
     </div>
 </div>
 
+<!--modal phan quyền-->
+<div class="modal modal-blur fade" id="modal_permission_user" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_permission_user">
 
+    </div>
+</div>
 
 
 @section scripts{
@@ -146,6 +160,8 @@
     <script src="~/plugins/mdb-treeview/wow.js"></script>
     <script src="~/js/jquery.validate.js"></script>
     <script>
+        const isEdit = @isEdit.ToString().ToLower();
+      const isDelete = @isDelete.ToString().ToLower();
         var tableId = "#table-userinfo";
         var ajaxURL = "/Account/SearchUserInfo";
         var columnData = [
@@ -202,10 +218,22 @@
 
         });
         function RenderTableAction(userId) {
-            var html = `<div class='div-table-action'>
-                                        <i class='fa fa-edit' onclick='showModalCreateNV(${userId} )'></i>
-                                        <i class='fa fa-trash' onclick='DeleteNV(${userId})' title='xóa'></i>
-                                </div>`;
+            let html = `<div class='div-table-action'>`;
+
+            // Check if Edit action should be added
+            if (isEdit) {
+                html += `<i class='fa fa-edit' onclick='showModalCreateNV(${userId})' title='Sửa'></i>&nbsp`;
+            }
+
+            // Check if Delete action should be added
+            if (isDelete) {
+                html += `<i class='fa fa-trash' onclick='DeleteNV(${userId})' title='Xóa'></i>`;
+            }
+
+            // Always show Permission action
+            html += `<i class='fas fa-user-shield' onclick='showModalPermissionUser(${userId})' title='Phân quyền'></i>`;
+            html += `</div>`;
+
             return html;
         }
 
@@ -254,7 +282,7 @@
                         Title: $("#a_chuc_danh").val(),
                         IsActive: true,
                     },
-                    RoleSelected: $("#Role").val(),
+                    RoleSelected: '',
                     DepartmentSelected: $("#a_department").val(),
                     LstRoles: [],
                     LstDepartment: [],
@@ -295,9 +323,6 @@
                     "email": {
                         required: true,
                     },
-                    "role": {
-                        required: true,
-                    },
                     "department": {
                         required: true,
                     }
@@ -317,7 +342,7 @@
         }
 
         function closeModal_CreateUser() {
-         
+
             $("#modal_add_nv").modal("hide")
 
         }
@@ -343,12 +368,208 @@
                         success: function (response) {
                             if (response.success) {
 
-                                toastr.success('Nhóm hoạt động đã được xóa thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                                toastr.success('Xóa nhân viên thành công!', 'Thành công', { positionClass: "toast-top-center" });
                                 SearchUserInfo();
                             }
                             else {
                                 console.error(response);
-                                toastr.error('Có lỗi xảy ra khi xóa nhóm hoạt động !', 'Lỗi', { positionClass: "toast-top-center" });
+                                toastr.error('Có lỗi xảy ra khi xóa nhân viên !', 'Lỗi', { positionClass: "toast-top-center" });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Có lỗi khi tải nội dung modal: ", error);
+                            alert("Lỗi tải modal, vui lòng thử lại sau.");
+                        }
+                    });
+
+                }
+            });
+        }
+
+        //----PHÂN QUYÊN USER----
+        function showModalPermissionUser(id) {
+            $.ajax({
+                url: '/account/FormPermissonUser/' + id,
+                type: 'GET',
+                success: function (response) {
+                    // Chèn HTML trả về vào phần tử có id "dailog_nv"
+                    $('#dailog_permission_user').html(response);
+
+                    // Hiển thị modal
+                    $("#modal_permission_user").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function closeModal_CreatePerssion() {
+
+            $("#modal_permission_user").modal("hide")
+
+        }
+
+        function CreatePerssion() {
+            if (validatePermissionUser() == true) {
+                // Get selected menu
+                const menuElement = document.getElementById('menu');
+                const menuId = menuElement.value; // Get the selected menu's value (Id)
+                const menuText = menuElement.options[menuElement.selectedIndex].text; // Get the selected menu's text (Id)
+                const menuPrefix = menuElement.options[menuElement.selectedIndex]?.getAttribute('data-prefix'); // Get the prefix attribute
+
+                //// Get all checked checkboxes
+                //const checkedPermissions = Array.from(document.querySelectorAll('input[name="permissions"]:checked'))
+                //    .map(checkbox => menuPrefix+"_"+checkbox.value);
+                // Get all checked checkboxes with their value and text
+                const checkedPermissions = Array.from(document.querySelectorAll('input[name="permissions"]:checked'))
+                    .map(checkbox => ({
+                        Permission: `${menuPrefix}_${checkbox.value}`, // Prefix and value
+                        PermissionName: document.querySelector(`label[for="${checkbox.id}"]`).innerText
+                    }));
+
+
+
+                // Example: Sending data to a server via AJAX
+                const userId = document.getElementById('a_userId').value; // Get the user ID
+                const dataPost = {
+                    userId: userId,
+                    menuId: menuId,
+                    menuPrefix: menuPrefix,
+                    permission: checkedPermissions
+                };
+                // Log or use the data as needed
+                console.log('Menu ID:', dataPost);
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/Account/CreatePermissionUser",
+                    dataType: 'json',
+                    data: JSON.stringify(dataPost),
+                    beforeSend: function () {
+
+                    },
+                    success: function (res) {
+                        if (res.isSuccess === true) {
+                            toastr.success('Phân quyền thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            const permissionNames = checkedPermissions.map(p => p.PermissionName).join(',');
+                            var html =`<tr>
+                                        <td>
+                                            ${menuText}
+                                        </td>
+                                        <td>
+                                            ${permissionNames}
+                                        </td>
+                                        <td style="text-align:center;">
+
+                                            <span class="fa fa-trash" onclick="RemovePermissionByUserIdMenuId(${res.longValReturn})"></span>
+                                        </td>
+                                     </tr>`
+                            $('#table_thong_tin_quyen_theo_menu').append(html);
+                            //$("#modal_permission_user").modal("hide")
+                        } else {
+                            toastr.error('Có lỗi khi phân quyền. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+
+                    }
+                });
+            }
+        }
+        function validatePermissionUser() {
+            var resultValid = $("#frmPermissionUser").validate({
+                rules: {
+                    "a_menu": {
+                        required: true,
+                    },
+
+
+                },
+                messages: {
+                    "a_menu": "Menu không được để trống!",
+
+                },
+
+            }).form();
+
+            return resultValid;
+        }
+
+        function handelchangeMenu() {
+            // Get selected menu
+            const menuElement = document.getElementById('menu');
+            const menuId = menuElement.value;
+            const userId = $('#a_userId').val();
+            $.ajax({
+                url: '/account/GetDetailPermission/',
+                data: {
+                    MenuId: menuId,
+                    UserId: userId
+                },
+                type: 'GET',
+                success: function (response) {
+                    // Select all checkboxes
+                    // Clear all checkboxes before setting new ones
+                    document.querySelectorAll('input[name="permissions"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    if (response != null && response.length > 0) {
+                        response.forEach((item) => {
+                            switch (item.permissionName) {
+                                case 'Thêm':
+                                    document.querySelector('input#them.form-check-input').checked = true
+                                    break;
+                                case 'Xóa':
+                                    document.querySelector('input#xoa.form-check-input').checked = true
+                                    break;
+                                case 'Sửa':
+                                    document.querySelector('input#sua.form-check-input').checked = true
+                                    break;
+                                case 'Duyệt':
+                                    document.querySelector('input#duyet.form-check-input').checked = true
+                                    break;
+
+                            }
+                        })
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function RemovePermissionByUserIdMenuId(menuId) {
+            const userId = $('#a_userId').val();
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // call ajax delete
+                    $.ajax({
+                        url: '/Account/DeletePermissionByUserIdMenuId',
+                        type: 'GET',
+                        data: {
+                            MenuId: menuId,
+                            UserId: userId
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                toastr.success('Xóa phân quyền thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                                $("#modal_permission_user").modal("hide")
+                            }
+                            else {
+                                console.error(response);
+                                toastr.error('Có lỗi xảy ra khi xóa phân quyền !', 'Lỗi', { positionClass: "toast-top-center" });
                             }
                         },
                         error: function (xhr, status, error) {

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace WebApp.Controllers
 {
     public class AccountController : Controller
@@ -37,7 +38,7 @@ namespace WebApp.Controllers
             return View(model);
         }
         [HttpPost]
-        public IActionResult Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginModel model)
         {
             string failedAlert = string.Empty;
             ClaimsIdentity identity = null;
@@ -49,11 +50,19 @@ namespace WebApp.Controllers
                 if (userInfo != null)
                 {
                     string roleName = userService.GetRoleByUser(userInfo.UserName);
+                    string permission = "";
+                    var dataPer = await userService.GetPermissionMenuByUserId(userInfo.Id);
+                    foreach(var per in dataPer)
+                    {
+                        permission += ","+per.Permissions;  
+                    };   
                     identity = new ClaimsIdentity(new[] {
                         new Claim(ClaimTypes.Name,model.UserName),
                         new Claim("FullName",userInfo.FullName),
                         new Claim("DepartmentId",userInfo.DepartmentId.HasValue?userInfo.DepartmentId.Value.ToString():"0"),
-                        new Claim(ClaimTypes.Role,roleName)
+                        new Claim(ClaimTypes.Role,roleName),
+                        new Claim("UserId",userInfo.Id.ToString()),
+                        new Claim("Permission",permission)
                     },CookieAuthenticationDefaults.AuthenticationScheme);
                     IsAuthenticated = true;
                 }
@@ -273,5 +282,76 @@ namespace WebApp.Controllers
         }
         #endregion
 
+
+        #region Permission
+        public async Task<IActionResult> FormPermissonUser(int id = 0)
+        {
+            var viewModel = new PermissionUserParModel();
+            var lstMenu = await userService.LstMenu();
+            var lstPermssionMenu = await userService.GetPermissionMenuByUserId(id);
+            lstMenu = lstMenu.FindAll(x => x.IsActive == true && x.Parent > 0 && x.IsActive == true);
+            viewModel.LstMenu = lstMenu;
+            viewModel.LstPermissionMenu = lstPermssionMenu;
+            viewModel.UserId = id;
+            return View(viewModel);
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreatePermissionUser([FromBody] PermissionUserModel model)
+        {
+            var res = new SaveResultModel<object>();
+            // remove trước khi tạo
+            var rsDelete = await userService.DeletePermissionByUserIdMenuId(model.UserId, model.MenuId);
+            if(rsDelete == false)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Lỗi xóa permission trước khi lưu mới";
+                return Json(res);
+            }    
+            res = await userService.CreatePermissionUser(model, User.Identity.Name);
+            
+            return Json(res);
+        }
+        
+        [HttpGet]
+        public async Task<JsonResult> GetDetailPermission(int MenuId,int UserId)
+        {
+            
+
+            var res = await userService.GetPermissionByUserIdMenuId(UserId, MenuId);
+            
+            return Json(res);
+        }    
+        
+        [HttpGet]
+        public async Task<JsonResult> DeletePermissionByUserIdMenuId(int MenuId,int UserId)
+        {
+
+
+            try
+            {
+                
+                var res = await userService.DeletePermissionByUserIdMenuId(UserId, MenuId);
+                return Json(new
+                {
+                    success = res,
+                    message = res == true ? "Xóa thành công." : "Xóa thất bại"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+
+        #endregion
     }
 }

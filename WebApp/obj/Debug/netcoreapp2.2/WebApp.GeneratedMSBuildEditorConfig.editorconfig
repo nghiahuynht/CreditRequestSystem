@@ -1,5 +1,3 @@
 is_global = true
 build_property.RootNamespace = WebApp
-build_property.ProjectDir = F:\Projects\OnGIT\CreditRequestSystem\WebApp\
-build_property.EnableComHosting = 
-build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.ProjectDir = D:\HOME\CreditRequestSystem\WebApp\

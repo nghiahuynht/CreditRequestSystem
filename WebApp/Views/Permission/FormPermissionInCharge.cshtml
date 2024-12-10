@@ -1,0 +1,84 @@
+﻿
+@model DAL.Models.Permission.PermissionInChargeModel
+<div class="modal-content">
+    <div class="modal-header p-2">
+        <h5 class="modal-title">Phân quyền nhân viên phụ trách</h5>
+
+    </div>
+    <div class="content-body">
+        <input hidden id="PermissionInChargeId" value="@ViewBag.PermissionInChargeId" />
+        <input hidden id="ProjectDetailId" value="@ViewBag.ProjectDetailId" />
+        <input hidden id="ProjectName" value="@ViewBag.ProjectName" />
+        <div class="modal-body p-3">
+            <form id="frmCreatePermissionInCharge">
+
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin phân quyên nhân viên phụ trách</legend>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Phòng ban: <span class="text-red">*</span></label>
+                            <select class="form-control" id="a_phong_ban" name="phong_ban" onchange="handlePhongBanChange()">
+                                <option value=""></option>
+                                @{
+                                    foreach (var item in Model.LstDepartment)
+                                    {
+                                        string selected = item.Id == Model.UserSelected.DepartmentId ? "selected='selected'" : "";
+                                        <option value="@item.Id" @(selected)>@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 ">
+                            <label class="form-label col-auto">Nhân viên <span class="text-red">*</span></label>
+                            <select class="form-control" id="a_nhan_vien" name="nhan_vien" onchange="handleNhanVienChange()">
+                                <option value=""></option>
+                                @{
+                                    foreach (var item in Model.LstUser)
+                                    {
+                                        string selected = item.Id == Model.UserSelected.Id ? "selected='selected'" : "";
+                                        <option value="@item.Id" data-email="@item.Email" data-phone="@item.Phone" data-title="@item.Title" @(selected)>@item.FullName</option>
+                                    }
+                                }
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="row" id="region_tt_nhanvien" style="display:none">
+                        <div class="col-md-6">
+                            <label class="form-label">Chức vụ:</label>
+                            <input class="form-control"  id="a_chuc_vu" name="chuc_vu" value="" readonly />
+                        </div>
+                        <div class="col-md-6 ">
+                            <label class="form-label">Email:</label>
+                            <input class="form-control" id="a_email_nv" name="email_nv" value="" readonly />
+
+                        </div>
+
+                    </div>
+                </fieldset>
+
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer p-0">
+        <button type="button" class="btn btn-primary btn-footer" id="btnLuuTaoDot" onclick="CreatePermissionInCharge();"><i class="fas fa-save me-1"></i>&nbsp;Lưu</button>
+        <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_PermissionInCharge();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>&nbsp;Đóng</button>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        if ($("#a_active_group_id").val() == "0") {
+            var projectCode = generateCode("NHD");
+            if (projectCode != "") {
+                $('#a_code').val(projectCode);
+                // $('#a_code').prop('readonly', true);
+            }
+        }
+        else {
+            // $('#a_code').prop('readonly', true);
+        }
+    });
+</script>

@@ -40,3 +40,16 @@ F:\Projects\OnSVN\IchiWeb\DAL\obj\Release\netcoreapp2.2\DAL.AssemblyInfo.cs
 F:\Projects\OnSVN\IchiWeb\DAL\obj\Release\netcoreapp2.2\DAL.dll
 F:\Projects\OnSVN\IchiWeb\DAL\obj\Release\netcoreapp2.2\DAL.pdb
 F:\Projects\OnSVN\IchiWeb\DAL\obj\Release\netcoreapp2.2\DAL.csprojAssemblyReference.cache
+D:\HOME\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.deps.json
+D:\HOME\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.runtimeconfig.json
+D:\HOME\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.runtimeconfig.dev.json
+D:\HOME\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.dll
+D:\HOME\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.pdb
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.csproj.AssemblyReference.cache
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.dll
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.pdb
+D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.genruntimeconfig.cache

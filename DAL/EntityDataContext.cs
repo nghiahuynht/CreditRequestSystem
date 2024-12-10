@@ -61,6 +61,8 @@ namespace DAL
         public DbSet<CategoryExpenseTableViewModel> CategoryExpenseTableViewModel { get; set; }
         public DbSet<ProjectOverviewModel> ProjectOverviewModel { get; set; }
         public DbSet<PermissionInChargeTableModel> PermissionInChargeTableModel { get; set; }
+        public DbSet<PermissionMenuModel> PermissionMenuModel { get; set; }
+        public DbSet<PermissionMenuInfoModel> PermissionMenuInfoModel { get; set; }
 
 
 
@@ -77,6 +79,7 @@ namespace DAL
             modelBuilder.Entity<RoleInfo>().HasKey(o => o.Code);
             modelBuilder.Entity<Unit>().HasKey(o => o.Code);
             modelBuilder.Entity<PermissionInChargeTableModel>().HasKey(o => o.Id);
+            modelBuilder.Entity<PermissionMenuModel>().HasKey(o => o.MenuId);
         }
 
 

@@ -12,5 +12,6 @@ namespace DAL.Entities
         public string URL { get; set; }
         public int Priority { get; set; }
         public bool IsActive { get; set; }
+        public string MenuPrefix { get; set; }
     }
 }

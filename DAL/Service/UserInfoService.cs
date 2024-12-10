@@ -141,22 +141,37 @@ namespace DAL.Service
         }
 
 
-        public async Task<List<Menu>> LstMenuNavigationByRole(string roleCode)
+        public async Task<List<Menu>> LstMenuNavigationByRole(int UserId)
         {
-            var res = await (from menu in dtx.Menu
-                             join menurole in dtx.MenuRole on menu.Id equals menurole.MenuId
-                             where menurole.RoleCode == roleCode && menu.IsActive
-                             select new Menu
-                             {
-                                 Id = menu.Id,
-                                 Name = menu.Name,
-                                 MenuIcon = menu.MenuIcon,
-                                 URL = menu.URL,
-                                 Priority = menu.Priority,
-                                 Parent = menu.Parent
-                             }).ToListAsync();
-            return res;
+            //var res1 = await (from menu in dtx.Menu
+            //                 join menurole in dtx.MenuRole on menu.Id equals menurole.MenuId
+            //                 where menurole.RoleCode == "Admin" && menu.IsActive
+            //                 select new Menu
+            //                 {
+            //                     Id = menu.Id,
+            //                     Name = menu.Name,
+            //                     MenuIcon = menu.MenuIcon,
+            //                     URL = menu.URL,
+            //                     Priority = menu.Priority,
+            //                     Parent = menu.Parent
+            //                 }).ToListAsync();
+           
+            var res = new List<Menu>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@UserId", UserId),
+                };
+                ValidNullValue(param);
 
+              res=  await dtx.Menu.FromSql(@"EXEC sp_GetMenuByUserId @UserId", param).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
         }
 
 
@@ -267,6 +282,129 @@ namespace DAL.Service
                 
             }
             return res;
+        }
+
+        public async Task<SaveResultModel<object>> CreatePermissionUser(PermissionUserModel model,string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                if(model.Permission.Count() == 0)
+                {
+                    var param = new SqlParameter[]
+                          {
+                            new SqlParameter("@UserId", model.UserId),
+                            new SqlParameter("@MenuId", model.MenuId),
+                            new SqlParameter("@MenuPrefix", model.MenuPrefix),
+                            new SqlParameter("@Permission", ""),
+                            new SqlParameter("@PermissionName", ""),
+                            new SqlParameter("@ActionBy", userName),
+                            new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+                          };
+
+
+
+                    ValidNullValue(param);
+                    await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePermissionUser @UserId,@MenuId,@MenuPrefix,@Permission,@PermissionName,@ActionBy,@NewId OUT", param);
+                    res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+                }   
+                else
+                {
+                    foreach (var permission in model.Permission)
+                    {
+                        var param = new SqlParameter[]
+                          {
+                            new SqlParameter("@UserId", model.UserId),
+                            new SqlParameter("@MenuId", model.MenuId),
+                            new SqlParameter("@MenuPrefix", model.MenuPrefix),
+                            new SqlParameter("@Permission", permission.Permission),
+                            new SqlParameter("@PermissionName", permission.PermissionName),
+                            new SqlParameter("@ActionBy", userName),
+                            new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+                          };
+
+
+
+                        ValidNullValue(param);
+                        await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePermissionUser @UserId,@MenuId,@MenuPrefix,@Permission,@PermissionName,@ActionBy,@NewId OUT", param);
+                        res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+                    }
+                }    
+                
+               
+            }
+
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+        public async Task<List<PermissionMenuModel>> GetPermissionMenuByUserId(int UserId)
+        {
+            var res = new List<PermissionMenuModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@UserId", UserId),
+                   
+                };
+                ValidNullValue(param);
+                res = dtx.PermissionMenuModel.FromSql("sp_GetPermissionMenuByUserId @UserId", param).ToList();
+               
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
+            return res;
+        }
+
+        public async Task<List<PermissionMenuInfoModel>> GetPermissionByUserIdMenuId(int UserId, int MenuId)
+        {
+            var res = new List<PermissionMenuInfoModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@MenuId", MenuId),
+
+                };
+                ValidNullValue(param);
+                res = dtx.PermissionMenuInfoModel.FromSql("sp_GetPermissionByUserIdMenuId @UserId,@MenuId", param).ToList();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return res;
+        }
+
+        public  async Task<bool> DeletePermissionByUserIdMenuId(int UserId, int MenuId)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@UserId", UserId),
+                    new SqlParameter("@MenuId", MenuId),
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeletePermissionByUserIdMenuId @UserId,@MenuId", param);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

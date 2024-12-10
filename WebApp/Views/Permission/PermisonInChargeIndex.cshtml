@@ -1,0 +1,384 @@
+﻿
+@{
+    ViewData["Title"] = "Danh sách phân quyền nhân viên chịu trách nhiệm ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model DAL.Models.Permission.PermissionInChargeParModel
+@section styles{
+
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .div-member {
+            margin-left: 20px;
+        }
+
+            .div-member .nav .nav-link {
+                margin: 4px 0 !important;
+            }
+
+        .card .nav.flex-column > li {
+            border-bottom: 0px;
+        }
+
+        .span-team-name {
+            font-weight: bold
+        }
+
+        .i-edit-saleteam {
+            color: #555;
+        }
+
+        .i-delete-saleteam {
+            color: #ff0000;
+        }
+
+        .typeahead {
+            width: 100% !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                            <label>Dự án</label>
+                            <select class="form-control" id="dll-project">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model.LstProject)
+                                    {
+                                        <option value="@opt.Id">@opt.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Hoạt động</label>
+                            <select class="form-control" id="dll-activegroup">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model.LstActiveGroup)
+                                    {
+                                        <option value="@opt.Id">@opt.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="col-sm-3">
+                            <button onclick="SearchPermissionInCharge()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreatePermissionInCharge(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body ">
+                    <table class="table table-bordered table-hover dataTable" id="table-permission-in-charge" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Tên dự án</th>
+                                <th>Tên hoạt động</th>
+                                <th>Tổng tiền</th>
+                                <th>Nhân viên phụ trách</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_permission_incharge" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_permission_incharge">
+
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script src="~/plugins/mdb-treeview/forms-free.js"></script>
+    <script src="~/plugins/mdb-treeview/scrolling-navbar.js"></script>
+    <script src="~/plugins/mdb-treeview/treeview.js"></script>
+    <script src="~/plugins/mdb-treeview/wow.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script>
+        var tableId = "#table-permission-in-charge";
+        var ajaxURL = "/Permission/GetDataPermissonInCharge";
+        var columnData = [
+            { "data": "projectId", visible: false },
+            { "data": "projectName" },
+            { "data": "activeGroupName" },
+            {
+                "data": "totalAmount", "render": function (data, type, row, meta) {
+                    return RenderNumerFormat(data);
+                }
+            },
+            { "data": "userName" },
+            {
+                "data": "projectId", "render": function (data, type, row, meta) {
+                    return RenderTableAction(row.projectName, row.projectDetailId,0);
+                }
+            },
+
+
+        ];
+
+        var arrPaymentProfile = [];
+
+
+        $(document).ready(function () {
+
+            SearchPermissionInCharge();
+
+
+        });
+        function RenderTableAction(projectName,projectDetailId,Id) {
+            var html = `
+                            <div class='div-table-action'>
+                                  <i class='fa fa-key' onclick='showModalPermissionInCharge("${projectName}", ${projectDetailId}, ${Id})' title='phân quyền'></i>
+
+                            </div>`;
+            return html;
+
+        }
+
+        function SearchPermissionInCharge() {
+
+            var dataSearch = {
+                ProjectId: $("#dll-project").val(),
+                ActiveGroupId: $("#dll-activegroup").val(),
+                ExpenseId: $("#dll-expense").val(),
+
+            };
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
+
+        }
+
+        function showModalPermissionInCharge(projectName, projectDetailId, Id) {
+            $.ajax({
+                url: `/Permission/FormPermissionInCharge?ProjectName=${encodeURIComponent(projectName)}&ProjectDetailId=${projectDetailId}&PermissionInChargeId=${Id}`,
+                type: 'GET',
+                success: function (response) {
+                    $('#dailog_permission_incharge').html(response);
+
+                    // Hiển thị modal
+                    $("#modal_permission_incharge").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function CreatePermissionInCharge() {
+
+            var isValidateDetail = validatePermissionInCharge();
+            if (isValidateDetail == true) {
+              
+                var dataPost = {
+                    Id: parseInt($("#PermissionInChargeId").val()),
+                    ProjecDetailId: parseInt($("#ProjectDetailId").val()),
+                    ProjectName: $("#ProjectName").val(),
+                    UserIdId: parseInt($('#a_nhan_vien').val()),
+                    UserName: $("#a_nhan_vien :selected").text()
+                };
+                // Gửi yêu cầu AJAX
+                console.log("dataPost", dataPost);
+                $.ajax({
+                    url: '/Permission/CreatePermissionInCharge',
+                    type: 'POST',
+                    data: JSON.stringify(dataPost),
+                    contentType: 'application/json',
+                    success: function (response) {
+
+                        if (response.isSuccess) {
+
+                            toastr.success('Phân quyền nhân viên phụ trách thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            SearchPermissionInCharge();
+                            $('#modal_permission_incharge').modal("hide");
+
+                        } else {
+                            toastr.error('Có lỗi khi phân quyền nhân viên phụ trách. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
+                        alert('Có lỗi khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+
+        function validatePermissionInCharge() {
+            var resultValid = $("#frmCreatePermissionInCharge").validate({
+                rules: {
+                    "phong_ban": {
+                        required: true,
+                    },
+                    "nhan_vien": {
+                        required: true,
+                    }
+
+                },
+                messages: {
+                    "phong_ban": "Phòng ban không được bỏ trống!",
+                    "nhan_vien": "Nhân viên không được bỏ trống!"
+                },
+
+            }).form();
+
+            return resultValid;
+
+        }
+
+        function closeModal_PermissionInCharge() {
+
+            $("#modal_permission_incharge").modal("hide")
+
+        }
+
+
+
+        function handlePhongBanChange() {
+            var id = $('#a_phong_ban').val();
+            $.ajax({
+                url: '/Account/GetUserByDepartment/' + id,
+                type: 'GET',
+                success: function (response) {
+                    if (response.isSuccess == true) {
+                        var htmlbody = "<option></option>";
+                        response.data.forEach((item) => {
+                            htmlbody += ` <option value="${item.id}" data-email="${item.email}" data-phone="${item.phone}" data-title="${item.title}" >${item.fullName}</option>`
+                        })
+                        $('#a_nhan_vien').html(htmlbody);
+                        $('#region_tt_nhanvien').hide();
+                    }
+                    else {
+                        console.error("Có lỗi khi tải dữ liệu: ", response);
+                        toastr.error('Có lỗi khi tải dữ liệu  !', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function handleNhanVienChange() {
+            var selectedOption = $('#a_nhan_vien').find(':selected'); // Get the selected option
+            var email = selectedOption.data('email'); // Get the data-email attribute
+            var title = selectedOption.data('title'); // Get the data-title attribute
+
+            // Set the values of the input fields
+            $('#a_email_nv').val(email);
+            $('#a_chuc_vu').val(title);
+
+
+            $('#region_tt_nhanvien').show();
+        }
+
+
+        function SaveProfileForProjectDetail(profileId) {
+
+            // Find the row that contains the clicked icon
+            var row = $(`span.fa-check[onclick="SaveProfileForProjectDetail(${profileId})"]`).closest('tr');
+
+            // Retrieve values from the inputs in the row
+            var codeInput = row.find('input[name="ma_hs_thanh_toan"]');
+            var nameInput = row.find('input[name="ten_hs_thanh_toan"]');
+            var notesInput = row.find('input[name="ghi_chu_hs_thanh_toan"]');
+            var fileInput = row.find('input[name="tep_dinh_kem"]');
+            var fileAttach = row.find('input[name="tep_dinh_kem_hs_thanh_toan"]');
+            var code = codeInput.val();
+            var name = nameInput.val();
+
+            // Validation messages
+            var errors = [];
+
+            if (!code || code.trim() === "") {
+                errors.push("Mã không được để trống!");
+            }
+            if (!name || name.trim() === "") {
+                errors.push("Tên không được để trống!");
+            }
+
+            // Display validation errors if any
+            if (errors.length > 0) {
+                toastr.error(errors.join("<br>"), 'Lỗi', { positionClass: "toast-top-center" });
+                return;
+            }
+
+            // Prepare the data for submission
+            var dataPost = {
+                Id: 0,
+                ProjectDetailId: 0,
+                ActiveGroupId: $("#a_nhom_hoat_dong").val(),
+                ProfileId: profileId,
+                PaymentInfoCode: code.trim(),
+                PaymentInfoName: name.trim(),
+                Notes: row.find('input[id="a_ghi_chu_hs_thanh_toan"]').val()?.trim(),
+                FileAttach: fileAttach.val() == null ? 0 : fileAttach.val(),
+                IsUpdate: false,
+            };
+            arrPaymentProfile.push(dataPost);
+            // Set inputs to readonly
+            codeInput.prop('readonly', true);
+            nameInput.prop('readonly', true);
+            notesInput.prop('readonly', true);
+
+            // Remove the onclick event from the save icon
+            row.find('span.fa-check').remove();
+            toastr.success('Thông tin hồ sơ đã tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+            // Log the data (optional for debugging)
+
+
+        }
+
+
+
+
+    </script>
+}
+
+
