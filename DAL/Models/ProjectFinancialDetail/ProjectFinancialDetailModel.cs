@@ -43,6 +43,7 @@ namespace DAL.Models.ProjectFinancialDetail
         public long Id { get; set; }
         public int ProjectDetailId { get; set; }
         public int ActiveGroupId { get; set; }
+        public int ExpenseId { get; set; }
         public long ProfileId { get; set; }
         public int? FileAttach { get; set; }
         public string PaymentInfoCode { get; set; }

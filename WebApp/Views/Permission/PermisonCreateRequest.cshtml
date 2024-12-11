@@ -1,0 +1,361 @@
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
+@{
+    ViewData["Title"] = "Danh sách phân quyền nhân viên tạo yêu cầu thanh toán";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanQuyenNhanVienTaoYeuCau.Add);
+}
+@model DAL.Models.UserInfo.UserParViewModel
+@section styles{
+
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .div-member {
+            margin-left: 20px;
+        }
+
+            .div-member .nav .nav-link {
+                margin: 4px 0 !important;
+            }
+
+        .card .nav.flex-column > li {
+            border-bottom: 0px;
+        }
+
+        .span-team-name {
+            font-weight: bold
+        }
+
+        .i-edit-saleteam {
+            color: #555;
+        }
+
+        .i-delete-saleteam {
+            color: #ff0000;
+        }
+
+        .typeahead {
+            width: 100% !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                            <label>Phòng ban</label>
+                            <select class="form-control" id="ddl-role">
+                                <option value="all">Tất cả</option>
+                                @{
+                                    foreach (var opt in Model.LstDepartment)
+                                    {
+                                        <option value="@opt.Id">@opt.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Tìm theo SĐT/tên/email</label>
+                            <input type="text" class="form-control" id="txtkeyword" />
+                        </div>
+
+                        <div class="col-sm-3">
+                            <button onclick="SearchPermissionInCharge()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body ">
+                    <table class="table table-bordered table-hover dataTable" id="table-permission-create-request" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th width="200px">Tên đầy đủ</th>
+                                <th>SDT</th>
+                                <th>Email</th>
+                                <th width="150px">Chức danh</th>
+                                <th width="100px">Hoạt động</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_permission_create_request" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_permission_create_request">
+
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script src="~/plugins/mdb-treeview/forms-free.js"></script>
+    <script src="~/plugins/mdb-treeview/scrolling-navbar.js"></script>
+    <script src="~/plugins/mdb-treeview/treeview.js"></script>
+    <script src="~/plugins/mdb-treeview/wow.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script>
+        const isAdd = @isAdd.ToString().ToLower();
+        var tableId = "#table-permission-in-charge";
+        var ajaxURL = "/Account/SearchUserInfo";
+        var columnData = [
+            { "data": "id", visible: false },
+            { "data": "fullName" },
+            {
+                "data": "phone", "render": function (data, type, row, meta) {
+                    if (data == "NULL" || data == null) {
+                        return ""
+                    }
+                    else {
+                        return data
+                    }
+
+                }
+            },
+            { "data": "email" },
+            { "data": "title" },
+
+            {
+                "data": "isActive", "render": function (data, type, row, meta) {
+                    if (data == "Yes") {
+                        return "<i class='text-success' >Hoạt động</i>"
+                    }
+                    else {
+                        return "<i class='text-danger' >Ngưng hoạt động</i>"
+                    }
+                }
+            },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(row.id, row.fullName);
+                }
+            },
+
+
+        ];
+
+        var arrPaymentProfile = [];
+
+
+        $(document).ready(function () {
+
+            SearchPermissionInCharge();
+
+
+        });
+        function RenderTableAction(id, fullname) {
+            let html = `<div class='div-table-action'>`;
+
+            // Check if add action should be added
+            if (isAdd) {
+                html += `<i class='fa fa-key' onclick='showModalPermissionCreateRequest("${id}", "${fullname}")' title='phân quyền'></i>&nbsp`;
+            }
+
+            html += `</div>`;
+            return html;
+           
+
+        }
+
+        function SearchPermissionInCharge() {
+
+            var dataSearch = {
+                RoleCode: 'all',
+                Keyword: $("#txtkeyword").val()
+
+            };
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
+
+        }
+
+        function showModalPermissionCreateRequest(id, fullName) {
+            $.ajax({
+                url: `/Permission/FormPermissionCreateRequest?id=${encodeURIComponent(id)}&fullName=${fullName}`,
+                type: 'GET',
+                success: function (response) {
+                    $('#dailog_permission_create_request').html(response);
+
+                    // Hiển thị modal
+                    $("#modal_permission_create_request").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        function CreatePermissionCreateRequest() {
+
+            var isValidateDetail = validatePermissionInCharge();
+            if (isValidateDetail == true) {
+
+                var dataPost = {
+                    Id: parseInt($("#PermissionInChargeId").val()),
+                    ProjectId: parseInt($("#a_du_an").val()),
+                    ProjectName: $("#a_du_an option:selected").text(),
+                    UserId: parseInt($('#UserId').val()),
+                    UserName: $("#UserName").val()
+                };
+                // Gửi yêu cầu AJAX
+                console.log("dataPost", dataPost);
+                $.ajax({
+                    url: '/Permission/CreatePermissionInCharge',
+                    type: 'POST',
+                    data: JSON.stringify(dataPost),
+                    contentType: 'application/json',
+                    success: function (response) {
+
+                        if (response.isSuccess) {
+
+                            toastr.success('Phân quyền nhân viên phụ trách thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            var html = `<tr>
+                                            <td>
+                                                ${dataPost.ProjectName}
+                                            </td>
+
+                                            <td style="text-align:center;">
+
+                                                <span class="fa fa-trash" onclick="RemovePermissionProjectById(${response.longValReturn})"></span>
+                                            </td>
+                                         </tr>`
+                            $('#table_thong_tin_nhan_vien_phu_trach').append(html);
+
+
+                        } else {
+                            toastr.error('Có lỗi khi phân quyền nhân viên phụ trách. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý khi có lỗi xảy ra trong quá trình gọi AJAX
+                        alert('Có lỗi khi gửi yêu cầu!');
+                    }
+                });
+            }
+        }
+
+        function validatePermissionInCharge() {
+            var resultValid = $("#frmCreatePermissionInCharge").validate({
+                rules: {
+                    "phong_ban": {
+                        required: true,
+                    },
+                    "nhan_vien": {
+                        required: true,
+                    }
+
+                },
+                messages: {
+                    "phong_ban": "Phòng ban không được bỏ trống!",
+                    "nhan_vien": "Nhân viên không được bỏ trống!"
+                },
+
+            }).form();
+
+            return resultValid;
+
+        }
+
+        function closeModal_PermissionInCharge() {
+
+            $("#modal_permission_incharge").modal("hide")
+
+        }
+
+
+
+        function RemovePermissionProjectById(Id) {
+            const userId = $('#a_userId').val();
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // call ajax delete
+                    $.ajax({
+                        url: '/Permission/DeletePermissionProjectById',
+                        type: 'GET',
+                        data: {
+                            Id: Id
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                toastr.success('Xóa phân quyền thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                                $("#modal_permission_incharge").modal("hide")
+                            }
+                            else {
+                                console.error(response);
+                                toastr.error('Có lỗi xảy ra khi xóa phân quyền !', 'Lỗi', { positionClass: "toast-top-center" });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Có lỗi khi tải nội dung modal: ", error);
+                            alert("Lỗi tải modal, vui lòng thử lại sau.");
+                        }
+                    });
+
+                }
+            });
+        }
+
+
+
+
+
+
+
+
+
+    </script>
+}
+
+

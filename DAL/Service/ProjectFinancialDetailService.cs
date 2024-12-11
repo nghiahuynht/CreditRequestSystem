@@ -29,6 +29,7 @@ namespace DAL.Service
                {
                   new SqlParameter("@ProjectDetailId", model.ProjectDetailId),
                     new SqlParameter("@ActiveGroupId", model.ActiveGroupId),
+                    new SqlParameter("@ExpenseId", model.ExpenseId),
                     new SqlParameter("@ProfileId", model.ProfileId),
                     new SqlParameter("@FileAttach", model.FileAttach),
                     new SqlParameter("@PaymentInfoCode", model.PaymentInfoCode),
@@ -42,7 +43,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertPaymentProfileForProjectDetail @ProjectDetailId,@ActiveGroupId,@ProfileId,@FileAttach,@PaymentInfoCode,@PaymentInfoName,@Notes,@CreatedBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertPaymentProfileForProjectDetail @ProjectDetailId,@ActiveGroupId,@ExpenseId,@ProfileId,@FileAttach,@PaymentInfoCode,@PaymentInfoName,@Notes,@CreatedBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)

@@ -51,6 +51,13 @@ namespace WebApp.ExcelHelper
             public const string Edit = "NVPT_EDIT";
             public const string Delete = "NVPT_DELETE";
             public const string Approve = "NVPT_APPROVE";
+        }  
+        public static class PhanQuyenNhanVienTaoYeuCau
+        {
+            public const string Add = "NVTYC_ADD";
+            public const string Edit = "NVTYC_EDIT";
+            public const string Delete = "NVTYC_DELETE";
+            public const string Approve = "NVTYC_APPROVE";
         }
 
     }

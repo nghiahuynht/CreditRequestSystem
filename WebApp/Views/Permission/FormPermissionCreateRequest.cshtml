@@ -1,0 +1,80 @@
+﻿
+@model DAL.Models.Permission.PermissionInChargeModel
+<div class="modal-content">
+    <div class="modal-header p-2">
+        <h5 class="modal-title">Phân quyền nhân viên phụ trách</h5>
+
+    </div>
+    <div class="content-body">
+
+        <input hidden id="PermissionInChargeId" value="@Model.data.Id" />
+        <input hidden id="UserName" value="@ViewBag.UserName" />
+        <input hidden id="UserId" value="@ViewBag.UserId" />
+        <div class="modal-body p-3">
+            <form id="frmCreatePermissionInCharge">
+
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin phân quyên nhân viên phụ trách</legend>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="col-md-6 control-label">Dự án <span class="text-red">*</span></label>
+                            <div class="col-md-6">
+
+                                <select class="form-control" id="a_du_an" name="du_an" >
+                                    <option></option>
+                                    @foreach (var hd in Model.LstProject)
+                                    {
+                                        <option value="@hd.Id">@hd.Name</option>
+
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                       
+
+                    </div>
+                   
+                </fieldset>
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin các dự án/hoạt động phụ trách </legend>
+
+                    <table class="table table-bordered" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Dự án</th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="table_thong_tin_nhan_vien_phu_trach">
+                            @foreach (var item in Model.lstPermissionProject)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.ProjectName
+                                    </td>
+
+                                    <td style="text-align:center;">
+
+                                        <span class="fa fa-trash" onclick="RemovePermissionProjectById(@item.Id)"></span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer p-0">
+        <button type="button" class="btn btn-primary btn-footer" id="btnLuuTaoDot" onclick="CreatePermissionInCharge();"><i class="fas fa-save me-1"></i>&nbsp;Lưu</button>
+        <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_PermissionInCharge();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>&nbsp;Đóng</button>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        
+    });
+</script>
