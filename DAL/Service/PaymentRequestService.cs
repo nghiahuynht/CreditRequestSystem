@@ -158,14 +158,15 @@ namespace DAL.Service
                     new SqlParameter("@Activity", filter.ActivityId),
                     new SqlParameter("@FromDate", filter.FromDate),
                     new SqlParameter("@ToDate", filter.ToDate),
+                    new SqlParameter("@Status", filter.Status),
                     new SqlParameter("@Keyword", filter.Keyword),
-                    new SqlParameter("@UserName", userName),
+                    new SqlParameter("@UserSearch", userName),
                     new SqlParameter("@PageCurrent", filter.start),
                     new SqlParameter("@PageSize", filter.length),
                     new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
                 };
                 ValidNullValue(param);
-                var lstData = dtx.PaymenRequestGridModel.FromSql("sp_SearchPaymentRequestPaging @IsExcel,@Status,@CreditType,@FromDate,@ToDate,@Keyword,@UserSearch,@PageCurrent,@PageSize,@TotalRow OUT", param).ToList();
+                var lstData = dtx.PaymenRequestGridModel.FromSql("sp_SearchPaymentRequestPaging @IsExcel,@ProjectId,@Activity,@FromDate,@ToDate,@Status,@Keyword,@UserSearch,@PageCurrent,@PageSize,@TotalRow OUT", param).ToList();
                 res.recordsTotal = Convert.ToInt64(param[param.Length - 1].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();
@@ -179,6 +180,37 @@ namespace DAL.Service
 
             return res;
         }
+
+
+        public SaveResultModel<object> ChangeStatusPaymentRequest(ChangeStatusRequestParamModel model)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@RequestId", model.requestId),
+                  new SqlParameter("@Status", model.status),
+                  new SqlParameter("@UserName", model.userName),
+                  new SqlParameter("@Note", model.note),
+               };
+
+
+                ValidNullValue(param);
+                dtx.Database.ExecuteSqlCommand("EXEC sp_ChangeStatusPaymentRequest @RequestId,@Status,@UserName,@Note", param);
+
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+
+
 
     }
 }

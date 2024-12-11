@@ -7,6 +7,7 @@ using DAL.IService;
 using DAL.Models.PaymentRequqest;
 using Microsoft.AspNetCore.Mvc;
 using DAL.Models.ProjectFinancialSummar;
+using DAL.Models;
 
 namespace WebApp.Controllers
 {
@@ -100,25 +101,44 @@ namespace WebApp.Controllers
             return Json(lstExpense);
         }
 
-        public PartialViewResult _PaymentRequestAttachment(long requestId, long requestLineItemId)
+        [HttpGet]
+        public PartialViewResult _PaymentRequestAttachment(int expenseId)
         {
-
-            return PartialView();
+            var mandatoryAttachRequest = categoryService.GetPaymentProfileByExpense(expenseId);
+            return PartialView(mandatoryAttachRequest);
         }
 
 
 
-        public IActionResult SearchPaymentRequest()
+        public async Task<IActionResult> SearchPaymentRequest()
         {
             var filter = new PaymentRequestFilterSearchModel {
                 FromDate = Common.FirtDayOfMonth(),
                 ToDate = DateTime.Now.ToString("dd/MM/yyyy")
             };
-            return View();
+
+            ViewBag.DDLProject = await projectFinancialSummarService.LstAllProjectFinancialSummar();
+
+
+            return View(filter);
         }
 
-       
 
+        [HttpPost]
+        public DataTableResultModel<PaymenRequestGridModel> SearchPaymentRequestPaging(PaymentRequestFilterSearchModel filter)
+        {
+            var res = paymentRequestService.SearchPaymentRequest(filter,false,AuthenInfo().UserName);
+            return res;
+        }
+
+
+        [HttpPost]
+        public JsonResult ChangePaymentRequestStatus([FromBody] ChangeStatusRequestParamModel model)
+        {
+            model.userName = AuthenInfo().UserName;
+            var res = paymentRequestService.ChangeStatusPaymentRequest(model);
+            return Json(res);
+        }
 
     }
 }

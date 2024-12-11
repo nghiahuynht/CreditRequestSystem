@@ -115,7 +115,7 @@ namespace DAL.Service
                     new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
                 };
                 ValidNullValue(param);
-                var lstData = dtx.CreditRequestGridModel.FromSql("sp_GetDataCreditRequestPagingWeb @IsExcel,@Status,@CreditType,@FromDate,@ToDate,@Keyword,@UserSearch,@PageCurrent,@PageSize,@TotalRow OUT", param).ToList();
+                var lstData = dtx.CreditRequestGridModel.FromSql("sp_SearchPaymentRequestPaging @IsExcel,@Status,@CreditType,@FromDate,@ToDate,@Keyword,@UserSearch,@PageCurrent,@PageSize,@TotalRow OUT", param).ToList();
                 res.recordsTotal = Convert.ToInt64(param[param.Length - 1].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();

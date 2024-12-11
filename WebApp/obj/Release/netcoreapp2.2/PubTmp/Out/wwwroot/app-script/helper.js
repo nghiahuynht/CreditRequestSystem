@@ -62,7 +62,8 @@ function AlertFail(contentMessage) {
 }
 
 
-function ConverFormatDate(currentFormatDate) {
+function ConverFormatDate(currentFormatDate) // for string param
+{
     if (currentFormatDate == null || currentFormatDate == "") {
         return null;
     } else {
@@ -72,6 +73,23 @@ function ConverFormatDate(currentFormatDate) {
     }
    
 }
+
+
+function RenderFormatDate(dateObject) {
+    var d = new Date(dateObject);
+    var day = d.getDate();
+    var month = d.getMonth() + 1;
+    var year = d.getFullYear();
+    if (day < 10) {
+        day = "0" + day;
+    }
+    if (month < 10) {
+        month = "0" + month;
+    }
+    var date = day + "/" + month + "/" + year;
+
+    return date;
+};
 
 //function RenderNumerFormat(data) {
 //    var res = "";
@@ -101,7 +119,15 @@ function RenderNumerFormat(data) {
     }
     return "<div style='width:100%;'>" + res + "</div>";
 }
-
+function DeRenderNumerFormat(data) {
+    debugger
+    if (data != null || data != undefined)
+    {
+        data = data.toString().replace(".", "");
+    }
+    debugger;
+    return data;
+}
 function RenderNumerFormat_NotHTML(data) {
     var res = "";
     if (data !== undefined && data > 0) {

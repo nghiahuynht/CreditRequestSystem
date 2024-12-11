@@ -187,10 +187,9 @@ namespace DAL.Service
             try
             {
                 var param = new SqlParameter[]
-                  {
-                    new SqlParameter("@UserId", UserId)
-
-                  };
+                {
+                      new SqlParameter("@UserId", UserId)
+                };
 
 
                 res = await dtx.ProjectFinancialSummarDLLModel.FromSql("EXEC sp_GetAllProductByPermissionUser @UserId", param).ToListAsync();

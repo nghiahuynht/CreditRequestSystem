@@ -16,5 +16,6 @@ namespace DAL.IService
         Task<ListResultModel<ProjectFinancialSummarGridModel>> GetProjectByUser(string userName);
         Task SavePaymentRequestLineItems(long requestHeaderId, List<PaymentRequestItemModel> model);
         DataTableResultModel<PaymenRequestGridModel> SearchPaymentRequest(PaymentRequestFilterSearchModel filter, bool isExcel, string userName);
+        SaveResultModel<object> ChangeStatusPaymentRequest(ChangeStatusRequestParamModel model);
     }
 }

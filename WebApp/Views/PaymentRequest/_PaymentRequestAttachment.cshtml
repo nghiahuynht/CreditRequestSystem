@@ -1,0 +1,44 @@
+﻿@model List<DAL.Models.Category.CategoryPaymentProfileViewModel>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th colspan="4">
+                Các chừng từ cần đính kèm
+            </th>
+            <th><input type="button" value="Upload" class="btn btn-warning" /></th>
+        </tr>
+        <tr>
+            <th>Tên chừng từ</th>
+            <th>Ghi chú</th>
+            <th>Mẫu điền</th>
+            <th>File đã đính kèm</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(item.Name)</td>
+                        <td>@(item.Notes)</td>
+                        <td><a href="#">@(item.FileAttachName)</a></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">Khoản chi này không tìm thấy khai báo chứng từ đính kèm</td>
+                </tr>
+            }
+        }
+    </tbody>
+    
+</table>

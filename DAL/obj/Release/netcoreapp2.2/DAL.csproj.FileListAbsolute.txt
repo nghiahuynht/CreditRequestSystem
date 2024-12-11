@@ -53,3 +53,14 @@ D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.csproj.CoreCompile
 D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.dll
 D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.pdb
 D:\HOME\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.genruntimeconfig.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.deps.json
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.runtimeconfig.json
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.runtimeconfig.dev.json
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.dll
+F:\Projects\OnGIT\CreditRequestSystem\DAL\bin\Release\netcoreapp2.2\DAL.pdb
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.csprojAssemblyReference.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.AssemblyInfo.cs
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.dll
+F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Release\netcoreapp2.2\DAL.pdb

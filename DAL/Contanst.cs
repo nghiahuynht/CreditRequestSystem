@@ -71,9 +71,11 @@ namespace DAL
         public static string PaymentRequesStatus_Draft = "draft";
         public static string PaymentRequesStatus_Waiting= "waiting";
         public static string PaymentRequesStatus_Approved = "approved";
+        public static string PaymentRequesStatus_Unc = "unc";
+        public static string PaymentRequesStatus_Completed = "completed";// lasted success
         public static string PaymentRequesStatus_Rejected = "rejected";
         public static string PaymentRequesStatus_Canceled = "canceled";
-        public static string PaymentRequesStatus_Unc = "unc";// lasted success
+       
 
 
 
