@@ -457,5 +457,24 @@ namespace DAL.Service
             }
             return res;
         }
+
+        public List<CategoryActiveGroupViewModel> LstCategoryActiveGroupAllocationByProductId(int Id)
+        {
+            var res = new List<CategoryActiveGroupViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id)
+
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryActiveGroupViewModel.FromSql("EXEC sp_GetCategoryActiveGroupAllocationByProductId @Id",param).ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
     }
 }

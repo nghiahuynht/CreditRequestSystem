@@ -200,5 +200,20 @@ namespace DAL.Service
             }
             return res;
         }
+
+        public async Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectAllocation()
+        {
+            var res = new List<ProjectFinancialSummarDLLModel>();
+            try
+            {
+
+                res = await dtx.ProjectFinancialSummarDLLModel.FromSql("EXEC sp_GetAllProductAllocation").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
     }
 }

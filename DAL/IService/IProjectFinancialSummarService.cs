@@ -17,6 +17,7 @@ namespace DAL.IService
         Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummarByPermission(int UserId);
         Task<ProjectOverviewModel> GetProjectOverviewById(int Id);
         Task<SaveResultModel<object>> CheckCodeUnique(string prefix, string code);
+        Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectAllocation();
 
     }
 }

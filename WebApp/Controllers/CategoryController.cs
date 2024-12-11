@@ -140,6 +140,32 @@ namespace WebApp.Controllers
             }
         }
 
+
+        [HttpGet]
+        public JsonResult GetActiveGroupAllocationByProductId(int Id)
+        {
+            try
+            {
+
+                var rs = categoryService.LstCategoryActiveGroupAllocationByProductId(Id);
+                return Json(new
+                {
+                    isSuccess = true,
+                    data = rs
+
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
         #endregion
 
         #region DM  mục chi

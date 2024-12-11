@@ -14,5 +14,9 @@ namespace DAL.IService
         Task<SaveResultModel<object>> CreatePermissionInCharge(PermissionInChargeCreateModel model, string userName);
 
         Task<bool> DeletePermissionProjectById(int Id);
+
+        Task<SaveResultModel<object>> CreatePermissionCreateRequest(CreatePermissionCreateRequestModel model, string userName);
+
+        Task<List<PermissionCreateRequestViewModel>> GetPermissionCreateRequestByUserId(int userId);
     }
 }

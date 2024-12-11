@@ -34,6 +34,7 @@ namespace DAL.IService
 
         List<CategoryDepartmentViewModel> LstAllCategoryDepartment();
         List<CategoryExpenseViewModel> GetExpenseByActiveGroup(int Id);
+        List<CategoryActiveGroupViewModel> LstCategoryActiveGroupAllocationByProductId(int Id);
 
     }
 }

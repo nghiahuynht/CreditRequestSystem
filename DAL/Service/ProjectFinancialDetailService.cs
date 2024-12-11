@@ -148,17 +148,19 @@ namespace DAL.Service
             }
         }
 
-        public async Task<List<PaymentInfoProjectDetailModel>> GetAllProfieForProjectId(int Id)
+        public async Task<List<PaymentInfoProjectDetailModel>> GetAllProfieForProjectId(int Id,int activeGroupId, int expenseId)
         {
             List<PaymentInfoProjectDetailModel> res = new List<PaymentInfoProjectDetailModel>();
             try
             {
                 var param = new SqlParameter[] {
-                    new SqlParameter("@Id", Id)
+                    new SqlParameter("@DetailId", Id),
+                    new SqlParameter("@ActiveGroupId", activeGroupId),
+                    new SqlParameter("@expenseId", expenseId)
                 };
                 ValidNullValue(param);
 
-                res = await dtx.PaymentInfoProjectDetailModel.FromSql("EXEC sp_GetAllProfieForProjectId @Id", param).ToListAsync();
+                res = await dtx.PaymentInfoProjectDetailModel.FromSql("EXEC sp_GetAllProfieByDetailIdActiveGroupIdExpenseId @DetailId,@ActiveGroupId,@expenseId", param).ToListAsync();
                 return res;
             }
             catch (Exception ex)

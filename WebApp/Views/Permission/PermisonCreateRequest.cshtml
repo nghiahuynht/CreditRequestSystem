@@ -4,7 +4,8 @@
     ViewData["Title"] = "Danh sách phân quyền nhân viên tạo yêu cầu thanh toán";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
-    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanQuyenNhanVienTaoYeuCau.Add);
+    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanQuyenNhanVienYeuCauTT.Add);
+
 }
 @model DAL.Models.UserInfo.UserParViewModel
 @section styles{
@@ -83,7 +84,7 @@
                         </div>
 
                         <div class="col-sm-3">
-                            <button onclick="SearchPermissionInCharge()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            <button onclick="SearchPermissionCreateRequest()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
 
                         </div>
 
@@ -137,8 +138,9 @@
     <script src="~/plugins/mdb-treeview/wow.js"></script>
     <script src="~/js/jquery.validate.js"></script>
     <script>
+        debugger
         const isAdd = @isAdd.ToString().ToLower();
-        var tableId = "#table-permission-in-charge";
+        var tableId = "#table-permission-create-request";
         var ajaxURL = "/Account/SearchUserInfo";
         var columnData = [
             { "data": "id", visible: false },
@@ -181,7 +183,7 @@
 
         $(document).ready(function () {
 
-            SearchPermissionInCharge();
+            SearchPermissionCreateRequest();
 
 
         });
@@ -199,7 +201,7 @@
 
         }
 
-        function SearchPermissionInCharge() {
+        function SearchPermissionCreateRequest() {
 
             var dataSearch = {
                 RoleCode: 'all',
@@ -229,20 +231,22 @@
 
         function CreatePermissionCreateRequest() {
 
-            var isValidateDetail = validatePermissionInCharge();
+            var isValidateDetail = validatePermissionCreateRequest();
             if (isValidateDetail == true) {
 
                 var dataPost = {
                     Id: parseInt($("#PermissionInChargeId").val()),
                     ProjectId: parseInt($("#a_du_an").val()),
                     ProjectName: $("#a_du_an option:selected").text(),
+                    ActiveGroupId: parseInt($("#a_nhom_hoat_dong").val()),
+                    ActiveGroupName: $("#a_nhom_hoat_dong option:selected").text(),
                     UserId: parseInt($('#UserId').val()),
                     UserName: $("#UserName").val()
                 };
                 // Gửi yêu cầu AJAX
                 console.log("dataPost", dataPost);
                 $.ajax({
-                    url: '/Permission/CreatePermissionInCharge',
+                    url: '/Permission/CreatePermissionCreateRequest',
                     type: 'POST',
                     data: JSON.stringify(dataPost),
                     contentType: 'application/json',
@@ -255,10 +259,12 @@
                                             <td>
                                                 ${dataPost.ProjectName}
                                             </td>
-
+                                            <td>
+                                                ${dataPost.ActiveGroupName}
+                                            </td>
                                             <td style="text-align:center;">
 
-                                                <span class="fa fa-trash" onclick="RemovePermissionProjectById(${response.longValReturn})"></span>
+                                                <span class="fa fa-trash" onclick="RemovePermissionCreateRequestById(${response.longValReturn})"></span>
                                             </td>
                                          </tr>`
                             $('#table_thong_tin_nhan_vien_phu_trach').append(html);
@@ -276,20 +282,20 @@
             }
         }
 
-        function validatePermissionInCharge() {
-            var resultValid = $("#frmCreatePermissionInCharge").validate({
+        function validatePermissionCreateRequest() {
+            var resultValid = $("#frmCreatePermissionCreateRequest").validate({
                 rules: {
-                    "phong_ban": {
+                    "du_an": {
                         required: true,
                     },
-                    "nhan_vien": {
+                    "nhom_hoat_dong": {
                         required: true,
                     }
 
                 },
                 messages: {
-                    "phong_ban": "Phòng ban không được bỏ trống!",
-                    "nhan_vien": "Nhân viên không được bỏ trống!"
+                    "du_an": "Dự án không được bỏ trống!",
+                    "nhom_hoat_dong": "Nhóm hoạt động không được bỏ trống!"
                 },
 
             }).form();
@@ -298,15 +304,15 @@
 
         }
 
-        function closeModal_PermissionInCharge() {
+        function closeModal_PermissionCreateRequest() {
 
-            $("#modal_permission_incharge").modal("hide")
+            $("#modal_permission_create_request").modal("hide")
 
         }
 
 
 
-        function RemovePermissionProjectById(Id) {
+        function RemovePermissionCreateRequestById(Id) {
             const userId = $('#a_userId').val();
             Swal.fire({
                 title: 'Bạn có chắc chắn?',
@@ -330,7 +336,7 @@
                             if (response.success) {
 
                                 toastr.success('Xóa phân quyền thành công!', 'Thành công', { positionClass: "toast-top-center" });
-                                $("#modal_permission_incharge").modal("hide")
+                                $("#modal_permission_create_request").modal("hide")
                             }
                             else {
                                 console.error(response);
@@ -347,7 +353,34 @@
             });
         }
 
+        function handelchangeProject() {
+            // Get selected menu
+            const duanElement = document.getElementById('a_du_an');
+            const duanId = duanElement.value;
 
+            $.ajax({
+                url: '/category/GetActiveGroupAllocationByProductId/',
+                data: {
+                   Id: duanId,
+                   
+                },
+                type: 'GET',
+                success: function (response) {
+                    
+                    if (response.isSuccess == true && response.data.length > 0) {
+                        var htmlbody = "<option></option>";
+                        response.data.forEach((item) => {
+                            htmlbody += `<option value="${item.id}">${item.name}</option>`
+                        })
+                        $('#a_nhom_hoat_dong').html(htmlbody);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
 
 
 

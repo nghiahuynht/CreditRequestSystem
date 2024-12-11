@@ -18,7 +18,40 @@ namespace DAL.Service
         {
             this.dtx = dtx;
         }
-       
+
+        public async Task<SaveResultModel<object>> CreatePermissionCreateRequest(CreatePermissionCreateRequestModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@Id", model.Id),
+                    new SqlParameter("@ProjectId", model.ProjectId),
+                    new SqlParameter("@ProjectName", model.ProjectName),
+                    new SqlParameter("@ActiveGroupId", model.ActiveGroupId),
+                    new SqlParameter("@ActiveGroupName", model.ActiveGroupName),
+                    new SqlParameter("@UserId", model.UserId),
+                    new SqlParameter("@UserName", model.UserName),
+                    new SqlParameter("@ActionBy", userName),
+                    new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePermissionCreateRequest @Id,@ProjectId,@ProjectName,@ActiveGroupId,@ActiveGroupName,@UserId,@UserName,@ActionBy,@NewId OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
 
         public async Task<SaveResultModel<object>> CreatePermissionInCharge(PermissionInChargeCreateModel model, string userName)
         {
@@ -68,6 +101,28 @@ namespace DAL.Service
             {
                 return false;
             }
+        }
+
+        public async Task<List<PermissionCreateRequestViewModel>> GetPermissionCreateRequestByUserId(int userId)
+        {
+            var res = new List<PermissionCreateRequestViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@UserId",userId),
+
+                };
+                ValidNullValue(param);
+                res = dtx.PermissionCreateRequestViewModel.FromSql("sp_GetPermissionCreateRequestByUserId @UserId", param).ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return res;
         }
 
         public async Task<List<PermissionProjectViewModel>> GetPermissionProjectByUserId(int userId)

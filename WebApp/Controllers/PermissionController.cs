@@ -46,17 +46,15 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> FormPermissionInCharge(int id=0,string fullName = "")
         {
-            var lstDepartment = _categoryService.LstAllCategoryDepartment();
 
             PermissionInChargeModel model = new PermissionInChargeModel();
             var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
-            var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+           
             ViewBag.UserId = id;
             ViewBag.UserName = fullName;
             if (id == 0)
             {
                 model.LstProject = lstProject;
-                model.DM_NhomHoatDong = dm_NhomHoatDong;
                 model.data = new PermissionInChargeInfoModel();
                 return View(model);
             }
@@ -64,7 +62,6 @@ namespace WebApp.Controllers
             {
                 var lstPermission= await _permissionService.GetPermissionProjectByUserId(id);
                 model.LstProject = lstProject;
-                model.DM_NhomHoatDong = dm_NhomHoatDong;
                 model.data = new PermissionInChargeInfoModel();
                 model.lstPermissionProject = lstPermission;
                 return View(model);
@@ -105,6 +102,59 @@ namespace WebApp.Controllers
                     message = $"Đã xảy ra lỗi: {ex.Message}"
                 });
             }
+        }
+
+
+        #endregion
+        #region Phân quyên nv yc hoàn tiền
+        [HttpGet]
+        public async Task<IActionResult> PermisonCreateRequest()
+        {
+            UserParViewModel par = new UserParViewModel();
+            var lstRoles = _userService.GetAllRoles();
+            var lstDepartment = _categoryService.LstAllCategoryDepartment();
+            par.LstRoles = lstRoles;
+            par.LstDepartment = lstDepartment;
+            return View(par);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FormPermissionCreateRequest(int id = 0, string fullName = "")
+        {
+
+
+            PermissionCreateRequestModel model = new PermissionCreateRequestModel();
+            var lstProject = await _projectFinancialSummarService.LstAllProjectAllocation();
+            var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
+            ViewBag.UserId = id;
+            ViewBag.UserName = fullName;
+            if (id == 0)
+            {
+                model.LstProject = lstProject;
+                model.DM_NhomHoatDong = dm_NhomHoatDong;
+                model.data = new PermissionCreateRequestInfoModel();
+                return View(model);
+            }
+            else
+            {
+                var lstPermission = await _permissionService.GetPermissionCreateRequestByUserId(id);
+                model.LstProject = lstProject;
+                model.DM_NhomHoatDong = dm_NhomHoatDong;
+                model.data = new PermissionCreateRequestInfoModel();
+                model.lstPermissionProject = lstPermission;
+                return View(model);
+            }
+
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreatePermissionCreateRequest([FromBody] CreatePermissionCreateRequestModel model)
+        {
+            var res = new SaveResultModel<object>();
+
+            res = await _permissionService.CreatePermissionCreateRequest(model, User.Identity.Name);
+            return Json(res);
         }
         #endregion
     }
