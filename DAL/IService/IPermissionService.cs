@@ -9,8 +9,10 @@ namespace DAL.IService
 {
     public interface IPermissionService
     {
-        DataTableResultModel<PermissionInChargeTableModel> GetDataPermissionInChargePaging(PermissionInChargeFilterModel filter);
+        Task<List<PermissionProjectViewModel>> GetPermissionProjectByUserId(int userId);
 
         Task<SaveResultModel<object>> CreatePermissionInCharge(PermissionInChargeCreateModel model, string userName);
+
+        Task<bool> DeletePermissionProjectById(int Id);
     }
 }

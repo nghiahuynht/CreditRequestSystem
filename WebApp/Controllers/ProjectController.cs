@@ -243,7 +243,7 @@ namespace WebApp.Controllers
         // [Authorize(Roles = "Admin")]
         public DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectDetail(ProjectFinancialDetailFilterModel filter)
         {
-            var res = _projectFinancialDetailService.GetDataProjectFinancialDetailPaging(filter);
+            var res = _projectFinancialDetailService.GetDataProjectFinancialDetailPaging(filter,AuthenInfo().UserId);
             return res;
         }
 
@@ -303,7 +303,7 @@ namespace WebApp.Controllers
             if(Id>0)
             {
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
-                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
+                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummarByPermission(AuthenInfo().UserId);
                 var dataDetail = await _projectFinancialDetailService.GetProjectFinancialDetailById(Id);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
                 var dm_MucChi = _categoryService.LstAllCategoryExpense();
@@ -318,7 +318,7 @@ namespace WebApp.Controllers
             else
             {
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
-                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummar();
+                var lstProject = await _projectFinancialSummarService.LstAllProjectFinancialSummarByPermission(AuthenInfo().UserId);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
                 var dm_MucChi = _categoryService.LstAllCategoryExpense();
                 data.LstProject = lstProject;

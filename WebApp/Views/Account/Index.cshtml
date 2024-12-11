@@ -7,6 +7,7 @@
     bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.DanhSachNhanVien.Delete) ;
     bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.DanhSachNhanVien.Add);
     bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains( PermissionHelper.DanhSachNhanVien.Edit);
+    bool isPermission = AuthHelper.GetPermissionHelper(Permission).Contains( PermissionHelper.DanhSachNhanVien.PERMISSION);
 }
 @model DAL.Models.UserInfo.UserParViewModel
 @section styles{
@@ -161,7 +162,8 @@
     <script src="~/js/jquery.validate.js"></script>
     <script>
         const isEdit = @isEdit.ToString().ToLower();
-      const isDelete = @isDelete.ToString().ToLower();
+        const isDelete = @isDelete.ToString().ToLower();
+        const isPermission = @isPermission.ToString().ToLower();
         var tableId = "#table-userinfo";
         var ajaxURL = "/Account/SearchUserInfo";
         var columnData = [
@@ -227,11 +229,13 @@
 
             // Check if Delete action should be added
             if (isDelete) {
-                html += `<i class='fa fa-trash' onclick='DeleteNV(${userId})' title='Xóa'></i>`;
+                html += `<i class='fa fa-trash' onclick='DeleteNV(${userId})' title='Xóa'></i>&nbsp`;
             }
 
-            // Always show Permission action
-            html += `<i class='fas fa-user-shield' onclick='showModalPermissionUser(${userId})' title='Phân quyền'></i>`;
+            // Check if Permission action should be added
+            if (isPermission) {
+                html += `<i class='fas fa-user-shield' onclick='showModalPermissionUser(${userId})' title='Phân quyền'></i>`;
+            }
             html += `</div>`;
 
             return html;

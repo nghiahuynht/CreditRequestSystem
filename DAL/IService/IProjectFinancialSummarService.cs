@@ -14,6 +14,7 @@ namespace DAL.IService
         Task<ProjectFinancialSummarGridModel> GetProjectById(int Id);
         Task<bool> DeleteProjectFinancialSummar(int Id, string userName);
         Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummar();
+        Task<List<ProjectFinancialSummarDLLModel>> LstAllProjectFinancialSummarByPermission(int UserId);
         Task<ProjectOverviewModel> GetProjectOverviewById(int Id);
         Task<SaveResultModel<object>> CheckCodeUnique(string prefix, string code);
 
