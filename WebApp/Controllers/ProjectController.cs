@@ -262,6 +262,7 @@ namespace WebApp.Controllers
                         foreach(var item in data.PaymentInfo)
                         {
                             item.ProjectDetailId = (int)res.LongValReturn;
+                            item.ExpenseId=data.ExpenseId;
                              await _projectFinancialDetailService.CreateProfileForProjectDetail(item, AuthenInfo().UserName);
                         }
                     }
