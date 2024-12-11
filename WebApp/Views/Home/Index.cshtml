@@ -8,6 +8,13 @@
         #chartdiv{
             height:400px;
         }
+        #dashboard {
+            width:100%;height:620px;
+            background: url(/img/TTKSBT-HCM.jpg);
+            background-size: cover;
+            background-position: center;
+            opacity:0.2;
+        }
     </style>
 }
 <section class="content-header">
@@ -26,36 +33,7 @@
 </section>
 <!-- Main content -->
 <section class="content">
-    <input type="hidden" value="@(DateTime.Now.Year)" id="ddl-year" />
-    @*<div class="col-md-12">
-            <img class="img" src="~/img/ichi-bg-dashboard.png" style="width:100%;opacity:0.9" />
-        </div>*@
-
-
-
-    <div class="card">
-        <div class="card-header">
-
-        </div>
-        <div class="card-body">
-           
-        </div>
-    </div>
-
-
-
-
-    
-
-    <div class="card">
-        <div class="card-header">
-            
-        </div>
-        <div class="card-body" id="chartdiv">
-
-        </div>
-    </div>
-
+  <div id="dashboard"></div>
 
 
 </section>

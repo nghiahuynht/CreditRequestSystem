@@ -17,10 +17,48 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item">
-                        <input type="button" value="Lưu" class="btn btn-primary" id="btn-save" style="margin-right:5px;" />
-                        <input type="button" value="Gửi duyệt" class="btn btn-warning" id="btn-sentchecked" style="margin-right:5px;" />
-                        <input type="button" value="Duyệt" class="btn btn-success" id="btn-cancel" style="margin-right:5px;" />
-                        <input type="button" value="Từ chối" class="btn btn-danger" id="btn-sentchecked" style="margin-right:5px;" />
+
+                        @{
+                            if (Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Draft)
+                            {
+                                <input type="button" value="Lưu" class="btn btn-primary" id="btn-save" style="margin-right:5px;" />
+                            }
+
+                            if (Model.RequestHeader.Id != 0
+                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Draft)
+                            {
+                                <input type="button" value="Gửi duyệt" class="btn btn-warning" id="btn-sent-to-approver" style="margin-right:5px;" />
+                            }
+
+
+                            if (Model.RequestHeader.Id != 0
+                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Waiting)
+                            {
+                                <input type="button" value="Duyệt" class="btn btn-success" id="btn-approve" style="margin-right:5px;" />
+                                <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
+                            }
+
+                            if (Model.RequestHeader.Id != 0
+                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Approved)
+                            {
+                                <input type="button" value="UNC" class="btn btn-info" id="btn-unc" style="margin-right:5px;" />
+                                <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
+                            }
+
+
+                            if (Model.RequestHeader.Id != 0
+                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Unc)
+                            {
+                                <input type="button" value="Hoàn Thành" class="btn btn-success" id="btn-completed" style="margin-right:5px;" />
+                                <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
+                            }
+
+
+
+                        }
+
+
+
                     </li>
 
                 </ol>
@@ -64,7 +102,7 @@
                                     @{
                                         if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
                                         {
-                                            <span class='badge badge-secondary badge-status'>Chờ duyệt</span>
+                                            <span class='badge badge-secondary badge-status'>Nháp</span>
                                         }
                                         else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
                                         {
@@ -76,15 +114,19 @@
                                         }
                                         else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
                                         {
-                                            <span class='badge badge-success badge-status'>Từ chối</span>
+                                            <span class='badge badge-danger badge-status'>Từ chối</span>
                                         }
                                         else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
                                         {
-                                            <span class='badge badge-success badge-status'>Huỷ</span>
+                                            <span class='badge badge-danger badge-status'>Huỷ</span>
                                         }
                                         else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Unc)
                                         {
                                             <span class='badge badge-success badge-status'>Đã uỷ nhiệm chi</span>
+                                        }
+                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Completed)
+                                        {
+                                            <span class='badge badge-success badge-status'>Hoàn thành</span>
                                         }
                                     }
 
@@ -262,36 +304,21 @@
                                     @{
                                         decimal? total = Model.ListRequestItems.FirstOrDefault().Total;
                                     }
-                                    <strong id="lbl-total" class="number-divide" style="margin-top:5px;">@(total.HasValue?total.Value:0)</strong>
+                                    <strong id="lbl-total" class="number-divide" style="margin-top:5px;font-size:16pt;color:#0094ff">@(total.HasValue?total.Value:0)</strong>
                                    
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Đính kèm hoá đơn</label>
-                                <div class="col-md-6">
-                                    <input type="file" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Đính kèm giáo án</label>
-                                <div class="col-md-6">
-                                    <input type="file" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Đính kèm hợp đồng</label>
-                                <div class="col-md-6">
-                                    <input type="file" class="form-control" />
-                                </div>
-                            </div>
+                            
                         </div>
 
 
                     </div>
                 </fieldset>
             </form>
-
-
+            <form id="formrequestattach">
+                <div id="div_load_requestattachfile"></div>
+            </form>
+            
 
 
 
@@ -302,7 +329,33 @@
 </section>
 
 
+<div class="modal fade show" data-backdrop="static" id="modal-reject-credit" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Từ chối</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
 
+                <div class="row">
+                    <label class="col-md-6 control-label">Ghi chú lý do từ chối</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="txt-note" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" id="btn-reject">OK</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 
 
@@ -337,11 +390,77 @@
 
             InitDataOnload();
 
+            $("#ListRequestItems_ExpenseId").change(function () {
+                let expenseId = $(this).val();
+                LoadAttachRequestFile(expenseId);
+            });
+            
+
+
+
+            $("#btn-sent-to-approver").click(function () {
+                ChangeStatus("waiting");
+            });
+
+            $("#btn-approve").click(function () {
+                ChangeStatus("approved");
+            });
+
+
+            $("#btn-unc").click(function () {
+                ChangeStatus("unc");
+            });
+
+            $("#btn-completed").click(function () {
+                ChangeStatus("completed");
+            });
+
+            $("#btn-reject").click(function () {
+                let noteReject = $("#txt-note").val();
+                if (noteReject == "" || noteReject == null) {
+                    bootbox.alert(AlertFail("Vui lòng ghi chú lý do từ chối"));
+                } else {
+                    ChangeStatus("rejected");
+                }
+
+            });
+
+
+
+
+
+
+           
+
+
+
+
+
+
+
+
+
 
         });
 
         function validateSaveRequest() {
-            return true;
+            var resutlValid = $("#form-paymentrequest").validate({
+                rules: {
+                    "ListRequestItems.ProjectId": "required",
+                    "ListRequestItems.ActivityId": "required",
+                    "ListRequestItems.ExpenseId": "required",
+                    "ListRequestItems.Quanti": "required",
+                    "ListRequestItems.Price": "required",
+                },
+                messages: {
+                    "ListRequestItems.ProjectId": "Bắt buộc",
+                    "ListRequestItems.ActivityId": "Bắt buộc",
+                    "ListRequestItems.ExpenseId": "Bắt buộc",
+                    "ListRequestItems.Quanti": "Bắt buộc",
+                    "ListRequestItems.Price": "Bắt buộc",
+                }
+            }).form();
+            return resutlValid;
         }
         function saveRequest() {
 
@@ -439,7 +558,7 @@
                 url: "/PaymentRequest/GetActivityByProject?projectId=" + projetId,
                 success: function (result) {
 
-                    let htmlAct = "<option value='0'></option>";
+                    let htmlAct = "<option value='0'>Chọn nhóm hoạt động</option>";
                     $.each(result, function (key, value)
                     {
                         let selectedAct = actiSelected == value.activityGroupId ? "selected='selected'" : "";
@@ -452,19 +571,20 @@
         function GetExpenseByActivity(activityId) {
 
             let expsenseSelected = $("#ListRequestItems_ExpenseId").val();
+            LoadAttachRequestFile(expsenseSelected);
             $.ajax({
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 url: "/PaymentRequest/GetExpenseByActivity?activityId=" + activityId,
                 success: function (result) {
 
-                    let htmlExp = "<option value='0'>Chọn nhóm hoạt động</option>";
+                    let htmlExp = "<option value='0'>Chọn mục chi</option>";
                     $.each(result, function (key, value) {
                         let selectedExp = expsenseSelected == value.id ? "selected='selected'" : "";
                         htmlExp = htmlExp + "<option " + selectedExp + " value='" + value.id + "'>" + value.name + "</option>";
                     });
                     $("#ListRequestItems_ExpenseId").html(htmlExp);
-
+                    
                 }
             });
         }
@@ -479,6 +599,8 @@
                 let activityId = $("#ListRequestItems_ActivityId").val();
                 GetExpenseByActivity(activityId);
                 CalculaTotal();
+                let expsenseId = $("#ListRequestItems_ExpenseId").val();
+                LoadAttachRequestFile(expsenseId);
             }
         }
 
@@ -489,6 +611,53 @@
             $("#lbl-total").html(RenderNumerFormat(total));
             
         }
+        function LoadAttachRequestFile(expenseId) {
+            ShowWaiting();
+            $("#div_load_requestattachfile").load("/PaymentRequest/_PaymentRequestAttachment?expenseId=" + expenseId, function () {
+                HideWaiting();
+            });
+        }
+
+
+        function ChangeStatus(statusCode) {
+
+            let modelChangeStatus = {
+                "requestId": parseFloat($("#RequestHeader_Id").val()),
+                "status": statusCode,
+                "userName": "",
+                "note": $("#txt-note").val()
+            }
+
+            $.ajax({
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                url: "/PaymentRequest/ChangePaymentRequestStatus",
+                dataType: 'json',
+                data: JSON.stringify(modelChangeStatus),
+                beforeSend: function () {
+                    ShowWaiting();
+                },
+                success: function (res) {
+                    HideWaiting();
+                    if (res.isSuccess === true) {
+                        bootbox.alert(AlertSuccess("Chuyển trạng thái thành công"), function () {
+                           
+                            location.href = "/PaymentRequest/RequestDetail/" + modelChangeStatus.requestId;
+                        });
+
+                    } else {
+                        bootbox.alert(AlertFail(res.errorMessage));
+                    }
+
+                }
+            });
+
+        }
+
+
+
+
+
 
     </script>
 }

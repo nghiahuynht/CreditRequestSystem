@@ -1,8 +1,279 @@
-﻿
+﻿@model DAL.Models.PaymentRequqest.PaymentRequestFilterSearchModel
 @{
-    ViewData["Title"] = "SearchPaymentRequest";
+
+    ViewData["Title"] = "Danh sách yêu cầu thanh toán";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>SearchPaymentRequest</h1>
+@using DAL
+@using DAL.Models
+@using DAL.Models.ProjectFinancialSummar
+@section styles{
+    <link href="~/plugins/datepicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .fa-cube {
+            cursor: pointer;
+        }
+    </style>
+}
 
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+
+                <div class="col-sm-2">
+                    <label>Dự án</label>
+                    <select class="form-control" id="ddl-project">
+                        @{
+                            var projects = (List<ProjectFinancialSummarDLLModel>)ViewBag.DDLProject;
+                            if (projects.Any() && projects.Count > 1)
+                            {
+                                <option value="0">Tất cả dự án</option>
+                                foreach (var pro in projects)
+                                {
+                                    <option value="@(pro.Id)">@(pro.Name)</option>
+                                }
+                            }
+                            else if (projects.Any() && projects.Count == 1)
+                            {
+                                <option value="@(projects.FirstOrDefault().Id)">@(projects.FirstOrDefault().Name)</option>
+                            }
+                            else
+                            {
+                                <option value="-1">Tất cả dự án</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label>Nhóm hoạt động</label>
+                    <select class="form-control" id="ddl-activity">
+                        <option value="0">Tất cả hoạt động</option>
+                    </select>
+                </div>
+                <div class="col-sm-1">
+                    <label>Từ ngày</label>
+                    <div class="input-group date">
+                        <input type="text" id="FromDate" value="@(Model.FromDate)" class="form-control">
+                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <label>Đến ngày</label>
+                    <div class="input-group date">
+                        <input type="text" id="ToDate" value="@(Model.ToDate)" class="form-control">
+                        <span class="input-group-addon group-date-icon"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <label>Trạng thái</label>
+                    <select class="form-control" id="ddl-status">
+                        <option value="All">Tất cả</option>
+                        <option value="@Contanst.PaymentRequesStatus_Draft">Nháp</option>
+                        <option value="@Contanst.PaymentRequesStatus_Waiting">Chờ duyệt</option>
+                        <option value="@Contanst.PaymentRequesStatus_Approved">Đã duyệt(chờ thanh toán)</option>
+                        <option value="@Contanst.PaymentRequesStatus_Unc">Đang tiến hành TT</option>
+                        <option value="@Contanst.PaymentRequesStatus_Completed">Hoàn thành thanh toán</option>
+                        <option value="@Contanst.PaymentRequesStatus_Rejected">Từ chối</option>
+                        <option value="@Contanst.PaymentRequesStatus_Canceled">Huỷ</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label>Từ khoá</label>
+                    <input type="text" class="form-control" placeholder="Mã YC/Tên người yêu cầu" id="txtkeyword" />
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-warning btn-filter"><i class="fa fa-search" id="btn-search"></i>&nbsp;Tìm</button>&nbsp;
+                    <a href="/paymentrequest/RequestDetail" class="btn btn-sm btn-warning btn-filter"><i class="fa fa-plus-circle"></i>&nbsp;Tạo mới</a>&nbsp;
+                </div>
+               
+
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+            <table class="table table-bordered table-hover dataTable" id="table-paymentrequest" width="100%">
+               <thead>
+                   <tr>
+                       <th width="100px">Mã YC</th>
+                       <th>Ngày YC</th>
+                       <th>Người YC</th>
+                       <th>Phòng ban</th>
+                       <th>Trạng thái</th>
+                       <th>Tổng tiền</th>
+                       <th>Dự án</th>
+                       <th>Hoạt động</th>
+                       <th>Khoản chi</th>
+                   </tr>
+               </thead>
+            </table>
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script src="~/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script>
+
+
+        var tableId = "#table-paymentrequest";
+        var ajaxURL = "/PaymentRequest/SearchPaymentRequestPaging";
+        var columnData = [
+
+            {
+                "data": "requestCode", "render": function (data, type, row, meta) {
+                    return RenderCode(data,row["id"]);
+                }
+            },
+            { "data": "requestDate" },
+            { "data": "requestByName" },
+            { "data": "requestByDepartment" },
+            {
+                "data": "status", "render": function (data, type, row, meta) {
+                    return RenderStatus(data);
+                }
+            },
+            {
+                "data": "requestTotal", "render": function (data, type, row, meta) {
+                    return RenderNumerFormat(data);
+                }
+            },
+            { "data": "projectName" },
+            { "data": "activityName" },
+            { "data": "expenseName" },
+
+        ];
+
+
+
+        $(document).ready(function () {
+            $(".date").datepicker({
+                format: "dd/mm/yyyy"
+            }).on('changeDate', function (e) {
+                $(this).datepicker('hide');
+            });
+
+            $("#ddl-project").change(function () {
+                let projectId = $(this).val();
+                GetActivitiesByProject(projectId);
+            });
+
+            SearchPaymentRequest();
+            $("#btn-search").click(function () {
+                SearchPaymentRequest();
+            });
+
+
+           
+        })
+
+
+
+        function GetActivitiesByProject(projetId) {
+
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/PaymentRequest/GetActivityByProject?projectId=" + projetId,
+                success: function (result) {
+
+                    let htmlAct = "<option value='0'>Tất cả</option>";
+                    $.each(result, function (key, value) {
+                        htmlAct = htmlAct + "<option value='" + value.activityGroupId + "'>" + value.activityGroupName + "</option>";
+                    });
+                    $("#ddl-activity").html(htmlAct);
+                }
+            });
+        }
+
+        
+
+
+        function RenderCode(code,id) {
+            return "<a href='/paymentrequest/RequestDetail/" + id+"'><i class='fa fa-eye'></i>&nbsp;" + code+"</a>"
+        }
+
+        function RenderStatus(status) {
+            var statusHTML = "";
+            if (status == "draft") {
+                statusHTML = "<span class='badge badge-secondary badge-status'>Nháp</span>";
+            }
+            else if (status == "waiting") {
+                statusHTML = "<span class='badge badge-warning badge-status'>Chờ duyệt</span>";
+            }
+            else if (status == "approved") {
+                statusHTML = "<span class='badge badge-info badge-status'>Đã duyệt, chờ thanh toán</span>";
+            }
+            else if (status == "canceled") {
+                statusHTML = "<span class='badge badge-danger badge-status'>Hủy</span>";
+            }
+            else if (status == "rejected") {
+                statusHTML = "<span class='badge badge-danger badge-status'>Từ chối</span>";
+            }
+            else if (status == "unc") {
+                statusHTML = "<span class='badge badge-primary badge-status'>Đang tiến hành TT</span>";
+            }
+            else if (status == "completed") {
+                statusHTML = "<span class='badge badge-success badge-status'>Hoàn thành thanh toán</span>";
+            }
+            return statusHTML;
+        }
+
+       
+
+        function RenderTableAction(id)
+        {
+
+            var html = "<div class='div-table-action'>" +
+                "<i class='fa fa-edit' onclick='GotoDetail(" + id + ")'></i>&nbsp;&nbsp;" +
+                "</div>";
+            return html;
+        }
+
+        function GotoDetail(id) {
+            let creditType = $("#request-credit-type").val();
+            location.href = "/CreditRequest/CreditRequestDetail/" + id + "/" + creditType;
+        }
+
+
+        function SearchPaymentRequest() {
+            var filterModel = {
+                "ProjectId": $("#ddl-project").val(),
+                "ActivityId": $("#ddl-activity").val(),
+                "Department": 0,
+                "FromDate": ConverFormatDate($("#FromDate").val()),
+                "ToDate": ConverFormatDate($("#ToDate").val()),
+                "Status": $("#ddl-status").val(),
+                "Keyword": $("#txtkeyword").val()
+            };
+
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, filterModel);
+        }
+
+
+
+    </script>
+}
