@@ -132,6 +132,7 @@ namespace DAL.Service
             {
                 var param = new SqlParameter[] {
                   new SqlParameter("@UserName",userName),
+
                 };
                 ValidNullValue(param);
                 res.Results = await dtx.ProjectFinancialSummarGridModel.FromSql("EXEC sp_GetProjectByUser @UserName", param).ToListAsync();
@@ -146,7 +147,38 @@ namespace DAL.Service
 
 
 
+        public DataTableResultModel<PaymenRequestGridModel> SearchPaymentRequest(PaymentRequestFilterSearchModel filter,bool isExcel,string userName)
+        {
+            var res = new DataTableResultModel<PaymenRequestGridModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@IsExcel", isExcel),
+                    new SqlParameter("@ProjectId", filter.ProjectId),
+                    new SqlParameter("@Activity", filter.ActivityId),
+                    new SqlParameter("@FromDate", filter.FromDate),
+                    new SqlParameter("@ToDate", filter.ToDate),
+                    new SqlParameter("@Keyword", filter.Keyword),
+                    new SqlParameter("@UserName", userName),
+                    new SqlParameter("@PageCurrent", filter.start),
+                    new SqlParameter("@PageSize", filter.length),
+                    new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
+                };
+                ValidNullValue(param);
+                var lstData = dtx.PaymenRequestGridModel.FromSql("sp_SearchPaymentRequestPaging @IsExcel,@Status,@CreditType,@FromDate,@ToDate,@Keyword,@UserSearch,@PageCurrent,@PageSize,@TotalRow OUT", param).ToList();
+                res.recordsTotal = Convert.ToInt64(param[param.Length - 1].Value);
+                res.recordsFiltered = res.recordsTotal;
+                res.data = lstData.ToList();
+            }
+            catch (Exception ex)
+            {
+                res.recordsTotal = 0;
+                res.recordsFiltered = 0;
+                res.data = new List<PaymenRequestGridModel>();
+            }
 
+            return res;
+        }
 
     }
 }

@@ -420,8 +420,8 @@
                 success: function (result) {
 
                     $("#txt-projectcode").val(result.projectCode);
-                    $("#txt-from-projectdate").val(ConverFormatDate(result.timeStart));
-                    $("#txt-to-projectdate").val(ConverFormatDate(result.timeEnd));
+                    $("#txt-from-projectdate").val(RenderFormatDate(result.timeStart));
+                    $("#txt-to-projectdate").val(RenderFormatDate(result.timeEnd));
                     $("#txt-base-on-law").val(result.legalBasis);
                     $("#txt-hanmuc").val(result.totalAmount);
                     $("#txt-note-project").val(result.notes);

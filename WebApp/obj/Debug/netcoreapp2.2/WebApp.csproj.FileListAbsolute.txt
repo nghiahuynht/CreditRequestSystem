@@ -634,3 +634,16 @@ D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\P
 D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\PermisonInChargeIndex.cshtml.g.cs
 D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\FormPermissionInCharge.cshtml.g.cs
 D:\HOME\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Account\FormPermissonUser.cshtml.g.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Account\Add.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Account\FormPermissonUser.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\MucChi.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\NhomHoatDong.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddMucChi.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddNhomHoatDong.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddThongTinThanhToan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\FormPermissionInCharge.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\PermisonInChargeIndex.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormCreateProject.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormCreateProjectDetail.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormViewDetailProjectDetail.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\ProjectDetailIndex.g.cshtml.cs

@@ -99,5 +99,26 @@ namespace WebApp.Controllers
             var lstExpense = categoryService.GetExpenseByActiveGroup(activityId);
             return Json(lstExpense);
         }
+
+        public PartialViewResult _PaymentRequestAttachment(long requestId, long requestLineItemId)
+        {
+
+            return PartialView();
+        }
+
+
+
+        public IActionResult SearchPaymentRequest()
+        {
+            var filter = new PaymentRequestFilterSearchModel {
+                FromDate = Common.FirtDayOfMonth(),
+                ToDate = DateTime.Now.ToString("dd/MM/yyyy")
+            };
+            return View();
+        }
+
+       
+
+
     }
 }

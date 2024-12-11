@@ -63,7 +63,7 @@ namespace DAL
         public DbSet<PermissionInChargeTableModel> PermissionInChargeTableModel { get; set; }
         public DbSet<PermissionMenuModel> PermissionMenuModel { get; set; }
         public DbSet<PermissionMenuInfoModel> PermissionMenuInfoModel { get; set; }
-
+        public DbSet<PaymenRequestGridModel> PaymenRequestGridModel { get; set; }
 
 
         /*======================= Payment request ============================================*/
