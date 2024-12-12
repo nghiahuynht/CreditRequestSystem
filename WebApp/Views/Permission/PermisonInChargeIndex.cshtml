@@ -263,7 +263,8 @@
                                          </tr>`
                             $('#table_thong_tin_nhan_vien_phu_trach').append(html);
 
-
+                            //Xóa tùy chọn đã chọn khỏi dropdown
+                            $("#a_du_an option[value='" + dataPost.ProjectId + "']").remove();
                         } else {
                             toastr.error('Có lỗi khi phân quyền nhân viên phụ trách. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
                         }
@@ -279,17 +280,13 @@
         function validatePermissionInCharge() {
             var resultValid = $("#frmCreatePermissionInCharge").validate({
                 rules: {
-                    "phong_ban": {
-                        required: true,
-                    },
-                    "nhan_vien": {
+                    "du_an": {
                         required: true,
                     }
 
                 },
                 messages: {
-                    "phong_ban": "Phòng ban không được bỏ trống!",
-                    "nhan_vien": "Nhân viên không được bỏ trống!"
+                    "du_an": "Dự án không được bỏ trống!"
                 },
 
             }).form();

@@ -61,8 +61,10 @@ namespace WebApp.Controllers
             else
             {
                 var lstPermission= await _permissionService.GetPermissionProjectByUserId(id);
+                // remove project đã được phân quyền
+                lstProject = lstProject.FindAll(x => lstPermission.FindIndex(t => t.ProjectId == x.Id) ==-1);
                 model.LstProject = lstProject;
-                model.data = new PermissionInChargeInfoModel();
+                model.data = new PermissionInChargeInfoModel();            
                 model.lstPermissionProject = lstPermission;
                 return View(model);
             }
