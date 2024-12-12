@@ -28,6 +28,7 @@ namespace DAL.Service
                 var param = new SqlParameter[]
                {
                   new SqlParameter("@ProjectDetailId", model.ProjectDetailId),
+                  new SqlParameter("@ProjectId", model.ProjectId),
                     new SqlParameter("@ActiveGroupId", model.ActiveGroupId),
                     new SqlParameter("@ExpenseId", model.ExpenseId),
                     new SqlParameter("@ProfileId", model.ProfileId),
@@ -43,7 +44,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertPaymentProfileForProjectDetail @ProjectDetailId,@ActiveGroupId,@ExpenseId,@ProfileId,@FileAttach,@PaymentInfoCode,@PaymentInfoName,@Notes,@CreatedBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertPaymentProfileForProjectDetail @ProjectDetailId,@ProjectId,@ActiveGroupId,@ExpenseId,@ProfileId,@FileAttach,@PaymentInfoCode,@PaymentInfoName,@Notes,@CreatedBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -154,13 +155,13 @@ namespace DAL.Service
             try
             {
                 var param = new SqlParameter[] {
-                    new SqlParameter("@DetailId", Id),
+                    new SqlParameter("@ProjectId", Id),
                     new SqlParameter("@ActiveGroupId", activeGroupId),
                     new SqlParameter("@expenseId", expenseId)
                 };
                 ValidNullValue(param);
 
-                res = await dtx.PaymentInfoProjectDetailModel.FromSql("EXEC sp_GetAllProfieByDetailIdActiveGroupIdExpenseId @DetailId,@ActiveGroupId,@expenseId", param).ToListAsync();
+                res = await dtx.PaymentInfoProjectDetailModel.FromSql("EXEC sp_GetAllProfieByProjectIdActiveGroupIdExpenseId @ProjectId,@ActiveGroupId,@expenseId", param).ToListAsync();
                 return res;
             }
             catch (Exception ex)

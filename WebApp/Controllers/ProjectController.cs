@@ -263,6 +263,7 @@ namespace WebApp.Controllers
                         {
                             item.ProjectDetailId = (int)res.LongValReturn;
                             item.ExpenseId=data.ExpenseId;
+                            item.ProjectId=data.ProjectId;
                              await _projectFinancialDetailService.CreateProfileForProjectDetail(item, AuthenInfo().UserName);
                         }
                     }
@@ -308,7 +309,7 @@ namespace WebApp.Controllers
                 var dataDetail = await _projectFinancialDetailService.GetProjectFinancialDetailById(Id);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
                 var dm_MucChi = _categoryService.LstAllCategoryExpense();
-                var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(Id, dataDetail.ActivityGroupId, dataDetail.ExpenseId);
+                var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(dataDetail.ProjectId, dataDetail.ActivityGroupId, dataDetail.ExpenseId);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.data = dataDetail;
                 data.LstProject = lstProject;
@@ -364,7 +365,7 @@ namespace WebApp.Controllers
                 var dataDetail = await _projectFinancialDetailService.GetProjectFinancialDetailById(Id);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
                 var dm_HSThanhToan = _categoryService.LstAllCategoryPaymentProfile(dataDetail.ActivityGroupId);
-                var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(Id, dataDetail.ActivityGroupId, dataDetail.ExpenseId);
+                var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(dataDetail.ProjectId, dataDetail.ActivityGroupId, dataDetail.ExpenseId);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.DM_HSThanhToan = new List<PaymentInfoProjectDetailModel>();
                 data.HSThanhToan = hsThanhToan;
