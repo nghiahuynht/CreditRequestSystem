@@ -8,6 +8,9 @@ using DAL.Models.PaymentRequqest;
 using Microsoft.AspNetCore.Mvc;
 using DAL.Models.ProjectFinancialSummar;
 using DAL.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace WebApp.Controllers
 {
@@ -17,20 +20,25 @@ namespace WebApp.Controllers
         private IProjectFinancialSummarService projectFinancialSummarService;
         private IProjectFinancialDetailService projectFinancialDetailService;
         private ICategoryService categoryService;
-
+        private IAttachFileService attachFileService;
+        private IConfiguration config;
 
         private ICommonService commonService;
 
         public PaymentRequestController(IPaymentRequestService paymentRequestService, IProjectFinancialSummarService projectFinancialSummarService
             , IProjectFinancialDetailService projectFinancialDetailService
             , ICategoryService categoryService
-            , ICommonService commonService)
+            , ICommonService commonService
+            , IAttachFileService attachFileService
+            , IConfiguration config)
         {
             this.paymentRequestService = paymentRequestService;
             this.projectFinancialSummarService = projectFinancialSummarService;
             this.projectFinancialDetailService = projectFinancialDetailService;
             this.categoryService = categoryService;
             this.commonService = commonService;
+            this.attachFileService = attachFileService;
+            this.config = config;
         }
 
         public IActionResult SearchRequest()
@@ -102,9 +110,9 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public PartialViewResult _PaymentRequestAttachment(int expenseId)
+        public async Task<PartialViewResult> _PaymentRequestAttachment(long requestId)
         {
-            var mandatoryAttachRequest = categoryService.GetPaymentProfileByExpense(expenseId);
+            var mandatoryAttachRequest = await paymentRequestService.GetAttachmentByRequest(requestId);
             return PartialView(mandatoryAttachRequest);
         }
 
@@ -140,6 +148,59 @@ namespace WebApp.Controllers
             var res = paymentRequestService.ChangeStatusPaymentRequest(model);
             return Json(res);
         }
+
+
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> UploadAttachForRequestPayment(IFormCollection formattact, IFormFile postedFile)
+        {
+            string rootFolder = config["General:RootFolder"];
+            string domain = config["General:Domain"];
+
+            var fName = postedFile.FileName;
+            string paymentRequestId = formattact["paymentRequestId"];
+            string profileSuggestId = formattact["profileSuggestId"];
+
+            //======== Step 1: upload to folder ===========
+
+            var folder = $"{rootFolder}\\upload\\payment-request\\{paymentRequestId}";
+            string filePath = Path.Combine(folder, fName);
+            string urlPath = $"{domain}/upload/payment-request/{paymentRequestId}/{fName}";
+
+
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                postedFile.CopyTo(stream);
+            }
+
+            //======== Step 2: save to data ===========
+
+            var attachFile = new AttactFileModel
+            {
+                Id = 0,
+                ObjectId = Convert.ToInt64(paymentRequestId),
+                ObjectType = "PaymentRequest",
+                FileName = fName,
+                FilePath = filePath,
+                URLPath = urlPath,
+                CreatedBy = AuthenInfo().UserName,
+                SuggestId =Convert.ToInt64(profileSuggestId)
+
+            };
+            await attachFileService.SaveAttachment(attachFile);
+
+            return RedirectToAction("RequestDetail", "PaymentRequest", new { id = Convert.ToInt64(paymentRequestId) });
+        }
+
+        
+
+
+
+
 
     }
 }

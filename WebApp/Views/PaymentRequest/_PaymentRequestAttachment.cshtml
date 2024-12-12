@@ -1,33 +1,53 @@
-﻿@model List<DAL.Models.Category.CategoryPaymentProfileViewModel>
+﻿@model DAL.Models.ListResultModel<DAL.Models.PaymentRequqest.PaymentListAttachmentsModel>
 
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th colspan="4">
-                Các chừng từ cần đính kèm
-            </th>
-            <th><input type="button" value="Upload" class="btn btn-warning" /></th>
+            <td colspan="7">
+                <strong>Các chừng từ cần đính kèm</strong>
+            </td>
         </tr>
         <tr>
             <th>Tên chừng từ</th>
             <th>Ghi chú</th>
             <th>Mẫu điền</th>
             <th>File đã đính kèm</th>
-            <th></th>
+            <th width="40px">Up</th>
+            <th width="40px">Tải</th>
+            <th width="40px">Xoá</th>
         </tr>
     </thead>
     <tbody>
         @{
-            if (Model.Any())
+            if (Model.Results.Any())
             {
-                foreach (var item in Model)
+                foreach (var item in Model.Results)
                 {
-                    <tr>
-                        <td>@(item.Name)</td>
-                        <td>@(item.Notes)</td>
-                        <td><a href="#">@(item.FileAttachName)</a></td>
-                        <td></td>
-                        <td></td>
+                    <tr style="height:32px !important;">
+                        <td>@(item.SuggestName)</td>
+                        <td>@(item.SuggestNote)</td>
+                        <td><a href="@(item.SuggestFileURL)">@(item.SuggestFileName)</a></td>
+                        <td>@(item.AttachFileName)</td>
+                        <td width="40px"><i class="fa fa-upload file-btn-action" title="Up đính kèm" onclick="openUploadForm(@(item.Id))"></i></td>
+                        <td width="40px">
+                            @{
+                                if (!string.IsNullOrEmpty(item.AttachFileName))
+                                {
+                                    <a href="@(item.AttachURL)" title="Tải đính kèm"><i class="fa fa-download file-btn-action"></i></a>
+                                }
+                            }
+
+                        </td>
+                        <td width="40px">
+
+                            @{
+                                if (!string.IsNullOrEmpty(item.AttachFileName))
+                                {
+                                    <i title="Xoá đính kèm" class="fa fa-trash file-btn-action"></i>
+                                }
+                            }
+                            
+                        </td>
                     </tr>
                 }
 

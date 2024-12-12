@@ -65,17 +65,19 @@ namespace DAL.Service
             try
             {
                 var param = new SqlParameter[] {
+                    new SqlParameter("@ObjectId", obj.ObjectId),
                     new SqlParameter("@ObjectType", obj.ObjectType),
                     new SqlParameter("@FileName", obj.FileName),
                     new SqlParameter("@FilePath", obj.FilePath),
                     new SqlParameter("@URLPath", obj.URLPath),
                     new SqlParameter("@Size", obj.Size),
+                    new SqlParameter("@SuggestId", obj.SuggestId),
                     new SqlParameter("@CreatedBy", obj.CreatedBy),
                     new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
 
                 };
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_InsertUpdateAttactFile @ObjectType,@FileName,@FilePath,@URLPath,@Size,@CreatedBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_InsertUpdateAttactFile @ObjectId,@ObjectType,@FileName,@FilePath,@URLPath,@Size,@SuggestId,@CreatedBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
 
             }

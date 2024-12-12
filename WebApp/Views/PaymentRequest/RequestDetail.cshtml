@@ -6,7 +6,12 @@
     ViewData["Title"] = Model.RequestHeader.Id == 0 ? "Nhập thông tin yêu cầu thanh toán" : "Yêu cầu thanh toán: " + Model.RequestHeader.Code;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    .file-btn-action{
+        font-size:12pt;
+        cursor:pointer;
+    }
+</style>
 
 <section class="content-header">
     <div class="container-fluid">
@@ -378,6 +383,32 @@
     <!-- /.modal-dialog -->
 </div>
 
+<div class="modal fade show" id="modal-attach-upload" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Đính kèm file</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formattact" name="formattact" class="form-horizontal" action="/PaymentRequest/UploadAttachForRequestPayment" method="post" enctype="multipart/form-data">
+                    @(Html.AntiForgeryToken())
+                    <input type="hidden" id="paymentRequestId" name="paymentRequestId" value="@(Model.RequestHeader.Id)" />
+                    <input type="hidden" id="profileSuggestId" name="profileSuggestId" />
+                    <input type="file" name="postedFile" />
+                    <input type="submit" value="Upload" class="btn btn-sm btn-success" />
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
 
 
 @section scripts{
@@ -412,8 +443,12 @@
             InitDataOnload();
 
             $("#ListRequestItems_ExpenseId").change(function () {
+                let projectId = $("#ListRequestItems_ProjectId").val();
+                let actId = $("#ListRequestItems_ActivityId").val();
                 let expenseId = $(this).val();
-                LoadAttachRequestFile(expenseId);
+
+                let requestId = $("#RequestHeader_Id").val();
+                LoadAttachRequestFile(requestId);
             });
             
 
@@ -591,8 +626,10 @@
         }
         function GetExpenseByActivity(activityId) {
 
+            let requestId = $("#RequestHeader_Id").val();
+            let projectId = $("#ListRequestItems_ProjectId").val();
             let expsenseSelected = $("#ListRequestItems_ExpenseId").val();
-            LoadAttachRequestFile(expsenseSelected);
+            LoadAttachRequestFile(requestId);
             $.ajax({
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
@@ -621,7 +658,9 @@
                 GetExpenseByActivity(activityId);
                 CalculaTotal();
                 let expsenseId = $("#ListRequestItems_ExpenseId").val();
-                LoadAttachRequestFile(expsenseId);
+
+                let requestId = $("#RequestHeader_Id").val();
+                LoadAttachRequestFile(requestId);
             }
         }
 
@@ -632,9 +671,9 @@
             $("#lbl-total").html(RenderNumerFormat(total));
             
         }
-        function LoadAttachRequestFile(expenseId) {
+        function LoadAttachRequestFile(requestId) {
             ShowWaiting();
-            $("#div_load_requestattachfile").load("/PaymentRequest/_PaymentRequestAttachment?expenseId=" + expenseId, function () {
+            $("#div_load_requestattachfile").load("/PaymentRequest/_PaymentRequestAttachment?requestId=" + requestId , function () {
                 HideWaiting();
             });
         }
@@ -675,9 +714,13 @@
 
         }
 
+        function openUploadForm(suggestProfileId)
+        {
+            $("#profileSuggestId").val(suggestProfileId);
+            $("#modal-attach-upload").show();
+        }
 
-
-
+     
 
 
     </script>
