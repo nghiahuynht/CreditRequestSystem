@@ -9,3 +9,7 @@
 
 /.vs/WebApp/FileContentIndex
 /.vs/ProjectEvaluation
+/WebApp/obj
+/WebApp/bin
+/WebApp/Properties
+/WebApp/WebApp.csproj.user
