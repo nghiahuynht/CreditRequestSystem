@@ -13,7 +13,7 @@ namespace DAL.IService
         Task<SaveResultModel<object>> SavePaymentRequest(PaymentRequestModel model, string userLogin);
         Task<PaymentRequestModel> GetPaymentRequestHeaderById(long id);
         Task<List<PaymentRequestItemModel>> GetPaymentRequestItemsByRequestId(long requestId);
-        Task<ListResultModel<ProjectFinancialSummarGridModel>> GetProjectByUser(string userName);
+        Task<ListResultModel<ProjectFinancialSummarGridModel>> GetProjectByUser(int userId);
         Task SavePaymentRequestLineItems(long requestHeaderId, List<PaymentRequestItemModel> model);
         DataTableResultModel<PaymenRequestGridModel> SearchPaymentRequest(PaymentRequestFilterSearchModel filter, bool isExcel, string userName);
         SaveResultModel<object> ChangeStatusPaymentRequest(ChangeStatusRequestParamModel model);

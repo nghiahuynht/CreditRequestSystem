@@ -202,7 +202,7 @@
 
                     let htmlAct = "<option value='0'>Tất cả</option>";
                     $.each(result, function (key, value) {
-                        htmlAct = htmlAct + "<option value='" + value.activityGroupId + "'>" + value.activityGroupName + "</option>";
+                        htmlAct = htmlAct + "<option value='" + value.id + "'>" + value.name + "</option>";
                     });
                     $("#ddl-activity").html(htmlAct);
                 }

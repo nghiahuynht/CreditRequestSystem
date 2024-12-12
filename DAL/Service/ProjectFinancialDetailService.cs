@@ -1,5 +1,6 @@
 ﻿using DAL.IService;
 using DAL.Models;
+using DAL.Models.Category;
 using DAL.Models.ProjectFinancialDetail;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -218,6 +219,26 @@ namespace DAL.Service
             }
 
             return res;
+        }
+
+        public async Task<List<CategoryActiveGroupViewModel>> GetActiveGroupByProjectIdUserId(int Id, int userId)
+        {
+            List<CategoryActiveGroupViewModel> res = new List<CategoryActiveGroupViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id),
+                    new SqlParameter("@UserId", userId)
+                };
+                ValidNullValue(param);
+
+                res = await dtx.CategoryActiveGroupViewModel.FromSql("EXEC sp_GetProjectFinancialDetailByProjectIdByUser @Id,@UserId", param).ToListAsync();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                return res;
+            }
         }
     }
 }

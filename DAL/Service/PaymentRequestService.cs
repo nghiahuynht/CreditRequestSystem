@@ -125,17 +125,17 @@ namespace DAL.Service
 
 
 
-        public async Task<ListResultModel<ProjectFinancialSummarGridModel>> GetProjectByUser(string userName)
+        public async Task<ListResultModel<ProjectFinancialSummarGridModel>> GetProjectByUser(int userId)
         {
             var res = new ListResultModel<ProjectFinancialSummarGridModel>();
             try
             {
                 var param = new SqlParameter[] {
-                  new SqlParameter("@UserName",userName),
+                  new SqlParameter("@UserId",userId),
 
                 };
                 ValidNullValue(param);
-                res.Results = await dtx.ProjectFinancialSummarGridModel.FromSql("EXEC sp_GetProjectByUser @UserName", param).ToListAsync();
+                res.Results = await dtx.ProjectFinancialSummarGridModel.FromSql("EXEC sp_GetProjectByUser @UserId", param).ToListAsync();
             }
             catch (Exception ex)
             {

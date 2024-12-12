@@ -73,7 +73,7 @@ namespace WebApp.Controllers
                 };
             }
 
-            ViewBag.DDLProject = await paymentRequestService.GetProjectByUser(AuthenInfo().UserName);
+            ViewBag.DDLProject = await paymentRequestService.GetProjectByUser(AuthenInfo().UserId);
             ViewBag.StatusHistory =await paymentRequestService.GetListStatusHistory("PaymentRequest", id.HasValue?id.Value:0);
             return View(viewModel);
         }
@@ -98,7 +98,7 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<JsonResult> GetActivityByProject(int projectId)
         {
-            var lstActivity = await projectFinancialDetailService.GetAllProjectDetailByProjectId(projectId);
+            var lstActivity = await projectFinancialDetailService.GetActiveGroupByProjectIdUserId(projectId,AuthenInfo().UserId);
             return Json(lstActivity);
         }
 

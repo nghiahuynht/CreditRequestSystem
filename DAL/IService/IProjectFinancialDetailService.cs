@@ -1,4 +1,5 @@
 ﻿using DAL.Models;
+using DAL.Models.Category;
 using DAL.Models.ProjectFinancialDetail;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,7 @@ namespace DAL.IService
         Task<bool> DeletePaymentProfileOfProjectDetail(int ProjectDetailId, long ProfileId, string userName);
 
         DataTableResultModel<ProjectFinancialDetailTableModel> GetDataProjectFinancialDetailPaging(ProjectFinancialDetailFilterModel filter,int userId);
+
+        Task<List<CategoryActiveGroupViewModel>> GetActiveGroupByProjectIdUserId(int Id,int userId);
     }
 }

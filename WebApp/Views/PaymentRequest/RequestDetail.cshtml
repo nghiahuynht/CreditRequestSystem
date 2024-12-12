@@ -618,7 +618,7 @@
                     $.each(result, function (key, value)
                     {
                         let selectedAct = actiSelected == value.activityGroupId ? "selected='selected'" : "";
-                        htmlAct = htmlAct + "<option " + selectedAct+" value='" + value.activityGroupId + "'>" + value.activityGroupName+"</option>";
+                        htmlAct = htmlAct + "<option " + selectedAct+" value='" + value.id + "'>" + value.name +"</option>";
                     });
                     $("#ListRequestItems_ActivityId").html(htmlAct);
                 }
