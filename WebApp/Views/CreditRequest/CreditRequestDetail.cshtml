@@ -343,38 +343,38 @@
                                                         {
                                                             string classStatus = "";
 
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Waiting)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_Waiting)
                                                             {
                                                                 classStatus = "<span class='badge badge-warning badge-status'>Chờ QL kiểm tra</span>";
                                                             }
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Reviewed)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_Reviewed)
                                                             {
                                                                 classStatus = "<span class='badge badge-warning badge-status'>Chờ GĐ duyệt</span>";
                                                             }
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Approved)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_Approved)
                                                             {
                                                                 classStatus = "<span class='badge badge-success badge-status'>Đã duyệt</span>";
                                                             }
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Rejected)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_Rejected)
                                                             {
                                                                 classStatus = "<span class='badge badge-danger badge-status'>Từ chối</span>&nbsp;("+Model.RejectNote+")";
                                                             }
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Canceled)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_Canceled)
                                                             {
                                                                 classStatus = "<span class='badge badge-danger badge-status'>Huỷ</span>";
                                                             }
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_WaitingAccountant)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_WaitingAccountant)
                                                             {
                                                                 classStatus = "<span class='badge badge-warning badge-status'>Chờ KT kiểm tra HS</span>";
                                                             }
-                                                            if (statusItem.status == DAL.Contanst.CreditRequestStatus_Completed)
+                                                            if (statusItem.Status == DAL.Contanst.CreditRequestStatus_Completed)
                                                             {
                                                                 classStatus = "<span class='badge badge-success badge-status'>Đã thu/chi tiền</span>";
                                                             }
                                                             <tr>
                                                                 <td>@Html.Raw(classStatus)</td>
-                                                                <td>@(statusItem.actionBy)</td>
-                                                                <td>@(statusItem.actionDate.Value.ToString("dd/MM/yyyy hh:mm tt"))</td>
+                                                                <td>@(statusItem.ActionBy)</td>
+                                                                <td>@(statusItem.ActionDate.Value.ToString("dd/MM/yyyy hh:mm tt"))</td>
                                                             </tr>
                                                         }
                                                     }

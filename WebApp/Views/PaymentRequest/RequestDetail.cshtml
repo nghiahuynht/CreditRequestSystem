@@ -97,36 +97,57 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Trạng thái</label>
-                                <div class="col-md-6">
-                                    @{
-                                        if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Draft)
+                                <div class="col-md-10">
+                                    @{ 
+                                        var lstStatus = (ListResultModel<StatusHistoryModel>)ViewBag.StatusHistory;
+                                        if (lstStatus.Results.Any())
+                                        {
+                                            <table class="table table-bordered">
+                                                @{
+                                                    foreach (var status in lstStatus.Results)
+                                                    {
+                                                        string classStatus = "";
+
+                                                        if (status.Status == DAL.Contanst.PaymentRequesStatus_Draft)
+                                                        {
+                                                            classStatus = "<span class='badge badge-secondary badge-status'>Nháp</span>";
+                                                        }
+                                                        else if (status.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
+                                                        {
+                                                            classStatus = "<span class='badge badge-warning badge-status'>Chờ duyệt</span>";
+                                                        }
+                                                        else if (status.Status == DAL.Contanst.PaymentRequesStatus_Approved)
+                                                        {
+                                                            classStatus = "<span class='badge badge-success badge-status'>Đã duyệt</span>";
+                                                        }
+                                                        else if (status.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
+                                                        {
+                                                            classStatus ="<span class='badge badge-danger badge-status'>Từ chối</span>";
+                                                        }
+                                                        else if (status.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
+                                                        {
+                                                            classStatus = "<span class='badge badge-danger badge-status'>Huỷ</span>";
+                                                        }
+                                                        else if (status.Status == DAL.Contanst.PaymentRequesStatus_Unc)
+                                                        {
+                                                            classStatus = "<span class='badge badge-success badge-status'>Đã uỷ nhiệm chi</span>";
+                                                        }
+                                                        else if (status.Status == DAL.Contanst.PaymentRequesStatus_Completed)
+                                                        {
+                                                            classStatus = "<span class='badge badge-success badge-status'>Hoàn thành</span>";
+                                                        }
+                                                        <tr>
+                                                            <td>@Html.Raw(classStatus)</td>
+                                                            <td>@status.ActionName</td>
+                                                            <td>@status.ActionDate.Value.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </table>
+                                        }
+                                        else
                                         {
                                             <span class='badge badge-secondary badge-status'>Nháp</span>
-                                        }
-                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Waiting)
-                                        {
-                                            <span class='badge badge-warning badge-status'>Chờ duyệt</span>
-                                        }
-                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Approved)
-                                        {
-                                            <span class='badge badge-success badge-status'>Đã duyệt</span>
-                                        }
-                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
-                                        {
-                                            <span class='badge badge-danger badge-status'>Từ chối</span>
-                                        }
-                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
-                                        {
-                                            <span class='badge badge-danger badge-status'>Huỷ</span>
-                                        }
-                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Unc)
-                                        {
-                                            <span class='badge badge-success badge-status'>Đã uỷ nhiệm chi</span>
-                                        }
-                                        else if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Completed)
-                                        {
-                                            <span class='badge badge-success badge-status'>Hoàn thành</span>
                                         }
                                     }
 
@@ -163,7 +184,7 @@
                                 <label class="col-md-4 col-form-label">Dự án</label>
                                 <div class="col-md-6">
                                     <select class="form-control" id="ListRequestItems_ProjectId" name="ListRequestItems.ProjectId">
-                                        <option value="0">Chọn dự án</option>
+                                        <option value="">Chọn dự án</option>
                                         @{
                                             var lstProject = (ListResultModel<DAL.Models.ProjectFinancialSummar.ProjectFinancialSummarGridModel>)ViewBag.DDLProject;
                                             foreach (var item in lstProject.Results)
@@ -558,7 +579,7 @@
                 url: "/PaymentRequest/GetActivityByProject?projectId=" + projetId,
                 success: function (result) {
 
-                    let htmlAct = "<option value='0'>Chọn nhóm hoạt động</option>";
+                    let htmlAct = "<option value=''>Chọn nhóm hoạt động</option>";
                     $.each(result, function (key, value)
                     {
                         let selectedAct = actiSelected == value.activityGroupId ? "selected='selected'" : "";
@@ -578,7 +599,7 @@
                 url: "/PaymentRequest/GetExpenseByActivity?activityId=" + activityId,
                 success: function (result) {
 
-                    let htmlExp = "<option value='0'>Chọn mục chi</option>";
+                    let htmlExp = "<option value=''>Chọn mục chi</option>";
                     $.each(result, function (key, value) {
                         let selectedExp = expsenseSelected == value.id ? "selected='selected'" : "";
                         htmlExp = htmlExp + "<option " + selectedExp + " value='" + value.id + "'>" + value.name + "</option>";

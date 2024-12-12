@@ -66,7 +66,7 @@ namespace WebApp.Controllers
             }
 
             ViewBag.DDLProject = await paymentRequestService.GetProjectByUser(AuthenInfo().UserName);
-
+            ViewBag.StatusHistory =await paymentRequestService.GetListStatusHistory("PaymentRequest", id.HasValue?id.Value:0);
             return View(viewModel);
         }
 
@@ -108,7 +108,8 @@ namespace WebApp.Controllers
             return PartialView(mandatoryAttachRequest);
         }
 
-
+       
+       
 
         public async Task<IActionResult> SearchPaymentRequest()
         {

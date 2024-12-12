@@ -649,3 +649,5 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\ProjectDetailIndex.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\SearchPaymentRequest.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestAttachment.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\FormPermissionCreateRequest.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\PermisonCreateRequest.g.cshtml.cs

@@ -17,5 +17,6 @@ namespace DAL.IService
         Task SavePaymentRequestLineItems(long requestHeaderId, List<PaymentRequestItemModel> model);
         DataTableResultModel<PaymenRequestGridModel> SearchPaymentRequest(PaymentRequestFilterSearchModel filter, bool isExcel, string userName);
         SaveResultModel<object> ChangeStatusPaymentRequest(ChangeStatusRequestParamModel model);
+        Task<ListResultModel<StatusHistoryModel>> GetListStatusHistory(string objectType, long objectId);
     }
 }

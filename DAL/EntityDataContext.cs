@@ -75,6 +75,8 @@ namespace DAL
         public DbSet<PaymentRequestItemModel> PaymentRequestItemModel { get; set; }
         public DbSet<DepartmentModel> DepartmentModel { get; set; }
 
+        public DbSet<StatusHistoryModel> StatusHistoryModel { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ComboBoxModel>().HasKey(o => o.Value);

@@ -6,12 +6,15 @@ namespace DAL.Models
 {
     public class StatusHistoryModel
     {
-        public long id { get; set; }
-        public string objectType { get; set; }
-        public long objectId { get; set; }
-        public string status { get; set; }
-        public string actionBy { get; set; }
-        public string actionName { get; set; }
-        public DateTime? actionDate { get; set; }
+        public long Id { get; set; }
+        public string ObjectType { get; set; }
+        public long ObjectId { get; set; }
+        public string Status { get; set; }
+        public string ActionBy { get; set; }
+        public string ActionName { get; set; }
+        public DateTime? ActionDate { get; set; }
+        public string Note { get; set; }
+       
+       
     }
 }

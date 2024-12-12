@@ -211,6 +211,27 @@ namespace DAL.Service
 
 
 
+        public async Task<ListResultModel<StatusHistoryModel>> GetListStatusHistory(string objectType, long objectId)
+        {
+            var res = new ListResultModel<StatusHistoryModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@ObjectType",objectType),
+                  new SqlParameter("@ObjectId",objectId),
+                };
+                ValidNullValue(param);
+                res.Results = await dtx.StatusHistoryModel.FromSql("EXEC sp_GetHistoryStatus @ObjectType,@ObjectId", param).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+
 
     }
 }
