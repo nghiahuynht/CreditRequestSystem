@@ -157,11 +157,11 @@ namespace DAL.Service
                 var param = new SqlParameter[] {
                     new SqlParameter("@ProjectId", Id),
                     new SqlParameter("@ActiveGroupId", activeGroupId),
-                    new SqlParameter("@expenseId", expenseId)
+                    new SqlParameter("@ExpenseId", expenseId)
                 };
                 ValidNullValue(param);
 
-                res = await dtx.PaymentInfoProjectDetailModel.FromSql("EXEC sp_GetAllProfieByProjectIdActiveGroupIdExpenseId @ProjectId,@ActiveGroupId,@expenseId", param).ToListAsync();
+                res = await dtx.PaymentInfoProjectDetailModel.FromSql("EXEC sp_GetAllProfieByProjectIdActiveGroupIdExpenseId @ProjectId,@ActiveGroupId,@ExpenseId", param).ToListAsync();
                 return res;
             }
             catch (Exception ex)

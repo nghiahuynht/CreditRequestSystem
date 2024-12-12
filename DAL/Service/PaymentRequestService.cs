@@ -231,6 +231,28 @@ namespace DAL.Service
             return res;
         }
 
+        
+
+        public async Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId)
+        {
+            var res = new ListResultModel<PaymentListAttachmentsModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@RequestId",requestId),
+                };
+                ValidNullValue(param);
+                res.Results = await dtx.PaymentListAttachmentsModel.FromSql("EXEC sp_GetAttachmentByRequestId @RequestId", param).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+
 
 
     }

@@ -15,5 +15,6 @@ namespace DAL.Models
         public int? Size { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public long? SuggestId { get; set; }
     }
 }
