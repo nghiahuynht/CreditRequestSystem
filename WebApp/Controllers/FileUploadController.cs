@@ -118,7 +118,7 @@ namespace WebApp.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = "Tải lên thành công.",
+                    message = "Xoá thành công.",
                     fileNameAttactId = Id
                 });
 
