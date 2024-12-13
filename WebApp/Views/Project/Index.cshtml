@@ -7,6 +7,7 @@
 @section styles{
 
     <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
 
     <style>
         .div-member {
@@ -72,6 +73,7 @@
                         <div class="col-sm-3">
                             <button id="btn-search" onclick="SearchProjectFinancialSummar()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                             <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            <button id="btn-createNV" class="btn btn-filter btn-sm btn btn-primary" onclick="showModalImport()"><i class="fas fa-file-import"></i>&nbsp;Import</button>
                         </div>
 
                     </div>
@@ -85,7 +87,7 @@
                                 <th width="100px">Mã dự án </th>
                                 <th width="200px">Tên dự án</th>
                                 <th width="200px">Căn cứ pháp lý</th>
-                                <th width="140px">Thời gian thực hiện</th="150px">
+                                <th width="140px">Thời gian thực hiện</th>
                                 <th width="120px">Tổng hạn mức</th>
                                 <th width="120px">Đã sử dụng</th>
                                 <th width="100px">Ghi chú</th>
@@ -111,6 +113,30 @@
     </div>
 </div>
 
+<!--modal import-->
+<div class="modal modal-blur fade" id="modal_import_project" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog " id="form_import_project">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Tải lên dữ liệu chương trình/dự án/dịch vụ</h5>
+
+            </div>
+            <div class="modal-body">
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="#" class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
+                <form>
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Chọn file</label>
+                        <input class="form-control" type="file" id="fileInput" accept=".xls, .xlsx" onchange="readFileImport()">
+                    </div>
+                    <button type="button" class="btn btn-primary">Tải lên</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -132,7 +158,7 @@
                 "data": "timeStart", "render": function (data, type, row, meta) {
                     if (data != null && row.timeEnd != null) {
 
-                         return moment(data).format('DD/MM/YYYY') + '<br>' + moment(row.timeEnd).format('DD/MM/YYYY');;
+                        return moment(data).format('DD/MM/YYYY') + '<br>' + moment(row.timeEnd).format('DD/MM/YYYY');;
                     }
                     else {
                         return "";
@@ -184,23 +210,23 @@
                         success: function (response) {
                             if (response.success == true && response.fileNameAttactId > 0) {
                                 const html = `
-                                                <tr>
-                                                    <td width="40px" style="text-align:center;">
-                                                        <a  target="_blank">
-                                                            <span class="fa fa-download"></span>
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="${response.filePath}" target="_blank">${response.fileName}</a>
-                                                    </td>
-                                                     <td width="40px" style="text-align:center;color:crimson;">
-                                                        <span class="fa fa-trash delete-file"
-                                                              data-id="${response.fileNameAttactId}"
-                                                              style="cursor:pointer;"
-                                                              onclick="RemoveFile(${response.fileNameAttactId})"></span>
-                                                    </td>
-                                                </tr>
-                                            `;
+                                                    <tr>
+                                                        <td width="40px" style="text-align:center;">
+                                                            <a  target="_blank">
+                                                                <span class="fa fa-download"></span>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="${response.filePath}" target="_blank">${response.fileName}</a>
+                                                        </td>
+                                                         <td width="40px" style="text-align:center;color:crimson;">
+                                                            <span class="fa fa-trash delete-file"
+                                                                  data-id="${response.fileNameAttactId}"
+                                                                  style="cursor:pointer;"
+                                                                  onclick="RemoveFile(${response.fileNameAttactId})"></span>
+                                                        </td>
+                                                    </tr>
+                                                `;
 
                                 $('#table_Attact_File').append(html)
                             }
@@ -216,11 +242,11 @@
         });
         function RenderTableAction(id) {
             var html = `
-                    <div class='div-table-action'>
-                        <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
-                        <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>&nbsp;
-                        <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>&nbsp;
-                    </div>`;
+                        <div class='div-table-action'>
+                            <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
+                            <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>&nbsp;
+                            <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>&nbsp;
+                        </div>`;
             return html;
         }
         function GotoProjectDetail(id) {
@@ -243,7 +269,7 @@
                 url: '/Project/FormCreateProject', // Đảm bảo đường dẫn này đúng với action của bạn
                 type: 'GET',
                 data: {
-                    Id:id
+                    Id: id
                 },
                 success: function (response) {
                     // Chèn HTML trả về vào phần tử có id "dailog_nv"
@@ -283,7 +309,7 @@
                         success: function (response) {
                             if (response.success) {
                                 $(`span[data-id="${fileId}"]`).closest('tr').remove();
-                                listFileAttact = listFileAttact.filter(x =>x != fileId);
+                                listFileAttact = listFileAttact.filter(x => x != fileId);
                                 toastr.success('Xóa file thành công!', 'Thành công', { positionClass: "toast-top-center" });
                             }
                             else {
@@ -314,8 +340,8 @@
                     ProjectCode: $("#a_ma_du_an").val(),
                     ProjectName: $("#a_ten_du_an").val(),
                     LegalBasis: $("#a_can_cu_phap_ly").val(),
-                    TimeStart: $("#a_thoi_gian_bat_dau").val() ,
-                    TimeEnd: $("#a_thoi_gian_ket_thuc").val() ,
+                    TimeStart: $("#a_thoi_gian_bat_dau").val(),
+                    TimeEnd: $("#a_thoi_gian_ket_thuc").val(),
                     TotalAmount: $("#a_tong_han_muc_khong_format").val(),
                     StatusText: "",
                     Notes: $("#a_ghi_chu").val(),
@@ -462,6 +488,76 @@
                 inputElement.value = '';
                 document.getElementById('a_tong_han_muc_khong_format').value = '';
             }
+        }
+
+        function showModalImport() {
+            $("#modal_import_project").modal("show")
+        }
+
+        function readFileImport() {
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            if (file == undefined) {
+
+                Swal.fire({
+                    title: "Vui lòng chọn file!",
+                    icon: "error"
+                });
+                return;
+            }
+            formData.append('file', file);
+            $.ajax({
+                url: '/project/ReadFileImport',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    ShowWaiting();
+                },
+                complete: function () {
+                    HideWaiting();
+                },
+                success: function (response) {
+                    console.log("response", response)
+                    dataSFSubmit = [];
+                    dataResponeAjax = [];
+
+                    if (response) {
+                        var data = response.data;
+                        var dataSF = response.dataSF;
+                        var htmlAppend = '';
+                        for (var i = 0; i < data.length; i++) {
+                            htmlAppend += `<tr>`;
+                            htmlAppend += `<td class="col-checkbox">
+                                     <input data-id='`+ data[i].Id + `' type="checkbox" checked="checked" name="checkRow">
+                             </td>`;
+                            htmlAppend += `<td>` + data[i].MaNhanVien + `</td>`;
+                            htmlAppend += `<td>` + data[i].HoTen + `</td>`;
+                            htmlAppend += `<td>` + data[i].ViTri + `</td>`;
+                            htmlAppend += `<td>` + (data[i].NgaySinh == null ? "" : moment(data[i].NgaySinh).format('DD/MM/YYYY')) + `</td>`;
+                            htmlAppend += `<td>` + data[i].SDT + `</td>`;
+                            htmlAppend += `<td>` + (data[i].HoTenThanNhan == null ? "" : data[i].HoTenThanNhan) + `</td>`;
+                            htmlAppend += `<td>` + (data[i].NgaySinhThanNhan == null ? "" : moment(data[i].NgaySinhThanNhan).format('DD/MM/YYYY')) + `</td>`;
+                            htmlAppend += `<td>` + (data[i].CCCDThanNhan == null ? "" : data[i].CCCDThanNhan) + `</td>`;
+                            htmlAppend += `<td>` + (data[i].MoiQuanHe == null ? "" : data[i].MoiQuanHe) + `</td>`;
+                            htmlAppend += `<td>` + (data[i].TrungTam == null ? "" : data[i].TrungTam) + `</td>`;
+                            htmlAppend += `</tr>`;
+                            dataSFSubmit.push(data[i]);
+
+                        }
+                        $('#cntModalListNV #ListNVModal #lst-data-info').html(htmlAppend);
+                        showModal();
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Swal.fire({
+                        title: jqXHR.responseText,
+                        icon: "error"
+                    });
+                }
+            });
         }
 
     </script>

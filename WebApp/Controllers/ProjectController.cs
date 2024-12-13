@@ -3,9 +3,12 @@ using DAL.Models;
 using DAL.Models.Category;
 using DAL.Models.ProjectFinancialDetail;
 using DAL.Models.ProjectFinancialSummar;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -221,6 +224,125 @@ namespace WebApp.Controllers
 
                 });
             }
+
+        }
+
+        [HttpPost]
+        public IActionResult ReadFileImport(IFormFile file)
+        {
+            // Get all DM Trung Tam
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            List<ProjectFinancialSummarModel> lstProject = new List<ProjectFinancialSummarModel>();
+            if (file == null || file.Length == 0)
+                return BadRequest("File không hợp lệ");
+            string[] permittedExtensions = { ".xlsx", ".xls" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+            {
+                return BadRequest("File không hợp lệ");
+            }
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    int rows = worksheet.Dimension.Rows;
+                    int columns = worksheet.Dimension.Columns;
+                    // Check number rows
+                    if (rows > 201)
+                    {
+                        return BadRequest("File vượt quá số dòng tối đa (200 dòng)");
+                    }
+                    int indexHaveData = 2;
+                    for (int row = 2; row <= rows; row++)
+                    {
+
+                        if (columns > 0 && row > 2)
+                        {
+                            object tenDA = worksheet.Cells[row, 1].Value;
+
+                            object canCuPhapLy = worksheet.Cells[row, 2].Value;
+
+                            object thoiGianBatDau = worksheet.Cells[row, 3].Value;
+
+                            object thoiGianKetThuc = worksheet.Cells[row, 4].Value;
+
+                            object tongHanMuc = worksheet.Cells[row, 5].Value;
+                            object ghiChu = worksheet.Cells[row, 6].Value;
+
+
+                            if (string.IsNullOrEmpty(tenDA?.ToString()))
+                            {
+                                return BadRequest("Tên dự án không được bỏ trống");
+                            }
+                            if (string.IsNullOrEmpty(canCuPhapLy?.ToString()))
+                            {
+                                return BadRequest("Căn cứ pháp lý không được bỏ trống");
+                            }
+                          
+                            DateTime parsedBatDau= new DateTime();
+                            bool isValidateNgayBatDau = true;
+                            string[] formats = { "MM/dd/yyyy", "M/d/yyyy h:mm:ss tt", "dd/MM/yyyy", "d/M/yyyy", "dd/MM/yyyy h:mm:ss tt" };
+                            if (string.IsNullOrWhiteSpace(thoiGianBatDau?.ToString()) || !DateTime.TryParseExact(thoiGianBatDau?.ToString(), formats, null, System.Globalization.DateTimeStyles.None, out parsedBatDau))
+                            {
+
+                                isValidateNgayBatDau = false;
+                            }
+                            if (isValidateNgayBatDau == false)
+                            {
+                                return BadRequest("Ngày bắt đầu không hợp lệ");
+                            }
+
+                            DateTime parsedKetThuc= new DateTime();
+                            bool isValidateNgayKetThuc = true;
+                           
+                            if (string.IsNullOrWhiteSpace(thoiGianKetThuc?.ToString()) || !DateTime.TryParseExact(thoiGianKetThuc?.ToString(), formats, null, System.Globalization.DateTimeStyles.None, out parsedKetThuc))
+                            {
+
+                                isValidateNgayKetThuc = false;
+                            }
+                            if (isValidateNgayKetThuc == false)
+                            {
+                                return BadRequest("Ngày kết thúc không hợp lệ");
+                            }
+                            if (string.IsNullOrEmpty(tongHanMuc?.ToString()))
+                            {
+                                return BadRequest("Tổng hạn mức không được bỏ trống");
+                            }
+                            decimal parsedTongHanMuc;
+                            try
+                            {
+                                parsedTongHanMuc = decimal.Parse(tongHanMuc.ToString());
+                            }
+                            catch(Exception ex)
+                            {
+                                return BadRequest("Tổng hạn mức không hợp lệ");
+                            }
+
+                            ProjectFinancialSummarModel item = new ProjectFinancialSummarModel
+                            {
+
+                                ProjectName = tenDA.ToString(),
+                                LegalBasis = canCuPhapLy.ToString(),
+                                TimeStart = parsedBatDau,
+                                TimeEnd=parsedKetThuc,
+                                TotalAmount= parsedTongHanMuc,
+                                Notes= ghiChu != null?ghiChu?.ToString():""
+
+                            };
+                            lstProject.Add(item);
+                        }
+                    }
+                }
+            }
+            return Json(new
+            {
+                data = lstProject,
+                Status = "Success"
+            });
 
         }
         #endregion
