@@ -1,12 +1,8 @@
 ﻿@model DAL.Models.ListResultModel<DAL.Models.PaymentRequqest.PaymentListAttachmentsModel>
 
-<table class="table table-bordered">
+<h5>Chứng từ cần đính kèm</h5>
+<table class="table table-bordered" id="table-payment-request-attach">
     <thead>
-        <tr>
-            <td colspan="7">
-                <strong>Các chừng từ cần đính kèm</strong>
-            </td>
-        </tr>
         <tr>
             <th>Tên chừng từ</th>
             <th>Ghi chú</th>
@@ -23,7 +19,7 @@
             {
                 foreach (var item in Model.Results)
                 {
-                    <tr style="height:32px !important;">
+                    <tr class="tr_attach" style="height:32px !important;">
                         <td>@(item.SuggestName)</td>
                         <td>@(item.SuggestNote)</td>
                         <td><a href="@(item.SuggestFileURL)">@(item.SuggestFileName)</a></td>
@@ -43,7 +39,7 @@
                             @{
                                 if (!string.IsNullOrEmpty(item.AttachFileName))
                                 {
-                                    <i title="Xoá đính kèm" class="fa fa-trash file-btn-action"></i>
+                                    <i onclick="DeleteAttachment(@(item.AttachId))" title="Xoá đính kèm" class="fa fa-trash file-btn-action"></i>
                                 }
                             }
                             

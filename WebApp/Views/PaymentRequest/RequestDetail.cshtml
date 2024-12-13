@@ -101,9 +101,25 @@
                                     </div>
                                 </div>
                             </div>
+                           
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Người yêu cầu</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" value="@(Model.RequestHeader.CreatedByName)" disabled="disabled" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Khoa/Phòng ban</label>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(x => x.RequestHeader.CreatedByDepartment, new { @class = "form-control", @disabled = "disabled" })
+                                </div>
+                            </div>
                             <div class="form-group row">
                                 <div class="col-md-10">
-                                    @{ 
+                                    @{
                                         var lstStatus = (ListResultModel<StatusHistoryModel>)ViewBag.StatusHistory;
                                         if (lstStatus.Results.Any())
                                         {
@@ -127,7 +143,7 @@
                                                         }
                                                         else if (status.Status == DAL.Contanst.PaymentRequesStatus_Rejected)
                                                         {
-                                                            classStatus ="<span class='badge badge-danger badge-status'>Từ chối</span>";
+                                                            classStatus = "<span class='badge badge-danger badge-status'>Từ chối</span>";
                                                         }
                                                         else if (status.Status == DAL.Contanst.PaymentRequesStatus_Canceled)
                                                         {
@@ -158,22 +174,6 @@
 
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Người yêu cầu</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" value="@(Model.RequestHeader.CreatedByName)" disabled="disabled" />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Khoa/Phòng ban</label>
-                                <div class="col-md-6">
-                                    @Html.TextBoxFor(x => x.RequestHeader.CreatedByDepartment, new { @class = "form-control", @disabled = "disabled" })
-                                </div>
-                            </div>
-
                         </div>
 
                     </div>
@@ -424,7 +424,8 @@
             });
 
 
-            $("#btn-save").click(function () {
+            $("#btn-save").click(function ()
+            {
                 saveRequest();
             });
 
@@ -518,63 +519,92 @@
             }).form();
             return resutlValid;
         }
+
+        function ValidateUploadAttachs()
+        {
+            let countEmptyAttach = 0;
+            $('#table-payment-request-attach tr.tr_attach').each(function ()
+            {
+                let attachName = $(this).find("td").eq(3).html();
+                if (attachName == "" || attachName == null)
+                {
+                    countEmptyAttach = countEmptyAttach + 1;
+                }
+                  
+            });
+            return countEmptyAttach; 
+        }
+
+
+
         function saveRequest() {
 
             var valid = validateSaveRequest();
             if (valid) {
 
-                debugger;
-                var headerRequestData = FormToObject("#form-paymentrequest", "RequestHeader.");
-                headerRequestData.DateRequest = ConverFormatDate($("#RequestHeader_DateRequest").val());
+                let invalidAttach = ValidateUploadAttachs();
+                if (invalidAttach == 0) {
 
-                let lstItems = [];
-                var itemRequestData = FormToObject("#form-paymentrequest", "ListRequestItems.");
-                
-                let itemObject = {
-                    "Id": itemRequestData.Id,
-                    "RequestId": itemRequestData.RequestId,
-                    "ProjectId": itemRequestData.ProjectId,
-                    "ActivityId": itemRequestData.ActivityId,
-                    "ExpenseId": itemRequestData.ExpenseId,
-                    "Quanti": DeRenderNumerFormat(itemRequestData.Quanti),
-                    "Price": DeRenderNumerFormat(itemRequestData.Price),
-                    "Note": itemRequestData.Note
-                };
+                    debugger;
+                    var headerRequestData = FormToObject("#form-paymentrequest", "RequestHeader.");
+                    headerRequestData.DateRequest = ConverFormatDate($("#RequestHeader_DateRequest").val());
 
-                
-                lstItems.push(itemObject);
+                    let lstItems = [];
+                    var itemRequestData = FormToObject("#form-paymentrequest", "ListRequestItems.");
 
-                var saveData = {
-                    "RequestHeader": headerRequestData,
-                    "ListRequestItems": lstItems
-                };
+                    let itemObject = {
+                        "Id": itemRequestData.Id,
+                        "RequestId": itemRequestData.RequestId,
+                        "ProjectId": itemRequestData.ProjectId,
+                        "ActivityId": itemRequestData.ActivityId,
+                        "ExpenseId": itemRequestData.ExpenseId,
+                        "Quanti": DeRenderNumerFormat(itemRequestData.Quanti),
+                        "Price": DeRenderNumerFormat(itemRequestData.Price),
+                        "Note": itemRequestData.Note
+                    };
 
 
-                $.ajax({
-                    type: "POST",
-                    contentType: 'application/json; charset=utf-8',
-                    url: "/PaymentRequest/SavePaymentRequest",
-                    dataType: 'json',
-                    data: JSON.stringify(saveData),
-                    beforeSend: function () {
-                        ShowWaiting();
-                    },
-                    success: function (res) {
-                        HideWaiting();
-                        if (res.isSuccess === true) {
-                            bootbox.alert(AlertSuccess("Lưu dữ liệu thành công"), function () {
+                    lstItems.push(itemObject);
 
-                                location.href = "/PaymentRequest/RequestDetail/" + res.longValReturn;
-                            });
-                        } else {
-                            bootbox.alert(AlertFail(res.errorMessage));
+                    var saveData = {
+                        "RequestHeader": headerRequestData,
+                        "ListRequestItems": lstItems
+                    };
+
+
+                    $.ajax({
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        url: "/PaymentRequest/SavePaymentRequest",
+                        dataType: 'json',
+                        data: JSON.stringify(saveData),
+                        beforeSend: function () {
+                            ShowWaiting();
+                        },
+                        success: function (res) {
+                            HideWaiting();
+                            if (res.isSuccess === true) {
+                                bootbox.alert(AlertSuccess("Lưu dữ liệu thành công"), function () {
+
+                                    location.href = "/PaymentRequest/RequestDetail/" + res.longValReturn;
+                                });
+                            } else {
+                                bootbox.alert(AlertFail(res.errorMessage));
+                            }
+                            lstItems = [];
                         }
-                        lstItems = [];
-                    }
-                });
+                    });
 
 
-            }
+
+                }// end if invalid attach
+                else {
+                    bootbox.alert(AlertFail("Còn tài liệu chưa đính kèm"));
+                }
+                
+
+
+            }// end if valid input
 
         }
         function FormatNumberDevide() {
@@ -721,7 +751,76 @@
         }
 
      
+        function DeleteAttachment(attachId) {
 
+            var conf = bootbox.confirm("Bạn có chắc muốn file đính kèm này?", function () {
+                if (conf) {
+                    $.ajax({
+                        type: "GET",
+                        contentType: 'application/json; charset=utf-8',
+                        url: "/FileUpload/DeleteFile/" + attachId,
+                        success: function (result) {
+                            bootbox.alert(AlertSuccess("Đã xoá thành công"), function ()
+                            {
+                                let requestId = $("#RequestHeader_Id").val();
+                                LoadAttachRequestFile(requestId);
+                            });
+
+                        }
+                    });
+                }
+            });
+
+
+        }
+
+
+
+        function DownloadFile(attachId) {
+
+
+            $.ajax({
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                url: "/CreditRequest/DownloadAttachFile?attachId=" + attachId,
+                success: function (r) {
+
+                    //Convert Base64 string to Byte Array.
+                    var bytes = Base64ToBytes(r);
+
+                    //Convert Byte Array to BLOB.
+                    var blob = new Blob([bytes], { type: "application/octetstream" });
+
+                    //Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    if (isIE) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", fileName);
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+                    }
+
+                }
+            });
+
+
+
+        }
+
+        function Base64ToBytes(base64) {
+            var s = window.atob(base64);
+            var bytes = new Uint8Array(s.length);
+            for (var i = 0; i < s.length; i++) {
+                bytes[i] = s.charCodeAt(i);
+            }
+            return bytes;
+        };
 
     </script>
 }
