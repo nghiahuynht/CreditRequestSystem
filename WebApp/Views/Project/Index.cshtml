@@ -137,6 +137,114 @@
     </div>
 </div>
 
+<!--modal read import-->
+
+
+<div id="cntModalListProject">
+    <div class="modal fade" id="ListProjectModal" tabindex="-1" aria-labelledby="ListProjectModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header pt-2 pb-2">
+                    <h5 class="modal-title" id="ListProjectModalLabel">Tải lên dữ liệu chương trình/dự án/dịch vụ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                        <span aria-hidden="true">
+                            <i class="fa fa-times"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: calc(100vh - 200px);overflow:scroll">
+                    <div class="row mb-2">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                            <table class="table table-root">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" name="checkAllRow" checked="checked">
+                                        </th>
+                                        <th scope="col">Mã dự án</th>
+                                        <th scope="col" class="">Tên dự án</th>
+                                        <th scope="col" class="">Căn cứ pháp lý</th>
+                                        <th scope="col" class="">Thời gian bắt đầu</th>
+                                        <th scope="col" class="">Thời gian kết thúc</th>
+                                        <th scope="col" class="">Tổng tiền</th>
+                                        <th scope="col" class="">Ghi chú</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody id="lst-data-info">
+                                </tbody>
+                                @*  <tfoot>
+                                <td id="sumcheck"></td>
+                                <td colspan="7"></td>
+                                </tfoot> *@
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-custom">
+                    <div class="footer-left col-6">
+                        <label>Số lượng dòng đã chọn: </label>
+                        <span id="sumcheck"></span>
+                    </div>
+
+                    <div class="footer-right col-6 pb-3">
+                        <button type="button" class="btn btn-primary" onclick="ImportDuAn()">Import Dự án</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal result import-->
+<div id="cntModalResultImport">
+    <div class="modal fade" id="ListProjectModalResultImport" tabindex="-1" aria-labelledby="ListProjectModalResultImportLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xxl">
+            <div class="modal-content">
+                <div class="modal-header pt-2 pb-2">
+                    <h5 class="modal-title" id="ListNVModalResultImportLabel">Kết Quả Import</h5>
+
+                </div>
+                <div class="modal-body" style="height: calc(100vh - 200px);overflow:scroll">
+                    <div class="row mb-2">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                            <table class="table table-root">
+                                <thead>
+                                    <tr>
+
+                                        <th scope="col">Mã dự án</th>
+                                        <th scope="col" class="">Tên dự án</th>
+                                        <th scope="col" class="">Căn cứ pháp lý</th>
+                                        <th scope="col" class="">Thời gian bắt đầu</th>
+                                        <th scope="col" class="">Thời gian kết thúc</th>
+                                        <th scope="col" class="">Tổng tiền</th>
+                                        <th scope="col" class="">Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lst-data-info">
+                                </tbody>
+                                @*  <tfoot>
+                                <td id="sumcheck"></td>
+                                <td colspan="7"></td>
+                                </tfoot> *@
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-custom">
+
+
+                    <div class="footer-right col-6 pb-3">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModalResultImport()">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -521,33 +629,31 @@
                 },
                 success: function (response) {
                     console.log("response", response)
-                    dataSFSubmit = [];
+                    dataSubmit = [];
                     dataResponeAjax = [];
 
-                    if (response) {
+                    if (response.status = "Success") {
                         var data = response.data;
-                        var dataSF = response.dataSF;
                         var htmlAppend = '';
                         for (var i = 0; i < data.length; i++) {
+                            var projectCode=generateCode("DA");
+                            data[i].projectCode = projectCode;
                             htmlAppend += `<tr>`;
                             htmlAppend += `<td class="col-checkbox">
-                                     <input data-id='`+ data[i].Id + `' type="checkbox" checked="checked" name="checkRow">
+                                             <input data-id='`+ data[i].projectCode + `' type="checkbox" checked="checked" name="checkRow">
                              </td>`;
-                            htmlAppend += `<td>` + data[i].MaNhanVien + `</td>`;
-                            htmlAppend += `<td>` + data[i].HoTen + `</td>`;
-                            htmlAppend += `<td>` + data[i].ViTri + `</td>`;
-                            htmlAppend += `<td>` + (data[i].NgaySinh == null ? "" : moment(data[i].NgaySinh).format('DD/MM/YYYY')) + `</td>`;
-                            htmlAppend += `<td>` + data[i].SDT + `</td>`;
-                            htmlAppend += `<td>` + (data[i].HoTenThanNhan == null ? "" : data[i].HoTenThanNhan) + `</td>`;
-                            htmlAppend += `<td>` + (data[i].NgaySinhThanNhan == null ? "" : moment(data[i].NgaySinhThanNhan).format('DD/MM/YYYY')) + `</td>`;
-                            htmlAppend += `<td>` + (data[i].CCCDThanNhan == null ? "" : data[i].CCCDThanNhan) + `</td>`;
-                            htmlAppend += `<td>` + (data[i].MoiQuanHe == null ? "" : data[i].MoiQuanHe) + `</td>`;
-                            htmlAppend += `<td>` + (data[i].TrungTam == null ? "" : data[i].TrungTam) + `</td>`;
+                            htmlAppend += `<td>` + data[i].projectCode + `</td>`;
+                            htmlAppend += `<td>` + data[i].projectName + `</td>`;
+                            htmlAppend += `<td>` + data[i].legalBasis + `</td>`;
+                            htmlAppend += `<td>` + (data[i].timeStart == null ? "" : moment(data[i].timeStart).format('DD/MM/YYYY')) + `</td>`;
+                            htmlAppend += `<td>` + (data[i].timeEnd == null ? "" : moment(data[i].timeEnd).format('DD/MM/YYYY')) + `</td>`;
+                            htmlAppend += `<td>` + data[i].totalAmount + `</td>`;
+                            htmlAppend += `<td>` + data[i].notes + `</td>`;
                             htmlAppend += `</tr>`;
-                            dataSFSubmit.push(data[i]);
-
+                            dataSubmit.push(data[i]);
+                            dataResponeAjax.push(data[i]);
                         }
-                        $('#cntModalListNV #ListNVModal #lst-data-info').html(htmlAppend);
+                        $('#cntModalListProject #ListProjectModal #lst-data-info').html(htmlAppend);
                         showModal();
                     }
                 },
@@ -559,7 +665,119 @@
                 }
             });
         }
+        function showModal() {
+            $('#cntModalListProject #ListProjectModal').modal().show();
+            caclCheckTotal();
+            $('#modal_import_project').modal('hide');
+            $('#cntModalListProject #ListProjectModal #lst-data-info').on('click', '[name="checkRow"]', function () {
+                var dataId = $(this).attr('data-id');
+                if ($(this).is(':checked')) {
+                    var dtSubmit = dataResponeAjax.find(x => x.projectCode == dataId);
+                    if (dtSubmit) {
+                        dataSubmit.push(dtSubmit);
+                    }
+                }
+                else {
+                    $('[name="checkAllRow"]').prop('checked', false);
+                    dataSubmit = dataSubmit.filter(x => x.projectCode != dataId);
+                }
+                caclCheckTotal();
+            });
+            $('#cntModalListProject #ListProjectModal [name="checkAllRow"]').on('click', function () {
+                if ($(this).is(':checked')) {
+                    $('#cntModalListProject #ListProjectModal #lst-data-info [name="checkRow"]').prop('checked', true);
+                    dataSubmit = dataResponeAjax;
+                }
+                else {
+                    $('#cntModalListNV #ListNVModal #lst-data-info [name="checkRow"]').prop('checked', false);
+                    dataSubmit = [];
+                }
+                caclCheckTotal();
+            })
 
+        }
+
+
+        function caclCheckTotal() {
+            var total = 0;
+            $('#cntModalListProject #ListProjectModal #lst-data-info [name="checkRow"]').each(function () {
+                if ($(this).is(':checked')) {
+                    total++;
+                }
+            });
+            $('#cntModalListProject #ListProjectModal #sumcheck').text(total);
+        }
+        function checkAllCheckbox() {
+            var flag = true;
+            $('#cntModalListProject #ListProjectModal #lst-data-info [name="checkRow"]').each(function () {
+                if (!$(this).is(':checked')) {
+                    flag = false;
+                    return false;
+                }
+            });
+            return flag;
+        }
+
+        function ImportDuAn() {
+            if (dataSubmit.length < 1) {
+                Swal.fire({
+                    title: "Vui lòng chọn ít nhất 1 dòng",
+                    icon: "error"
+                });
+                return;
+            }
+            console.log("dataSubmit", dataSubmit)
+            var jsonStr = JSON.stringify(dataSubmit);
+            $.ajax({
+                url: '/project/ImportProjectFinancialSummar',
+                type: 'POST',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: jsonStr,
+                processData: false,
+                beforeSend: function () {
+                    $('#cntModalListNV #ListNVModal').modal('hide');
+                   
+                },
+                complete: function () {
+                  
+                },
+                success: function (response) {
+                    console.log("response", response)
+                    Swal.fire({
+                        title: "Thao tác đã thực hiện",
+                        text: dataSFSubmit.length + " dòng dữ liệu",
+                        icon: response.Status == 1 ? "success" : "error"
+                    });
+
+                    var htmlAppend = '';
+                    for (var i = 0; i < response.data.length; i++) {
+                        htmlAppend += `<tr>`;
+                        htmlAppend += `<td>` + response.data[i].data.MaNhanVien + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].data.HoTen + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].data.ViTri + `</td>`;
+                        htmlAppend += `<td>` + (response.data[i].data.NgaySinh == null ? "" : moment(response.data[i].data.NgaySinh).format('DD/MM/YYYY')) + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].data.SDT + `</td>`;
+                        htmlAppend += `<td>` + (response.data[i].data.HoTenThanNhan == null ? "" : response.data[i].data.HoTenThanNhan) + `</td>`;
+                        htmlAppend += `<td>` + (response.data[i].data.NgaySinhThanNhan == null ? "" : moment(response.data[i].data.NgaySinhThanNhan).format('DD/MM/YYYY')) + `</td>`;
+                        htmlAppend += `<td>` + (response.data[i].data.CCCDThanNhan == null ? "" : response.data[i].data.CCCDThanNhan) + `</td>`;
+                        htmlAppend += `<td>` + (response.data[i].data.MoiQuanHe == null ? "" : response.data[i].data.MoiQuanHe) + `</td>`;
+                        htmlAppend += `<td>` + (response.data[i].data.TrungTam == null ? "" : response.data[i].data.TrungTam) + `</td>`;
+                        var messageColor = response.data[i].message === "Thành Công" ? "green" : "red";
+                        htmlAppend += `<td style='color:${messageColor};'>` + (response.data[i].message) + `</td>`;
+                        htmlAppend += `</tr>`;
+
+
+                    }
+                    $('#cntModalResultImport #ListNVModalResultImport #lst-data-info').html(htmlAppend);
+
+                    $('#ListNVModalResultImport').modal().show();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#result').html('Error: ' + textStatus + ' - ' + errorThrown);
+                }
+            });
+        }
     </script>
 }
 

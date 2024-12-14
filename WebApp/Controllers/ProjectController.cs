@@ -345,6 +345,33 @@ namespace WebApp.Controllers
             });
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportProjectFinancialSummar([FromBody] List<ProjectFinancialSummarModel> data)
+        {
+
+            try
+            {
+
+                return Json(new
+                {
+                    success = false,
+                    message = "Oke",
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message,
+
+                });
+            }
+
+
+        }
         #endregion
 
         #region project detail
