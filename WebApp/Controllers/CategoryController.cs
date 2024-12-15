@@ -270,8 +270,43 @@ namespace WebApp.Controllers
         #endregion
 
         #region DM Thong Tin Thanh Toan
+
+        public IActionResult ThongTinHoSoThanhToan()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        // [Authorize(Roles = "Admin")]
+        public DataTableResultModel<CategoryPaymentProfileViewModel> GetDataPaymentProfile(CategoryFilterModel filter)
+        {
+            var res = categoryService.GetPaymentProfileByFilter(filter);
+            return res;
+        }
+
+        public IActionResult _AddThongTinHoSoThanhToan(int id = 0)
+        {
+            var viewModel = new CategoryPaymentProfileAddViewModel();
+            if (id > 0)
+            {
+                viewModel.data = categoryService.GetPaymentProfileById(id);
+                viewModel.detail = categoryService.GetPaymentProfileDetailByPaymentProfileId(id);
+
+            }
+            else
+            {
+                viewModel.data= new CategoryPaymentProfileViewModel();
+                viewModel.detail= new List<CategoryPaymentProfileDetailViewModel>();
+                viewModel.data.Id = 0;
+            }
+
+            return View(viewModel);
+
+
+        }
+
         [HttpGet]
-        public IActionResult _AddThongTinThanhToan(int id = 0)
+        public IActionResult _AddThongTinThanhToanMucChi(int id = 0)
         {
             var viewModel = new PaymentProfileModel();
 
@@ -298,13 +333,23 @@ namespace WebApp.Controllers
         {
             var res = new SaveResultModel<object>();
 
-            res = await categoryService.CreatePaymentInfo(model, User.Identity.Name);
+            res = await categoryService.CreatePaymentProfile(model, User.Identity.Name);
+
             if (res.LongValReturn == -409)
             {
                 res.IsSuccess = false;
                 res.ErrorMessage = "Mã hồ sơ đã tồn tại!";
 
             }
+            else
+            {
+                // save table detail
+                foreach(var dt in model.detail)
+                {
+                    dt.PaymentProfileId = (int)res.LongValReturn;
+                   var resDetail = await categoryService.CreatePaymentProfileDetail(dt, User.Identity.Name);
+                }    
+            }    
             return Json(res);
         }
 
@@ -359,6 +404,31 @@ namespace WebApp.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<JsonResult> DeletePaymentProfileDetail(int Id)
+        {
+            try
+            {
+                var rs = await categoryService.DeletePaymentProfileDetail(Id);
+                return Json(new
+                {
+                    success = rs,
+                    message = rs == true ? "Xóa thành công." : "Xóa thất bại",
+                    projectId = Id
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
         #endregion
 
         #region DM Phong Ban

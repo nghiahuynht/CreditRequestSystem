@@ -26,12 +26,13 @@ namespace DAL.Models.Category
     public class CategoryPaymentProfileViewModel
     {
         public int Id { get; set; }
-        public int FileAttachId { get; set; }
-        public string FileAttachName { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }
+        public int FileAttachId { get; set; }
+        public string FileAttachName { get; set; }
         public string URLPath { get; set; }
+        public bool IsRquiredDoc { get; set; }
     }
 
     public class CategoryFilterModel : DataTableDefaultParamModel
@@ -59,12 +60,13 @@ namespace DAL.Models.Category
     public class CategoryPaymentInfoModel
     {
         public int Id { get; set; }
-        public int ExpenseId { get; set; }
         public int FileAttachId { get; set; }
         public string PaymentInfoCode { get; set; }
         public string PaymentInfoName { get; set; }
         public string Notes { get; set; }
-       
+        public bool IsRequiredDoc { get; set; }
+        public List<CategoryPaymentProfileDetailViewModel> detail { get; set; }
+
     }
 
     public class CategoryDepartmentViewModel
@@ -82,5 +84,20 @@ namespace DAL.Models.Category
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }
+    }
+
+    public class CategoryPaymentProfileDetailViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Notes { get; set; }
+        public int PaymentProfileId { get; set; }
+        
+    }
+
+    public class CategoryPaymentProfileAddViewModel
+    {
+        public CategoryPaymentProfileViewModel data { get; set; }
+        public List<CategoryPaymentProfileDetailViewModel> detail { get; set; }
     }
 }

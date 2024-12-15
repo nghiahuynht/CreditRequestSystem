@@ -28,13 +28,20 @@ namespace DAL.IService
         DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter);
         Task<SaveResultModel<object>> CreateExpense(CategoryExpenseViewModel model, string userName);
         Task<bool> DeleteExpense(int categoryId, string userName);
+        DataTableResultModel<CategoryPaymentProfileViewModel> GetPaymentProfileByFilter(CategoryFilterModel filter);
+        CategoryPaymentProfileViewModel GetPaymentProfileById(int Id);
         List<CategoryPaymentProfileViewModel> GetPaymentProfileByExpense(int expenseId);
-        Task<SaveResultModel<object>> CreatePaymentInfo(CategoryPaymentInfoModel model, string userName);
+        Task<SaveResultModel<object>> CreatePaymentProfile(CategoryPaymentInfoModel model, string userName);
+        Task<SaveResultModel<object>> CreatePaymentProfileDetail(CategoryPaymentProfileDetailViewModel model, string userName);
         Task<bool> DeletePaymentProfile(int Id, string userName);
 
         List<CategoryDepartmentViewModel> LstAllCategoryDepartment();
         List<CategoryExpenseViewModel> GetExpenseByActiveGroup(int Id);
         List<CategoryActiveGroupViewModel> LstCategoryActiveGroupAllocationByProductId(int Id);
+
+        List<CategoryPaymentProfileDetailViewModel> GetPaymentProfileDetailByPaymentProfileId(int Id);
+
+        Task<bool> DeletePaymentProfileDetail(int Id);
 
     }
 }

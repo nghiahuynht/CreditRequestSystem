@@ -356,8 +356,52 @@ namespace DAL.Service
             }
             return res;
         }
+        public DataTableResultModel<CategoryPaymentProfileViewModel> GetPaymentProfileByFilter(CategoryFilterModel filter)
+        {
+            var res = new DataTableResultModel<CategoryPaymentProfileViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Ma", filter.Code),
+                    new SqlParameter("@Ten", filter.Name),
+                    new SqlParameter("@Start", filter.start),
+                    new SqlParameter("@Length", filter.length),
+                    new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
+                };
+                ValidNullValue(param);
+                var lstData = dtx.CategoryPaymentProfileViewModel.FromSql("sp_GetPaymentProfilePaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
+                res.recordsTotal = Convert.ToInt16(param[4].Value);
+                res.recordsFiltered = res.recordsTotal;
+                res.data = lstData.ToList();
+            }
+            catch (Exception ex)
+            {
+                res.recordsTotal = 0;
+                res.recordsFiltered = 0;
+                res.data = new List<CategoryPaymentProfileViewModel>();
+            }
 
-        public async Task<SaveResultModel<object>> CreatePaymentInfo(CategoryPaymentInfoModel model, string userName)
+            return res;
+        }
+
+        public CategoryPaymentProfileViewModel GetPaymentProfileById(int Id)
+        {
+            var res = new CategoryPaymentProfileViewModel();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@Id",Id),
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryPaymentProfileViewModel.FromSql("EXEC sp_GetPaymentProfileById @Id", param).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+        public async Task<SaveResultModel<object>> CreatePaymentProfile(CategoryPaymentInfoModel model, string userName)
         {
             var res = new SaveResultModel<object>();
             res.Data = null;
@@ -366,12 +410,12 @@ namespace DAL.Service
                 var param = new SqlParameter[]
                {
                   new SqlParameter("@Id", model.Id),
-                    new SqlParameter("@ExpenseId", model.ExpenseId),
                     new SqlParameter("@Code", model.PaymentInfoCode),
                     new SqlParameter("@Name", model.PaymentInfoName),
                     new SqlParameter("@Notes", model.Notes),
-                    new SqlParameter("@FileAttachId", model.FileAttachId),
+                    new SqlParameter("@FileAttachId", model.FileAttachId),   
                     new SqlParameter("@ActionBy", userName),
+                    new SqlParameter("@IsRequiredDoc", model.IsRequiredDoc),
                     new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
 
                };
@@ -379,7 +423,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePaymentInfo @Id,@ExpenseId,@Code,@Name,@Notes,@FileAttachId,@ActionBy,@NewId OUT", param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePaymentProfile @Id,@Code,@Name,@Notes,@FileAttachId,@ActionBy,@IsRequiredDoc,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -473,6 +517,73 @@ namespace DAL.Service
             catch (Exception ex)
             {
 
+            }
+            return res;
+        }
+
+        public  List<CategoryPaymentProfileDetailViewModel> GetPaymentProfileDetailByPaymentProfileId(int Id)
+        {
+            var res = new List<CategoryPaymentProfileDetailViewModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@Id",Id),
+                };
+                ValidNullValue(param);
+                res = dtx.CategoryPaymentProfileDetailViewModel.FromSql("EXEC sp_GetPaymentProfileDetailByPaymentProfileId @Id", param).ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+        public async Task<bool> DeletePaymentProfileDetail(int Id)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id)
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeletePaymentProfileDetailById @Id", param);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<SaveResultModel<object>> CreatePaymentProfileDetail(CategoryPaymentProfileDetailViewModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@Id", model.Id),
+                    new SqlParameter("@PaymentProfileId", model.PaymentProfileId),
+                    new SqlParameter("@Name", model.Name),
+                    new SqlParameter("@Notes", model.Notes),
+                    new SqlParameter("@ActionBy", userName),
+                    new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePaymentProfileDetail @Id,@PaymentProfileId,@Name,@Notes,@ActionBy,@NewId OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
             }
             return res;
         }

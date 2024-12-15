@@ -1,0 +1,475 @@
+﻿@using System.Security.Claims
+@using WebApp.ExcelHelper;
+@{
+    ViewData["Title"] = "Danh sách thông tin hồ sơ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    //bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.HoSoThanhToan.Delete);
+    bool isDelete = true;
+    //bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.HoSoThanhToan.Add);
+    bool isAdd =true;
+    //bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.HoSoThanhToan.Edit);
+    bool isEdit = true;
+}
+@model List<DAL.Models.ComboBoxModel>
+@section styles{
+
+    <link href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.css" rel="stylesheet" />
+    <style>
+        .div-member {
+            margin-left: 20px;
+        }
+
+            .div-member .nav .nav-link {
+                margin: 4px 0 !important;
+            }
+
+        .card .nav.flex-column > li {
+            border-bottom: 0px;
+        }
+
+        .span-team-name {
+            font-weight: bold
+        }
+
+        .i-edit-saleteam {
+            color: #555;
+        }
+
+        .i-delete-saleteam {
+            color: #ff0000;
+        }
+
+        .typeahead {
+            width: 100% !important;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@(ViewData["Title"])</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                            <label>Mã hồ sơ</label>
+                            <input type="text" class="form-control" id="txtMa" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Tên hồ sơ</label>
+                            <input type="text" class="form-control" id="txtTen" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button onclick="SearchThongTinHoSo()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            @if (isAdd == true)
+                            {
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreatePaymentProfile(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body ">
+                    <table class="table table-bordered table-hover dataTable" id="table-paymentinfo" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Mã hồ sơ</th>
+                                <th>Tên hồ sơ</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!--modal add-->
+<div class="modal modal-blur fade" id="modal_add_payment_profile" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_payment_profile">
+
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts{
+    <script src="~/plugins/datatable/jquery.datatable.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.js"></script>
+
+    <script src="~/plugins/mdb-treeview/forms-free.js"></script>
+    <script src="~/plugins/mdb-treeview/scrolling-navbar.js"></script>
+    <script src="~/plugins/mdb-treeview/treeview.js"></script>
+    <script src="~/plugins/mdb-treeview/wow.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script>
+        const isEdit = @isEdit.ToString().ToLower();
+       const isDelete = @isDelete.ToString().ToLower();
+        var tableId = "#table-paymentinfo";
+        var ajaxURL = "/Category/GetDataPaymentProfile";
+        var columnData = [
+            { "data": "id", visible: false },
+            { "data": "code" },
+            { "data": "name" },
+            { "data": "notes" },
+            {
+                "data": "id", "render": function (data, type, row, meta) {
+                    return RenderTableAction(data);
+                }
+            },
+
+
+        ];
+
+        var arrPaymentProfileDetail = [];
+
+
+        $(document).ready(function () {
+
+            SearchThongTinHoSo();
+
+
+        });
+        function RenderTableAction(id) {
+            let html = `<div class='div-table-action'>`;
+
+            // Check if Edit action should be added
+            if (isEdit) {
+                html += `<i class='fa fa-edit' onclick='showModalCreatePaymentProfile(${id})' title='sửa'></i>&nbsp`;
+            }
+
+            // Check if Delete action should be added
+            if (isDelete) {
+                html += `<i class='fa fa-trash' onclick='DeleteExpense(${id})' title='xóa'></i>`;
+            }
+
+            html += `</div>`;
+
+            return html;
+
+        }
+
+        function SearchThongTinHoSo() {
+
+            var dataSearch = {
+                Code: $("#txtMa").val(),
+                Name: $("#txtTen").val()
+            };
+            GenrateDataTableSearch(tableId, ajaxURL, columnData, dataSearch);
+
+        }
+
+        function showModalCreatePaymentProfile(id) {
+            $.ajax({
+                url: '/Category/_AddThongTinHoSoThanhToan/' + id, // Đảm bảo đường dẫn này đúng với action của bạn
+                type: 'GET',
+                success: function (response) {
+                    // Chèn HTML trả về vào phần tử có id "dailog_nv"
+                    $('#dailog_payment_profile').html(response);
+
+                    // Hiển thị modal
+                    $("#modal_add_payment_profile").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi khi tải nội dung modal: ", error);
+                    alert("Lỗi tải modal, vui lòng thử lại sau.");
+                }
+            });
+        }
+
+
+        function AddRowPaymentProfileĐetail() {
+            debugger
+            var html = '';
+            var randomId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+            html = ` <tr>
+                                    <td>
+                                        <input name="chi_tiet_hs_id" id="a_chi_tiet_hs_${randomId}"  readonly class="form-control" value=${randomId} />
+                                    </td>
+                                    <td>
+                                        <input name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten_${randomId}"  class="form-control"  />
+                                    </td>
+                                    <td>
+                                        <input name="chi_tiet_hs_ghi_chu" id="a_chi_tiet_hs_ghi_chu_${randomId}"  class="form-control" />
+                                    </td>
+                                    <td style="text-align:center;">
+                                         <span class="fa fa-check" onclick="SaveProfileDetail(${randomId})"></span>
+                                        <span class="fa fa-trash" onclick="RemovePaymentProfileDetail(${randomId},false)"></span>
+                                    </td>
+                                </tr>`
+           
+            $('#table_thong_tin_hs_thanh_toan_chi_tiet').append(html);
+        }
+
+        //a_payment_profile_id
+        function RemovePaymentProfileDetail(Id,isSaveDB) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (isSaveDB == true) {
+                        // call ajax
+                        $.ajax({
+                            url: '/Category/DeletePaymentProfileDetail',
+                            type: 'GET',
+                            data: {
+                                Id: Id
+                            },
+                            contentType: 'application/json',
+                            success: function (response) {
+                                if (response.success) {
+                                    // remove array detail
+                                    arrPaymentProfileDetail = arrPaymentProfileDetail.filter(x => x.Id != Id);
+                                    $(`span.fa-trash[onclick="RemovePaymentProfileDetail(${Id},true)"]`).closest('tr').remove();
+                                    toastr.success('Xóa thông tin hồ sơ thành công!', 'Thành công');
+                                }
+                                else {
+
+                                    toastr.error('Xóa thông tin hồ sơ  thất bại!', 'Lỗi');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+
+                                alert('Có lỗi khi gửi yêu cầu!');
+                            }
+                        });
+                    }
+                    else {
+                        // remove array detail
+                        arrPaymentProfileDetail = arrPaymentProfileDetail.filter(x => x.Id != Id);
+                        $(`span.fa-trash[onclick="RemovePaymentProfileDetail(${Id},false)"]`).closest('tr').remove();
+
+                    }
+                    
+
+                }
+            });
+        }
+
+        function CreatePaymentProfile() {
+
+            var isValidate = validateData();
+           
+            if (isValidate == true) {
+
+                if (arrPaymentProfileDetail.length == 0) {
+                    toastr.error("Nội dung kiểm tra không được bỏ trống", 'Lỗi', { positionClass: "toast-top-center" });
+                    return 
+                }
+                var dataPost = {
+                    Id: $("#a_payment_profile_id").val(),
+                    PaymentInfoCode: $("#a_code").val(),
+                    PaymentInfoName: $("#a_name").val(),
+                    Notes: $("#a_ghi_chu").val(),
+                    IsRequiredDoc: $("#a_requird_doc").is(":checked"),
+                    detail:arrPaymentProfileDetail
+                };
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/Category/CreatePaymentInfo",
+                    dataType: 'json',
+                    data: JSON.stringify(dataPost),
+                    beforeSend: function () {
+
+                    },
+                    success: function (res) {
+                        if (res.isSuccess === true) {
+                            toastr.success('Thêm thông tin hồ sơ thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            SearchThongTinHoSo();
+                            $("#modal_add_payment_profile").modal("hide");
+                            arrPaymentProfileDetail = [];
+                        } else {
+                            toastr.error(res.errorMessage, 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+
+                    }
+                });
+            }
+        }
+
+        function validateData() {
+            var resultValid = $("#frmCreatePaymentProfile").validate({
+                rules: {
+                    "code": {
+                        required: true,
+                    },
+                    "name": {
+                        required: true,
+                    }
+
+                },
+                messages: {
+                    
+                    "code": "Mã không được để trống!",
+                    "name": "Tên không được để trống!"
+                },
+
+            }).form();
+
+            return resultValid;
+        }
+
+        function closeModal_PaymentProfile() {
+
+            $("#modal_add_payment_profile").modal("hide")
+
+        }
+
+        
+
+        //function showModalCreatePaymentInfo(id) {
+        //    $.ajax({
+        //        url: '/Category/_AddThongTinHoSoThanhToan/' + id,
+        //        type: 'GET',
+        //        success: function (response) {
+
+        //            // Chèn HTML trả về vào phần tử có id "dailog_nv"
+        //            $('#dailog_payment_profile').html(response);
+        //            console.log("response", response)
+
+        //            // Hiển thị modal
+        //            $("#modal_add_payment_profile").modal("show")
+        //        },
+        //        error: function (xhr, status, error) {
+        //            console.error("Có lỗi khi tải nội dung modal: ", error);
+        //            alert("Lỗi tải modal, vui lòng thử lại sau.");
+        //        }
+        //    });
+        //}
+
+        //--------------HS Thanh Toán ---------------
+       
+
+     
+
+        function RemovePaymentProfile(Id) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // call ajax
+                    $.ajax({
+                        url: '/Category/DeletePaymentProfile',
+                        type: 'GET',
+                        data: {
+                            Id: Id
+                        },
+                        contentType: 'application/json',
+                        success: function (response) {
+                            if (response.success) {
+
+                                $(`span.fa-trash[onclick="RemovePaymentProfile(${Id})"]`).closest('tr').remove();
+                                toastr.success('Xóa thông tin hồ sơ thành công!', 'Thành công');
+                            }
+                            else {
+
+                                toastr.error('Xóa thông tin hồ sơ  thất bại!', 'Lỗi');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+
+                            alert('Có lỗi khi gửi yêu cầu!');
+                        }
+                    });
+
+                }
+            });
+
+        }
+
+        function SaveProfileDetail(profileDetailId) {
+
+            // Find the row that contains the clicked icon
+            var row = $(`span.fa-check[onclick="SaveProfileDetail(${profileDetailId})"]`).closest('tr');
+
+            // Retrieve values from the inputs in the row
+            var IdInput = row.find('input[name="chi_tiet_hs_id"]');
+            var nameInput = row.find('input[name="chi_tiet_hs_ten"]');
+            var notesInput = row.find('input[name="chi_tiet_hs_ghi_chu"]');
+           
+            var name = nameInput.val();
+            var id = IdInput.val();
+            var notes = notesInput.val();
+
+            // Validation messages
+            var errors = [];
+
+            if (!name || name.trim() === "") {
+                errors.push("Nội dung kiểm tra không được để trống!");
+            }
+            
+
+            // Display validation errors if any
+            if (errors.length > 0) {
+                toastr.error(errors.join("<br>"), 'Lỗi', { positionClass: "toast-top-center" });
+                return;
+            }
+
+            // Prepare the data for submission
+            var dataPost = {
+                Id: id,
+                PaymentProfileId: 0,
+                Name: name.trim(),
+                Notes: notes?.trim()
+                
+            };
+            nameInput.prop('readonly', true);
+            notesInput.prop('readonly', true);
+            row.find('span.fa-check').remove();
+            toastr.success('Nội dung kiểm tra tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+            arrPaymentProfileDetail.push(dataPost)
+            // Log the data (optional for debugging)
+            console.log("dataPost", arrPaymentProfileDetail)
+          
+        }
+    </script>
+}
+
+

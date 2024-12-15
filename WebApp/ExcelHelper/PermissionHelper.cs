@@ -38,6 +38,14 @@ namespace WebApp.ExcelHelper
             public const string Approve = "MC_APPROVE";
         }
 
+        public static class HoSoThanhToan
+        {
+            public const string Add = "HSTT_ADD";
+            public const string Edit = "HSTT_EDIT";
+            public const string Delete = "HSTT_DELETE";
+            public const string Approve = "HSTT_APPROVE";
+        }
+
         public static class PhanBoKinhPhi
         {
             public const string Add = "MC_ADD";

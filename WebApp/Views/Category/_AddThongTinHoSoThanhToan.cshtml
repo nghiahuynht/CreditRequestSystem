@@ -1,0 +1,123 @@
+﻿
+@model DAL.Models.Category.CategoryPaymentProfileAddViewModel
+
+<div class="modal-content">
+    <div class="modal-header p-2">
+        @if (Model.data.Id == 0)
+        {
+            <h5 class="modal-title">Thêm thông tin hồ sơ thanh toán</h5>
+        }
+        else
+        {
+            <h5 class="modal-title">Chỉnh sửa thông tin hồ sơ thanh toán</h5>
+        }
+
+    </div>
+    <div class="content-body">
+        <div class="modal-body p-3">
+            <form id="frmCreatePaymentProfile">
+                <input id="a_payment_profile_id" hidden value="@Model.data.Id" />
+                <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                    <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Thông tin hồ sơ</legend>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Mã hồ sơ: <span class="text-red">*</span></label>
+                            <input type="text" class="form-control" id="a_code" name="code" value="@Model.data.Code" />
+                        </div>
+                        <div class="col-md-6 ">
+                            <label class="form-label col-auto">Tên hồ sơ: <span class="text-red">*</span></label>
+                            <input type="text" class="form-control" id="a_name" name="name" value="@Model.data.Name" />
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 ">
+                            <label class="form-label col-auto">Mẫu chứng từ:</label>
+                            @{
+                                var isChecked = Model.data.IsRquiredDoc == true ? "checked" : "";
+                            }
+                            <input @isChecked type="checkbox" id="a_requird_doc" name="requird_doc"  data-size="xs">
+
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ghi chú:</label>
+                            <textarea class="form-control" id="a_ghi_chu" name="ghi_chu">@Model.data.Notes</textarea>
+                        </div>
+
+
+
+                    </div>
+                </fieldset>
+
+
+            </form>
+            <fieldset class="border rounded-1 pb-3 pe-3 ps-3 mb-3">
+                <legend class="float-none w-auto px-3 text-uppercase fw-bold fs-3 mb-0 text-blue">Nội dung kiểm tra</legend>
+
+                <table class="table table-bordered" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nội dung</th>
+                            <th>Ghi chú</th>
+                            <th width="60px"><button onclick="AddRowPaymentProfileĐetail()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_thong_tin_hs_thanh_toan_chi_tiet">
+
+                        @foreach (var hs in Model.detail)
+                        {
+
+                            <tr>
+                                <td>
+                                    <input name="chi_tiet_hs_id" id="a_chi_tiet_hs" value="@hs.Id" readonly class="form-control" />
+                                </td>
+                                <td>
+                                    <input name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten" value="@hs.Name" class="form-control" />
+                                </td>
+                                <td>
+                                    <input name="chi_tiet_hs_ghi_chu" id="a_chi_tiet_hs_ghi_chu" value="@hs.Notes" class="form-control" />
+                                </td>
+                                <td style="text-align:center;">
+                                    <span class="fa fa-trash" onclick="RemovePaymentProfileDetail(@hs.Id,true)"></span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+    <div class="modal-footer p-0">
+        <button type="button" class="btn btn-primary btn-footer" id="btnLuuTaoDot" onclick="CreatePaymentProfile();"><i class="fas fa-save me-1"></i>&nbsp;Lưu</button>
+        <button type="button" class="btn btn-secondary btn-footer" onclick="closeModal_PaymentProfile();" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>&nbsp;Đóng</button>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        if ($("#a_payment_profile_id").val() == "0") {
+            var paymentProfileCode = generateCode("TTHS");
+            if (paymentProfileCode != "") {
+                $('#a_code').val(paymentProfileCode);
+                // $('#a_code').prop('readonly', true);
+            }
+        }
+        else {
+           var items = @Html.Raw(Json.Serialize(Model.detail));
+            if (items != null) {
+                items.forEach(function (item) {
+                    var dataPost = {
+                        Id: item.id,
+                        PaymentProfileId: item.paymentProfileId,
+                        Name: item.name,
+                        Notes: item.notes
+                    };
+                    arrPaymentProfileDetail.push(dataPost);
+                });
+            }
+        }
+    });
+</script>

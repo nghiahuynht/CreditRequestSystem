@@ -66,6 +66,7 @@ namespace DAL
         public DbSet<PermissionProjectViewModel> PermissionProjectViewModel { get; set; }
         public DbSet<PaymenRequestGridModel> PaymenRequestGridModel { get; set; }
         public DbSet<PermissionCreateRequestViewModel> PermissionCreateRequestViewModel { get; set; }
+        public DbSet<CategoryPaymentProfileDetailViewModel> CategoryPaymentProfileDetailViewModel { get; set; }
 
 
         /*======================= Payment request ============================================*/
