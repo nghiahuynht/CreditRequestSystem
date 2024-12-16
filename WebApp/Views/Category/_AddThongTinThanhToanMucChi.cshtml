@@ -37,7 +37,7 @@
             <table class="table table-bordered" width="100%">
                 <thead>
                     <tr>
-                        <th>Mã hồ sơ</th>
+                        <th>Hồ sơ</th>
                         <th>Tên hồ sơ</th>
                         <th>Ghi chú</th>
                         <th>Tệp đính kèm</th>
@@ -63,7 +63,7 @@
                         </td>
                         <td style="text-align:center;">
                           
-                            <span class="fa fa-trash" onclick="RemovePaymentProfile(@hs.Id)"></span>
+                            <span class="fa fa-trash" onclick="RemoveExpensePaymentProfile(@hs.Id)"></span>
                         </td>
                     </tr>
                     }
@@ -78,4 +78,24 @@
     </div>
 
 </div>
+
+<script>
+
+    $(document).ready(function () {
+        var items = @Html.Raw(Json.Serialize(Model.LstPaymentProfile));
+        if (items != null) {
+            lstCbPaymentProfile = [];
+                items.forEach(function (item) {
+                    var data = {
+                        id: item.id,
+                        code: item.code,
+                        name: item.name,
+                        notes: item.notes,
+                        isRequiredDoc: item.isRquiredDoc,
+                    };
+                    lstCbPaymentProfile.push(data);
+                });
+            }
+    });
+</script>
 

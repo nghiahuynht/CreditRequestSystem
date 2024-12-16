@@ -128,16 +128,13 @@ namespace DAL.Service
             return res;
         }
 
-        public List<CategoryPaymentProfileViewModel> LstAllCategoryPaymentProfile(int activeGroupId)
+        public List<CategoryPaymentProfileViewModel> LstAllCategoryPaymentProfile()
         {
             var res = new List<CategoryPaymentProfileViewModel>();
             try
             {
-                var param = new SqlParameter[] {
-                  new SqlParameter("@ActiveGroupId",activeGroupId),
-                };
-                ValidNullValue(param);
-                res = dtx.CategoryPaymentProfileViewModel.FromSql("EXEC sp_GetAllCategoryPaymentProfileByActiveGroup @ActiveGroupId", param).ToList();
+                
+                res = dtx.CategoryPaymentProfileViewModel.FromSql("EXEC sp_GetAllCategoryPaymentProfile").ToList();
             }
             catch (Exception ex)
             {
@@ -586,6 +583,58 @@ namespace DAL.Service
                 res.IsSuccess = false;
             }
             return res;
+        }
+
+        public async Task<SaveResultModel<object>> CreateExpensePaymentInfo(ExpensePaymentInfoModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@Id", model.Id),
+                    new SqlParameter("@ExpenseId", model.ExpenseId),
+                    new SqlParameter("@ProfileId", model.ProfileId),
+                    new SqlParameter("@PaymentInfoCode", model.PaymentInfoCode),
+                    new SqlParameter("@PaymentInfoName", model.PaymentInfoName),
+                    new SqlParameter("@Notes", model.Notes),
+                    new SqlParameter("@ActionBy", userName),
+                    new SqlParameter("@FileAttach", model.FileAttach),
+                    new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+               };
+
+
+
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpensePaymentProfile @Id,@ExpenseId,@ProfileId,@PaymentInfoCode,@PaymentInfoName,@Notes,@ActionBy,@FileAttach,@NewId OUT", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+        public async Task<bool> DeleteExpensePaymentProfile(int Id)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@Id", Id)
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteExpensePaymentProfile @Id", param);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

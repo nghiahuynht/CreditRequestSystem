@@ -513,7 +513,6 @@ namespace WebApp.Controllers
                 ProjectFinancialDetailViewModel data = new ProjectFinancialDetailViewModel();
                 var dataDetail = await _projectFinancialDetailService.GetProjectFinancialDetailById(Id);
                 var dm_NhomHoatDong = _categoryService.LstAllCategoryActiveGroup();
-                var dm_HSThanhToan = _categoryService.LstAllCategoryPaymentProfile(dataDetail.ActivityGroupId);
                 var hsThanhToan = await _projectFinancialDetailService.GetAllProfieForProjectId(dataDetail.ProjectId, dataDetail.ActivityGroupId, dataDetail.ExpenseId);
                 data.DM_NhomHoatDong = dm_NhomHoatDong;
                 data.DM_HSThanhToan = new List<PaymentInfoProjectDetailModel>();

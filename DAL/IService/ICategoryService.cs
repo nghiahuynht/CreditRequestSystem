@@ -17,7 +17,7 @@ namespace DAL.IService
         List<Category> LstAllCategoies();
         SaveResultModel<object> DeleteCategory(int categoryId, string userName);
         List<CategoryActiveGroupViewModel> LstAllCategoryActiveGroup();
-        List<CategoryPaymentProfileViewModel> LstAllCategoryPaymentProfile(int activeGroupId);
+        List<CategoryPaymentProfileViewModel> LstAllCategoryPaymentProfile();
         CategoryActiveGroupViewModel GetActiveGroupById(int Id);
         DataTableResultModel<CategoryActiveGroupViewModel> GetActiveGroupByFilter(CategoryFilterModel filter);
         Task<SaveResultModel<object>> CreateActiveGroup(CategoryActiveGroupViewModel model, string userName);
@@ -42,6 +42,9 @@ namespace DAL.IService
         List<CategoryPaymentProfileDetailViewModel> GetPaymentProfileDetailByPaymentProfileId(int Id);
 
         Task<bool> DeletePaymentProfileDetail(int Id);
+
+        Task<SaveResultModel<object>> CreateExpensePaymentInfo(ExpensePaymentInfoModel model, string userName);
+        Task<bool> DeleteExpensePaymentProfile(int Id);
 
     }
 }

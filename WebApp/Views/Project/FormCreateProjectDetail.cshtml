@@ -157,7 +157,7 @@
                         <th>Tên hồ sơ</th>
                         <th>Ghi chú</th>
                         <th>Tệp đính kèm</th>
-                        <th width="60px"><button onclick="AddFormPaymentProfile()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                        
                     </tr>
                 </thead>
                 <tbody id="table_thong_tin_hs_thanh_toan">
@@ -179,9 +179,7 @@
                                     <a href="@hd.URLPath" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan" target="_blank">@hd.FileName</a>
                                     <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" value="@hd.FileAttach" />
                                 </td>
-                                <td style="text-align:center;">
-                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(@hd.FileAttach)"></span>
-                                </td>
+                                
                             </tr>
                         }
                     }

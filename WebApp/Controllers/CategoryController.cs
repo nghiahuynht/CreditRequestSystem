@@ -316,12 +316,13 @@ namespace WebApp.Controllers
                 var mucChi = categoryService.GetExpenseById(id);
                 viewModel.TTHoSoThanhToan = lstHoSoThanhToan;
                 viewModel.MucChi = mucChi;
-
+                viewModel.LstPaymentProfile = categoryService.LstAllCategoryPaymentProfile();
             }
             else
             {
                 viewModel.TTHoSoThanhToan = new List<CategoryPaymentProfileViewModel>();
                 viewModel.MucChi = new CategoryExpenseViewModel();
+                viewModel.LstPaymentProfile = categoryService.LstAllCategoryPaymentProfile();
             }
             return View(viewModel);
 
@@ -411,6 +412,49 @@ namespace WebApp.Controllers
             try
             {
                 var rs = await categoryService.DeletePaymentProfileDetail(Id);
+                return Json(new
+                {
+                    success = rs,
+                    message = rs == true ? "Xóa thành công." : "Xóa thất bại",
+                    projectId = Id
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateExpensePaymentInfo([FromBody] ExpensePaymentInfoModel model)
+        {
+            var res = new SaveResultModel<object>();
+
+            res = await categoryService.CreateExpensePaymentInfo(model, User.Identity.Name);
+
+            if (res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã hồ sơ đã tồn tại!";
+
+            }
+            
+            
+            return Json(res);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteExpensePaymentProfile(int Id)
+        {
+            try
+            {
+                var rs = await categoryService.DeleteExpensePaymentProfile(Id);
                 return Json(new
                 {
                     success = rs,

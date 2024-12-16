@@ -54,6 +54,7 @@ namespace DAL.Models.Category
     {
         public CategoryExpenseViewModel MucChi { get; set; }
         public List<CategoryPaymentProfileViewModel> TTHoSoThanhToan { get; set; }
+        public List<CategoryPaymentProfileViewModel> LstPaymentProfile { get; set; }
     }
 
 
@@ -99,5 +100,17 @@ namespace DAL.Models.Category
     {
         public CategoryPaymentProfileViewModel data { get; set; }
         public List<CategoryPaymentProfileDetailViewModel> detail { get; set; }
+    }
+
+    public class ExpensePaymentInfoModel
+    {
+        public int Id { get; set; }
+        public int ExpenseId { get; set; }
+        public int FileAttach { get; set; }
+        public string ProfileId { get; set; }
+        public string PaymentInfoCode { get; set; }
+        public string PaymentInfoName { get; set; }
+        public string Notes { get; set; }
+
     }
 }

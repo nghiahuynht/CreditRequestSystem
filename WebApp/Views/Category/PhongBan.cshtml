@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @using WebApp.ExcelHelper;
 @{
-    ViewData["Title"] = "Danh sách mục chi";
+    ViewData["Title"] = "Danh sách phòng ban";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
     bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Delete);
@@ -68,18 +68,18 @@
                     <div class="row">
 
                         <div class="col-sm-3">
-                            <label>Mã mục chi</label>
+                            <label>Mã bộ phận</label>
                             <input type="text" class="form-control" id="txtMa" />
                         </div>
                         <div class="col-sm-3">
-                            <label>Tên mục chi</label>
+                            <label>Tên bộ phận</label>
                             <input type="text" class="form-control" id="txtTen" />
                         </div>
                         <div class="col-sm-3">
-                            <button onclick="SearchMucChi()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                            <button onclick="SearchBoPhan()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                             @if (isAdd == true)
                             {
-                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateExpense(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateDepartment(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
                             }
                         </div>
 
@@ -91,9 +91,8 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Nhóm hoạt động</th>
-                                <th>Mã mục chi</th>
-                                <th>Tên mục chi</th>
+                                <th>Mã bộ phận</th>
+                                <th>Tên bộ phận</th>
                                 <th>Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -111,8 +110,8 @@
 
 
 <!--modal add-->
-<div class="modal modal-blur fade" id="modal_add_expense" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl" id="dailog_expense">
+<div class="modal modal-blur fade" id="modal_add_department" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="dailog_department">
 
     </div>
 </div>
@@ -497,7 +496,7 @@
                 PaymentInfoCode: selectedOptionCode,
                 PaymentInfoName: name.trim(),
                 Notes: notes.val()?.trim(),
-                FileAttach: fileAttachInput.val()?.trim()
+                FileAttachId: fileAttachInput.val()?.trim()
             };
 
             // Log the data (optional for debugging)
