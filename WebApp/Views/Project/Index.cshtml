@@ -122,7 +122,7 @@
 
             </div>
             <div class="modal-body">
-                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="#" class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/template/TemplateImportProject.xlsx" class="text-primary">File mẫu</a></p>
                 <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
                 <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
                 <form>
@@ -130,7 +130,7 @@
                         <label for="fileInput" class="form-label">Chọn file</label>
                         <input class="form-control" type="file" id="fileInput" accept=".xls, .xlsx" onchange="readFileImport()">
                     </div>
-                    <button type="button" class="btn btn-primary">Tải lên</button>
+                    
                 </form>
             </div>
         </div>
@@ -200,7 +200,7 @@
 <!--modal result import-->
 <div id="cntModalResultImport">
     <div class="modal fade" id="ListProjectModalResultImport" tabindex="-1" aria-labelledby="ListProjectModalResultImportLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-xxl">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header pt-2 pb-2">
                     <h5 class="modal-title" id="ListNVModalResultImportLabel">Kết Quả Import</h5>
@@ -209,7 +209,7 @@
                 <div class="modal-body" style="height: calc(100vh - 200px);overflow:scroll">
                     <div class="row mb-2">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                            <table class="table table-root">
+                            <table class="table table-root" id="table-root-result-import">
                                 <thead>
                                     <tr>
 
@@ -220,14 +220,11 @@
                                         <th scope="col" class="">Thời gian kết thúc</th>
                                         <th scope="col" class="">Tổng tiền</th>
                                         <th scope="col" class="">Ghi chú</th>
+                                        <th scope="col" class="">Trạng thái</th>
                                     </tr>
                                 </thead>
                                 <tbody id="lst-data-info">
                                 </tbody>
-                                @*  <tfoot>
-                                <td id="sumcheck"></td>
-                                <td colspan="7"></td>
-                                </tfoot> *@
                             </table>
                         </div>
                     </div>
@@ -689,7 +686,7 @@
                     dataSubmit = dataResponeAjax;
                 }
                 else {
-                    $('#cntModalListNV #ListNVModal #lst-data-info [name="checkRow"]').prop('checked', false);
+                    $('#cntModalListProject #ListProjectModal #lst-data-info [name="checkRow"]').prop('checked', false);
                     dataSubmit = [];
                 }
                 caclCheckTotal();
@@ -736,7 +733,7 @@
                 data: jsonStr,
                 processData: false,
                 beforeSend: function () {
-                    $('#cntModalListNV #ListNVModal').modal('hide');
+                    $('#cntModalListProject #ListProjectModal').modal('hide');
                    
                 },
                 complete: function () {
@@ -746,32 +743,30 @@
                     console.log("response", response)
                     Swal.fire({
                         title: "Thao tác đã thực hiện",
-                        text: dataSFSubmit.length + " dòng dữ liệu",
-                        icon: response.Status == 1 ? "success" : "error"
+                        text: dataSubmit.length + " dòng dữ liệu",
+                        icon: response.status == "Thành công" ? "success" : "error"
                     });
 
                     var htmlAppend = '';
                     for (var i = 0; i < response.data.length; i++) {
                         htmlAppend += `<tr>`;
-                        htmlAppend += `<td>` + response.data[i].data.MaNhanVien + `</td>`;
-                        htmlAppend += `<td>` + response.data[i].data.HoTen + `</td>`;
-                        htmlAppend += `<td>` + response.data[i].data.ViTri + `</td>`;
-                        htmlAppend += `<td>` + (response.data[i].data.NgaySinh == null ? "" : moment(response.data[i].data.NgaySinh).format('DD/MM/YYYY')) + `</td>`;
-                        htmlAppend += `<td>` + response.data[i].data.SDT + `</td>`;
-                        htmlAppend += `<td>` + (response.data[i].data.HoTenThanNhan == null ? "" : response.data[i].data.HoTenThanNhan) + `</td>`;
-                        htmlAppend += `<td>` + (response.data[i].data.NgaySinhThanNhan == null ? "" : moment(response.data[i].data.NgaySinhThanNhan).format('DD/MM/YYYY')) + `</td>`;
-                        htmlAppend += `<td>` + (response.data[i].data.CCCDThanNhan == null ? "" : response.data[i].data.CCCDThanNhan) + `</td>`;
-                        htmlAppend += `<td>` + (response.data[i].data.MoiQuanHe == null ? "" : response.data[i].data.MoiQuanHe) + `</td>`;
-                        htmlAppend += `<td>` + (response.data[i].data.TrungTam == null ? "" : response.data[i].data.TrungTam) + `</td>`;
-                        var messageColor = response.data[i].message === "Thành Công" ? "green" : "red";
+                        htmlAppend += `<td>` + response.data[i].item.projectCode + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.projectName + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.legalBasis + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.timeStart + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.timeEnd + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.notes + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.totalAmount + `</td>`;
+                        var messageColor = response.data[i].message == "Thành công" ? "green" : "red";
                         htmlAppend += `<td style='color:${messageColor};'>` + (response.data[i].message) + `</td>`;
                         htmlAppend += `</tr>`;
 
 
                     }
-                    $('#cntModalResultImport #ListNVModalResultImport #lst-data-info').html(htmlAppend);
+                    $('#ListProjectModalResultImport #table-root-result-import #lst-data-info').html(htmlAppend);
 
-                    $('#ListNVModalResultImport').modal().show();
+                    $('#ListProjectModalResultImport').modal().show();
+                    SearchProjectFinancialSummar();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     $('#result').html('Error: ' + textStatus + ' - ' + errorThrown);

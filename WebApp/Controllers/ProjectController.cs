@@ -352,11 +352,34 @@ namespace WebApp.Controllers
 
             try
             {
+                List<ResImportProjectFinancialSummarModel> resImport = new List<ResImportProjectFinancialSummarModel>();
+                foreach(var item in data)
+                {
+                    var res = await _projectFinancialSummarService.CreateProjectFinancialSummar(item, AuthenInfo().UserName);
+                    string ms = "Thành công";
+                    if(res.LongValReturn <0)
+                    {
+                        if(res.LongValReturn == -409)
+                        {
+                            ms = "Mã dự án đã tồn tại";
+                        }
+                        else
+                        {
+                            ms = "Thất bại";
 
+                        }    
+                    };
+                    
+                    resImport.Add(new ResImportProjectFinancialSummarModel()
+                    {
+                        item = item,
+                        message = ms
+                    });
+                }
                 return Json(new
                 {
-                    success = false,
-                    message = "Oke",
+                    data = resImport,
+                    Status = "Thành công"
 
                 });
             }
@@ -364,8 +387,8 @@ namespace WebApp.Controllers
             {
                 return Json(new
                 {
-                    success = false,
                     message = ex.Message,
+                    Status = "Thất bại",
 
                 });
             }

@@ -58,4 +58,10 @@ namespace DAL.Models.ProjectFinancialSummar
         public decimal TotalAmount { get; set; }
         public decimal TotalAllocatedAmount { get; set; }
     }
+
+    public class ResImportProjectFinancialSummarModel
+    {
+        public ProjectFinancialSummarModel item { get; set; }
+        public string message { get; set; }
+    }
 }
