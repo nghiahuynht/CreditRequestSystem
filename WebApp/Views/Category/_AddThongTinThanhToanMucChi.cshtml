@@ -37,11 +37,11 @@
             <table class="table table-bordered" width="100%">
                 <thead>
                     <tr>
-                        <th>Hồ sơ</th>
-                        <th>Tên hồ sơ</th>
-                        <th>Ghi chú</th>
-                        <th>Tệp đính kèm</th>
-                        <th width="60px"><button onclick="AddFormPaymentProfile()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                        <th width="20%">Hồ sơ</th>
+                        <th width="40%">Tên hồ sơ</th>
+                        <th width="20%">Ghi chú</th>
+                        <th width="20%">Tệp đính kèm</th>
+                        <th width="10%"><button onclick="AddFormPaymentProfile()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
                     </tr>
                 </thead>
                 <tbody id="table_thong_tin_hs_thanh_toan">
@@ -52,10 +52,14 @@
                             <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan" value="@hs.Code" class="form-control" readonly />
                         </td>
                         <td>
-                            <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" value="@hs.Name" class="form-control" readonly/>
+                       
+                                <textarea name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan" class="form-control" readonly>@hs.Name</textarea>
+
+
                         </td>
                         <td>
-                            <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" value="@hs.Notes" class="form-control" readonly/>
+
+                                <textarea name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan" class="form-control" readonly>@hs.Notes</textarea>
                         </td>
                         <td>
 

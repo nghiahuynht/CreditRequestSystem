@@ -358,10 +358,10 @@
                                         
                                     </td>
                                     <td>
-                                        <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
+                                          <textarea name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" ></textarea>
                                     </td>
                                     <td>
-                                        <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
+                                        <textarea name="ghi_chu_hs_thanh_toan" iid="a_ghi_chu_hs_thanh_toan_${randomId}"  class="form-control" ></textarea>
                                     </td>
                                     <td>
                                         <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
@@ -454,8 +454,8 @@
             var row = $(`span.fa-check[onclick="SaveExpensePaymentProfile(${profileId})"]`).closest('tr');
 
             // Retrieve values from the inputs in the row
-            var nameInput = row.find('input[name="ten_hs_thanh_toan"]');
-            var notes = row.find('input[name="ghi_chu_hs_thanh_toan"]');
+            var nameInput = row.find('textarea[name="ten_hs_thanh_toan"]');
+            var notes = row.find('textarea[name="ghi_chu_hs_thanh_toan"]');
             var fileInput = row.find('input[name="tep_dinh_kem"]');
             var fileAttachInput = row.find('input[name="tep_dinh_kem_hs_thanh_toan"]');
             var name = nameInput.val();

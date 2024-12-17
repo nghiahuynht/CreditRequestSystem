@@ -217,10 +217,10 @@
                                         <input name="chi_tiet_hs_id" id="a_chi_tiet_hs_${randomId}"  readonly class="form-control" value=${randomId} />
                                     </td>
                                     <td>
-                                        <input name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten_${randomId}"  class="form-control"  />
+                                          <textarea name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten_${randomId}"  class="form-control"></textarea>
                                     </td>
                                     <td>
-                                        <input name="chi_tiet_hs_ghi_chu" id="a_chi_tiet_hs_ghi_chu_${randomId}"  class="form-control" />
+                                            <textarea name="chi_tiet_hs_ghi_chu" id="a_chi_tiet_hs_ghi_chu_${randomId}"  class="form-control"></textarea>
                                     </td>
                                     <td style="text-align:center;">
                                          <span class="fa fa-check" onclick="SaveProfileDetail(${randomId})"></span>
@@ -429,8 +429,8 @@
 
             // Retrieve values from the inputs in the row
             var IdInput = row.find('input[name="chi_tiet_hs_id"]');
-            var nameInput = row.find('input[name="chi_tiet_hs_ten"]');
-            var notesInput = row.find('input[name="chi_tiet_hs_ghi_chu"]');
+            var nameInput = row.find('textarea[name="chi_tiet_hs_ten"]');
+            var notesInput = row.find('textarea[name="chi_tiet_hs_ghi_chu"]');
            
             var name = nameInput.val();
             var id = IdInput.val();

@@ -45,6 +45,12 @@ namespace DAL.IService
 
         Task<SaveResultModel<object>> CreateExpensePaymentInfo(ExpensePaymentInfoModel model, string userName);
         Task<bool> DeleteExpensePaymentProfile(int Id);
+        DataTableResultModel<CategoryDepartmentViewModel> GetDepartmentByFilter(CategoryFilterModel filter);
 
+        CategoryDepartmentViewModel GetDepartmentById(int Id);
+
+        Task<SaveResultModel<object>> CreateDepartment(CategoryDepartmentViewModel model, string userName);
+
+        Task<bool> DeleteDepartment(int departmentId, string userName);
     }
 }

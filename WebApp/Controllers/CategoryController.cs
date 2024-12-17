@@ -475,7 +475,77 @@ namespace WebApp.Controllers
         }
         #endregion
 
-        #region DM Phong Ban
+        #region DM Bo Phan
+        public IActionResult BoPhan()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        // [Authorize(Roles = "Admin")]
+        public DataTableResultModel<CategoryDepartmentViewModel> GetDataDepartment(CategoryFilterModel filter)
+        {
+            var res = categoryService.GetDepartmentByFilter(filter);
+            return res;
+        }
+
+        public IActionResult _AddBoPhan(int id = 0)
+        {
+            var viewModel = new CategoryDepartmentViewModel();
+            if (id > 0)
+            {
+                viewModel = categoryService.GetDepartmentById(id);
+
+            }
+            else
+            {
+                viewModel.Id = 0;
+            }
+
+            return View(viewModel);
+
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateDepartment([FromBody] CategoryDepartmentViewModel model)
+        {
+            var res = new SaveResultModel<object>();
+
+            res = await categoryService.CreateDepartment(model, User.Identity.Name);
+            if (res.LongValReturn == -409)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Mã bộ phận đã tồn tại!";
+
+            }
+            return Json(res);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteDepartment(int Id)
+        {
+            try
+            {
+                var rs = await categoryService.DeleteDepartment(Id, AuthenInfo().UserName);
+                return Json(new
+                {
+                    success = rs,
+                    message = rs == true ? "Xóa thành công." : "Xóa thất bại",
+                    projectId = Id
+                });
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return Json(new
+                {
+                    success = false,
+                    message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
         #endregion
     }
 }

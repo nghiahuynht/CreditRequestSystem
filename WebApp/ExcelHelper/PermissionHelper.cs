@@ -74,6 +74,13 @@ namespace WebApp.ExcelHelper
             public const string Delete = "NVTYC_DELETE";
             public const string Approve = "NVTYC_APPROVE";
         }
+        public static class BoPhan
+        {
+            public const string Add = "BP_ADD";
+            public const string Edit = "BP_EDIT";
+            public const string Delete = "BP_DELETE";
+            public const string Approve = "BP_APPROVE";
+        }
 
     }
 }

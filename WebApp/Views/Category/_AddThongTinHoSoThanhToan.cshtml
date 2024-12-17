@@ -59,10 +59,10 @@
                 <table class="table table-bordered" width="100%">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Nội dung</th>
-                            <th>Ghi chú</th>
-                            <th width="60px"><button onclick="AddRowPaymentProfileĐetail()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
+                            <th width="10%">Id</th>
+                            <th width="50%">Nội dung</th>
+                            <th width="30%">Ghi chú</th>
+                            <th width="5%"><button onclick="AddRowPaymentProfileĐetail()" class="btn btn-sm btn-warning"><i class="fa fa-plus-circle"></i></button></th>
                         </tr>
                     </thead>
                     <tbody id="table_thong_tin_hs_thanh_toan_chi_tiet">
@@ -75,10 +75,11 @@
                                     <input name="chi_tiet_hs_id" id="a_chi_tiet_hs" value="@hs.Id" readonly class="form-control" />
                                 </td>
                                 <td>
-                                    <input name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten" value="@hs.Name" class="form-control" />
+                                    @* <input name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten" value="@hs.Name" class="form-control" /> *@
+                                    <textarea name="chi_tiet_hs_ten" id="a_chi_tiet_hs_ten" class="form-control" readonly>@hs.Name</textarea>
                                 </td>
                                 <td>
-                                    <input name="chi_tiet_hs_ghi_chu" id="a_chi_tiet_hs_ghi_chu" value="@hs.Notes" class="form-control" />
+                                    <textarea name="chi_tiet_hs_ghi_chu" id="a_chi_tiet_hs_ghi_chu" class="form-control" readonly>@hs.Notes</textarea>
                                 </td>
                                 <td style="text-align:center;">
                                     <span class="fa fa-trash" onclick="RemovePaymentProfileDetail(@hs.Id,true)"></span>
