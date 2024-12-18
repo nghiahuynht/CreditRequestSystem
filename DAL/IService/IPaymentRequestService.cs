@@ -1,4 +1,5 @@
 ﻿using DAL.Models;
+using DAL.Models.Category;
 using DAL.Models.PaymentRequqest;
 using DAL.Models.ProjectFinancialSummar;
 using System;
@@ -18,6 +19,7 @@ namespace DAL.IService
         DataTableResultModel<PaymenRequestGridModel> SearchPaymentRequest(PaymentRequestFilterSearchModel filter, bool isExcel, string userName);
         SaveResultModel<object> ChangeStatusPaymentRequest(ChangeStatusRequestParamModel model);
         Task<ListResultModel<StatusHistoryModel>> GetListStatusHistory(string objectType, long objectId);
-        Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId);
+        Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId, int projectId, int actityId, int expenseId);
+        Task<ListResultModel<PaymentCheckListHistoryModel>> GetCheckListApproveStepByRequest(long requestId);
     }
 }

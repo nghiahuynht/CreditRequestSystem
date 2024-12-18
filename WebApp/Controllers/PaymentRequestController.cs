@@ -109,15 +109,24 @@ namespace WebApp.Controllers
             return Json(lstExpense);
         }
 
-        [HttpGet]
-        public async Task<PartialViewResult> _PaymentRequestAttachment(long requestId)
-        {
-            var mandatoryAttachRequest = await paymentRequestService.GetAttachmentByRequest(requestId);
-            return PartialView(mandatoryAttachRequest);
-        }
+        //[HttpGet]
+        //public async Task<PartialViewResult> _PaymentRequestAttachment(long requestId)
+        //{
+        //    var mandatoryAttachRequest = await paymentRequestService.GetAttachmentByRequest(requestId);
+        //    return PartialView(mandatoryAttachRequest);
+        //}
 
-       
-       
+
+        [HttpGet]
+        public PartialViewResult _PaymentRequestApproveCheckist(long requestId,int projectId,int actityId, int expenseId)
+        {
+
+            var viewModel = new PaymentAttachCheckistModel();
+            viewModel.LstAttachments = paymentRequestService.GetAttachmentByRequest(requestId, projectId, actityId, expenseId).Result.Results;
+            viewModel.LstApproveChecklist = paymentRequestService.GetCheckListApproveStepByRequest(requestId).Result.Results;
+
+            return PartialView(viewModel);
+        }
 
         public async Task<IActionResult> SearchPaymentRequest()
         {

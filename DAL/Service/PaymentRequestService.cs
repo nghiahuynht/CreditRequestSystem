@@ -1,5 +1,6 @@
 ﻿using DAL.IService;
 using DAL.Models;
+using DAL.Models.Category;
 using DAL.Models.PaymentRequqest;
 using DAL.Models.ProjectFinancialSummar;
 using Microsoft.EntityFrameworkCore;
@@ -233,16 +234,19 @@ namespace DAL.Service
 
         
 
-        public async Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId)
+        public async Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId, int projectId, int actityId, int expenseId)
         {
             var res = new ListResultModel<PaymentListAttachmentsModel>();
             try
             {
                 var param = new SqlParameter[] {
                   new SqlParameter("@RequestId",requestId),
+                  new SqlParameter("@ProjectId",projectId),
+                  new SqlParameter("@ActivityId",actityId),
+                  new SqlParameter("@ExpenseId",expenseId),
                 };
                 ValidNullValue(param);
-                res.Results = await dtx.PaymentListAttachmentsModel.FromSql("EXEC sp_GetAttachmentByRequestId @RequestId", param).ToListAsync();
+                res.Results = await dtx.PaymentListAttachmentsModel.FromSql("EXEC sp_GetAttachmentByRequestId @RequestId,@ProjectId,@ActivityId,@ExpenseId", param).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -252,7 +256,25 @@ namespace DAL.Service
             return res;
         }
 
-        
+        public async Task<ListResultModel<PaymentCheckListHistoryModel>> GetCheckListApproveStepByRequest(long requestId)
+        {
+            var res = new ListResultModel<PaymentCheckListHistoryModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                  new SqlParameter("@RequestId",requestId),
+                };
+                ValidNullValue(param);
+                res.Results = await dtx.PaymentCheckListHistoryModel.FromSql("EXEC sp_GetApproveCheckListStepByRequest @RequestId", param).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+                res.Results = new List<PaymentCheckListHistoryModel>();
+            }
+            return res;
+        }
 
 
     }

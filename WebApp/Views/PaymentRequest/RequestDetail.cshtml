@@ -11,6 +11,9 @@
         font-size:12pt;
         cursor:pointer;
     }
+    .tr_attach {
+        background: #f0dc82;
+    }
 </style>
 
 <section class="content-header">
@@ -449,7 +452,7 @@
                 let expenseId = $(this).val();
 
                 let requestId = $("#RequestHeader_Id").val();
-                LoadAttachRequestFile(requestId);
+                LoadAttachRequestFile(requestId, projectId, actId, expenseId);
             });
             
 
@@ -542,7 +545,7 @@
             var valid = validateSaveRequest();
             if (valid) {
 
-                let invalidAttach = ValidateUploadAttachs();
+                let invalidAttach = 0;// ValidateUploadAttachs();
                 if (invalidAttach == 0) {
 
                     debugger;
@@ -647,7 +650,7 @@
                     let htmlAct = "<option value=''>Chọn nhóm hoạt động</option>";
                     $.each(result, function (key, value)
                     {
-                        let selectedAct = actiSelected == value.activityGroupId ? "selected='selected'" : "";
+                        let selectedAct = actiSelected == value.id ? "selected='selected'" : "";
                         htmlAct = htmlAct + "<option " + selectedAct+" value='" + value.id + "'>" + value.name +"</option>";
                     });
                     $("#ListRequestItems_ActivityId").html(htmlAct);
@@ -659,7 +662,7 @@
             let requestId = $("#RequestHeader_Id").val();
             let projectId = $("#ListRequestItems_ProjectId").val();
             let expsenseSelected = $("#ListRequestItems_ExpenseId").val();
-            LoadAttachRequestFile(requestId);
+            LoadAttachRequestFile(requestId, projectId, activityId, expsenseSelected);
             $.ajax({
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
@@ -690,7 +693,7 @@
                 let expsenseId = $("#ListRequestItems_ExpenseId").val();
 
                 let requestId = $("#RequestHeader_Id").val();
-                LoadAttachRequestFile(requestId);
+                LoadAttachRequestFile(requestId, projectId, activityId, expsenseId);
             }
         }
 
@@ -701,9 +704,12 @@
             $("#lbl-total").html(RenderNumerFormat(total));
             
         }
-        function LoadAttachRequestFile(requestId) {
+        function LoadAttachRequestFile(requestId,projectId,activityId,expenseId) {
             ShowWaiting();
-            $("#div_load_requestattachfile").load("/PaymentRequest/_PaymentRequestAttachment?requestId=" + requestId , function () {
+            $("#div_load_requestattachfile").load("/PaymentRequest/_PaymentRequestApproveCheckist?requestId=" + requestId
+                + "&projectId=" + projectId
+                + "&actityId=" + activityId
+                + "&expenseId=" + expenseId, function () {
                 HideWaiting();
             });
         }
@@ -763,7 +769,10 @@
                             bootbox.alert(AlertSuccess("Đã xoá thành công"), function ()
                             {
                                 let requestId = $("#RequestHeader_Id").val();
-                                LoadAttachRequestFile(requestId);
+                                let projectId = $("#ListRequestItems_ProjectId").val();
+                                let activityId = $("#ListRequestItems_ActivityId").val();
+                                let expsenseId = $("#ListRequestItems_ExpenseId").val();
+                                LoadAttachRequestFile(requestId, projectId, activityId, expsenseId);
                             });
 
                         }
@@ -773,6 +782,9 @@
 
 
         }
+
+       
+
 
 
 
