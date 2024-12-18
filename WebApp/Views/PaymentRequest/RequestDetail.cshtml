@@ -547,10 +547,9 @@
             var valid = validateSaveRequest();
             if (valid) {
 
-                let invalidAttach = 0;// ValidateUploadAttachs();
+                let invalidAttach = ValidateUploadAttachs();
                 if (invalidAttach == 0) {
 
-                    debugger;
                     var headerRequestData = FormToObject("#form-paymentrequest", "RequestHeader.");
                     headerRequestData.DateRequest = ConverFormatDate($("#RequestHeader_DateRequest").val());
 

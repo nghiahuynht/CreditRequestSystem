@@ -118,7 +118,7 @@ namespace WebApp.Controllers
             var request = await paymentRequestService.GetPaymentRequestHeaderById(requestId);
 
             var viewModel = new PaymentAttachCheckistModel();
-            viewModel.Status = request.Status;
+            viewModel.Status = request == null?Contanst.PaymentRequesStatus_Draft:request.Status;
             viewModel.LstAttachments = paymentRequestService.GetAttachmentByRequest(requestId, projectId, actityId, expenseId).Result.Results;
             viewModel.LstApproveChecklist = paymentRequestService.GetCheckListApproveStepByRequest(requestId).Result.Results;
 

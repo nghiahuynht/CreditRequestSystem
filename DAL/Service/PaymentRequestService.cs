@@ -75,7 +75,7 @@ namespace DAL.Service
                     ValidNullValue(param);
                     await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_SavePaymentRequestLineItem @Id,@RequestId,@ProjectId,@ActivityId,@ExpenseId,@Price,@Quanti,@Note", param);
                 }
-                catch
+                catch(Exception ex)
                 {
 
                 }
