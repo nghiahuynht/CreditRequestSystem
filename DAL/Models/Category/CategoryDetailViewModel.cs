@@ -26,6 +26,7 @@ namespace DAL.Models.Category
     public class CategoryPaymentProfileViewModel
     {
         public int Id { get; set; }
+        public int ExpenseProfileId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }

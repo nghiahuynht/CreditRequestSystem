@@ -87,6 +87,7 @@ namespace DAL
             modelBuilder.Entity<Unit>().HasKey(o => o.Code);
             modelBuilder.Entity<PermissionInChargeTableModel>().HasKey(o => o.Id);
             modelBuilder.Entity<PermissionMenuModel>().HasKey(o => o.MenuId);
+            modelBuilder.Entity<CategoryPaymentProfileViewModel>().HasKey(o => o.ExpenseProfileId);
         }
 
 

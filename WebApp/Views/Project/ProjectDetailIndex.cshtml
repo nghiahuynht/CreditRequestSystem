@@ -436,8 +436,8 @@
                                                     <input type="hidden" name="tep_dinh_kem_hs_thanh_toan"  value="${item.fileAttachId}" />
                                                 </td>
                                                 <td style="text-align:center;">
-                                                    <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${item.id})"></span>
-                                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(${item.id})"></span>
+                                                    <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${item.id},${item.expenseProfileId})"></span>
+                                                    <span class="fa fa-trash" onclick="RemovePaymentProfile(${item.expenseProfileId})"></span>
                                                 </td>
                                         </tr>`
                         })
@@ -515,10 +515,10 @@
             });
         }
 
-        function SaveProfileForProjectDetail(profileId) {
+        function SaveProfileForProjectDetail(profileId,expenseProfileId) {
 
             // Find the row that contains the clicked icon
-            var row = $(`span.fa-check[onclick="SaveProfileForProjectDetail(${profileId})"]`).closest('tr');
+            var row = $(`span.fa-check[onclick="SaveProfileForProjectDetail(${profileId},${expenseProfileId})"]`).closest('tr');
 
             // Retrieve values from the inputs in the row
             var codeInput = row.find('input[name="ma_hs_thanh_toan"]');
@@ -551,6 +551,7 @@
                 ProjectDetailId: 0,
                 ActiveGroupId: $("#a_nhom_hoat_dong").val(),
                 ProfileId: profileId,
+                ExpenseProfileId: expenseProfileId,
                 PaymentInfoCode: code.trim(),
                 PaymentInfoName: name.trim(),
                 Notes: row.find('input[id="a_ghi_chu_hs_thanh_toan"]').val()?.trim(),
@@ -571,30 +572,7 @@
 
         }
 
-        function AddFormPaymentProfile() {
-            // Generate a unique random number
-            var randomId = Date.now();
-            var htmthstt = ` <tr>
-                                    <td>
-                                        <input name="ma_hs_thanh_toan" id="a_ma_hs_thanh_toan_${randomId}" class="form-control"/>
-                                    </td>
-                                    <td>
-                                        <input name="ten_hs_thanh_toan" id="a_ten_hs_thanh_toan_${randomId}" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input name="ghi_chu_hs_thanh_toan" id="a_ghi_chu_hs_thanh_toan_${randomId}" class="form-control" />
-                                    </td>
-                                    <td>
-                                        <input type="file" name="tep_dinh_kem" onchange="uploadFilePaymentInfo(this, ${randomId})" />
-                                         <input type="hidden" name="tep_dinh_kem_hs_thanh_toan" id="a_tep_dinh_kem_hs_thanh_toan_${randomId}" value="-1" />
-                                    </td>
-                                    <td style="text-align:center;">
-                                        <span class="fa fa-check" onclick="SaveProfileForProjectDetail(${randomId})"></span>
-                                        <span class="fa fa-trash" onclick="RemovePaymentProfile(${randomId})"></span>
-                                    </td>
-                                 </tr>`;
-            $('#table_thong_tin_hs_thanh_toan').append(htmthstt);
-        }
+        
 
         function uploadFilePaymentInfo(input, id) {
             const file = input.files[0]; // Lấy file được chọn
@@ -644,7 +622,7 @@
             }
         }
 
-        function RemovePaymentProfile(profileId) {
+        function RemovePaymentProfile(expenseProfileId) {
             Swal.fire({
                 title: 'Bạn có chắc chắn?',
                 text: "Bạn sẽ không thể hoàn tác hành động này!",
@@ -656,9 +634,10 @@
                 cancelButtonText: 'Hủy'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $(`span.fa-trash[onclick="RemovePaymentProfile(${profileId})"]`).closest('tr').remove();
+                    $(`span.fa-trash[onclick="RemovePaymentProfile(${expenseProfileId})"]`).closest('tr').remove();
                     toastr.success('Xóa thông tin hồ sơ thành công!', 'Thành công');
-                    arrPaymentProfile = arrPaymentProfile.filter(x => x.ProfileId != profileId);
+                    console.log("12", arrPaymentProfile);
+                    arrPaymentProfile = arrPaymentProfile.filter(x => x.ExpenseProfileId != expenseProfileId);
                 }
             });
 
