@@ -21,5 +21,6 @@ namespace DAL.IService
         Task<ListResultModel<StatusHistoryModel>> GetListStatusHistory(string objectType, long objectId);
         Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId, int projectId, int actityId, int expenseId);
         Task<ListResultModel<PaymentCheckListHistoryModel>> GetCheckListApproveStepByRequest(long requestId);
+        SaveResultModel<object> ApproveStepChecklist(PaymentRequestApproveStepModel model, string userName);
     }
 }

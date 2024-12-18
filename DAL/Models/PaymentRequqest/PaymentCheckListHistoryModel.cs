@@ -6,8 +6,8 @@ namespace DAL.Models.PaymentRequqest
 {
     public class PaymentCheckListHistoryModel
     {
-        public long Id { get; set; }
-        public long PaymentProfileId { get; set; }
+        public int Id { get; set; }
+        public int PaymentProfileId { get; set; }
         public string Name { get; set; }
         public bool Approved { get; set; }
     }

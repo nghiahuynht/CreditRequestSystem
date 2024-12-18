@@ -277,5 +277,36 @@ namespace DAL.Service
         }
 
 
+        public SaveResultModel<object> ApproveStepChecklist(PaymentRequestApproveStepModel model,string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                  new SqlParameter("@RequestId", model.RequestId),
+                  new SqlParameter("@PaymentProfileId", model.ProfileAttachId),
+                  new SqlParameter("@StepChecklistId", model.StepChecklistId),
+                  new SqlParameter("@UserName", userName),
+               };
+
+
+                ValidNullValue(param);
+                dtx.Database.ExecuteSqlCommand("EXEC sp_PaymentRequestApproveStepCheckist @RequestId,@PaymentProfileId,@StepChecklistId,@UserName", param);
+
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+
+
+
+
     }
 }

@@ -24,50 +24,8 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item">
-
-                        @{
-                            if (Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Draft)
-                            {
-                                <input type="button" value="Lưu" class="btn btn-primary" id="btn-save" style="margin-right:5px;" />
-                            }
-
-                            if (Model.RequestHeader.Id != 0
-                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Draft)
-                            {
-                                <input type="button" value="Gửi duyệt" class="btn btn-warning" id="btn-sent-to-approver" style="margin-right:5px;" />
-                            }
-
-
-                            if (Model.RequestHeader.Id != 0
-                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Waiting)
-                            {
-                                <input type="button" value="Duyệt" class="btn btn-success" id="btn-approve" style="margin-right:5px;" />
-                                <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
-                            }
-
-                            if (Model.RequestHeader.Id != 0
-                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Approved)
-                            {
-                                <input type="button" value="UNC" class="btn btn-info" id="btn-unc" style="margin-right:5px;" />
-                                <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
-                            }
-
-
-                            if (Model.RequestHeader.Id != 0
-                                && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Unc)
-                            {
-                                <input type="button" value="Hoàn Thành" class="btn btn-success" id="btn-completed" style="margin-right:5px;" />
-                                <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
-                            }
-
-
-
-                        }
-
-
-
-                    </li>
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@(ViewData["Title"])</li>
 
                 </ol>
             </div>
@@ -351,6 +309,50 @@
 
 
 
+        </div>
+        <div class="card-footer">
+            <div class="text-right">
+                @{
+                    if (Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Draft)
+                    {
+                        <input type="button" value="Lưu" class="btn btn-primary" id="btn-save" style="margin-right:5px;" />
+                    }
+
+                    if (Model.RequestHeader.Id != 0
+                        && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Draft)
+                    {
+                        <input type="button" value="Gửi duyệt" class="btn btn-warning" id="btn-sent-to-approver" style="margin-right:5px;" />
+                    }
+
+
+                    if (Model.RequestHeader.Id != 0
+                        && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Waiting)
+                    {
+                        <input type="button" value="Duyệt" class="btn btn-success" id="btn-approve" style="margin-right:5px;" />
+                        <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
+                    }
+
+                    if (Model.RequestHeader.Id != 0
+                        && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Approved)
+                    {
+                        <input type="button" value="UNC" class="btn btn-info" id="btn-unc" style="margin-right:5px;" />
+                        <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
+                    }
+
+
+                    if (Model.RequestHeader.Id != 0
+                        && Model.RequestHeader.Status == Contanst.PaymentRequesStatus_Unc)
+                    {
+                        <input type="button" value="Hoàn Thành" class="btn btn-success" id="btn-completed" style="margin-right:5px;" />
+                        <input type="button" value="Từ chối" class="btn btn-danger" id="btn-reject" style="margin-right:5px;" />
+                    }
+
+
+
+                }
+
+            </div>
+           
         </div>
     </div>
 
@@ -709,7 +711,8 @@
             $("#div_load_requestattachfile").load("/PaymentRequest/_PaymentRequestApproveCheckist?requestId=" + requestId
                 + "&projectId=" + projectId
                 + "&actityId=" + activityId
-                + "&expenseId=" + expenseId, function () {
+                + "&expenseId=" + expenseId, function (){
+                    ValidApproveStep();
                 HideWaiting();
             });
         }
@@ -833,6 +836,74 @@
             }
             return bytes;
         };
+
+
+
+
+        function ApproveStepChecklist(paymentProfileId,stepId) {
+
+            let modelApprove = {
+                "RequestId": parseFloat($("#RequestHeader_Id").val()),
+                "ProfileAttachId": paymentProfileId,
+                "StepChecklistId": stepId
+            }
+
+            $.ajax({
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                url: "/PaymentRequest/ApproveStepChecklist",
+                dataType: 'json',
+                data: JSON.stringify(modelApprove),
+                beforeSend: function () {
+                   // ShowWaiting();
+                },
+                success: function (res) {
+                   // HideWaiting();
+                    if (res.isSuccess === true)
+                    {
+                        ValidApproveStep();
+                        toastr.success('Cập nhật thành công','Thành công', { positionClass: "toast-top-center" });
+
+                    } else {
+                        toastr.error('Có lỗi khi duyệt kiểm tra', 'Lỗi', { positionClass: "toast-top-center" });
+                    }
+                    
+                }
+            });
+
+        }
+
+
+
+
+        function ValidApproveStep()
+        {
+            debugger;
+            let stepCount = 0;
+            let stepChecked = 0;
+            $('#table-payment-request-attach .ck-step-approve').each(function ()
+            {
+                stepCount = stepCount +1;
+                var isChecked = $(this).prop('checked');
+                if (isChecked)
+                {
+                    stepChecked = stepChecked + 1;
+                }
+                
+            });
+
+            if (stepChecked == stepCount) {
+                $("#btn-approve").show();
+            } else {
+                $("#btn-approve").hide();
+            }
+
+      
+
+        }
+
+
+
 
     </script>
 }

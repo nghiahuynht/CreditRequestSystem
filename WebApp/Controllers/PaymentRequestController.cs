@@ -109,19 +109,16 @@ namespace WebApp.Controllers
             return Json(lstExpense);
         }
 
-        //[HttpGet]
-        //public async Task<PartialViewResult> _PaymentRequestAttachment(long requestId)
-        //{
-        //    var mandatoryAttachRequest = await paymentRequestService.GetAttachmentByRequest(requestId);
-        //    return PartialView(mandatoryAttachRequest);
-        //}
 
 
         [HttpGet]
-        public PartialViewResult _PaymentRequestApproveCheckist(long requestId,int projectId,int actityId, int expenseId)
+        public async Task<PartialViewResult> _PaymentRequestApproveCheckist(long requestId,int projectId,int actityId, int expenseId)
         {
 
+            var request = await paymentRequestService.GetPaymentRequestHeaderById(requestId);
+
             var viewModel = new PaymentAttachCheckistModel();
+            viewModel.Status = request.Status;
             viewModel.LstAttachments = paymentRequestService.GetAttachmentByRequest(requestId, projectId, actityId, expenseId).Result.Results;
             viewModel.LstApproveChecklist = paymentRequestService.GetCheckListApproveStepByRequest(requestId).Result.Results;
 
@@ -206,8 +203,12 @@ namespace WebApp.Controllers
         }
 
         
-
-
+        [HttpPost]
+        public JsonResult ApproveStepChecklist([FromBody] PaymentRequestApproveStepModel model)
+        {
+            var res = paymentRequestService.ApproveStepChecklist(model, AuthenInfo().UserName);
+            return Json(res);
+        }
 
 
 

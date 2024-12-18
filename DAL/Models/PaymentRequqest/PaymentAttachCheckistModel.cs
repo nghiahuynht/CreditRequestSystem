@@ -15,5 +15,6 @@ namespace DAL.Models.PaymentRequqest
 
         public List<PaymentListAttachmentsModel> LstAttachments { get; set; }
         public List<PaymentCheckListHistoryModel> LstApproveChecklist { get; set; }
+        public string Status { get; set; }
     }
 }

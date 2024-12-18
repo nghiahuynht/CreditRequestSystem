@@ -1,5 +1,5 @@
 ﻿@model DAL.Models.PaymentRequqest.PaymentAttachCheckistModel
-
+@using DAL
 <h5>Chứng từ cần đính kèm</h5>
 <table class="table table-bordered" id="table-payment-request-attach">
     <thead>
@@ -46,21 +46,25 @@
 
                         </td>
                     </tr>
-                                // for each step approve in each attachment
-                    foreach (var step in Model.LstApproveChecklist)
+                    if (Model.Status != Contanst.PaymentRequesStatus_Draft && Model.Status != Contanst.CreditRequestStatus_Canceled)
                     {
-                        string approvedStep = step.Approved ? "checked='checked' disabled":string.Empty;
+                        // for each step approve in each attachment
+                        foreach (var step in Model.LstApproveChecklist)
+                        {
+                            string approvedStep = step.Approved ? "checked='checked' disabled" : string.Empty;
+                            string disabledApproved = step.Approved ? "disabled='disabled'" : string.Empty;
 
-
-                        <tr class="tr-step">
-                            <td colspan="7">@(step.Name)</td>
-                            <td><input type="checkbox" @(approvedStep) class="ck-step-approve" /></td>
-                        </tr>
+                            <tr class="tr-step">
+                                <td colspan="6">@(step.Name)</td>
+                                <td><input onclick="ApproveStepChecklist(@(step.PaymentProfileId),@(step.Id))" type="checkbox" @(approvedStep) class="ck-step-approve" @(disabledApproved) /></td>
+                            </tr>
+                        }
                     }
 
 
 
-                 }
+
+                }
 
             }
             else

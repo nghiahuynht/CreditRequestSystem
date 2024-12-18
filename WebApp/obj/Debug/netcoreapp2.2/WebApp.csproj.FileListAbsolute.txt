@@ -647,11 +647,11 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\FormViewDetailProjectDetail.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Project\ProjectDetailIndex.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\SearchPaymentRequest.g.cshtml.cs
-F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestAttachment.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\FormPermissionCreateRequest.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Permission\PermisonCreateRequest.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\ThongTinHoSoThanhToan.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddThongTinHoSoThanhToan.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddThongTinThanhToanMucChi.g.cshtml.cs
-F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\PhongBan.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestApproveCheckist.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\BoPhan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddBoPhan.g.cshtml.cs
