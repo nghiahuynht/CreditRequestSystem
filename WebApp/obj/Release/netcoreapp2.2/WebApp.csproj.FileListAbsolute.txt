@@ -268,7 +268,6 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Vie
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\NhomHoatDong.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_AddMucChi.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_AddNhomHoatDong.g.cshtml.cs
-F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_AddThongTinThanhToan.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_PartialCategoryDetail.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_PartialCategorySearch.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\ChangeLimitRequest\ChangeLimitRequestDetail.g.cshtml.cs
@@ -282,7 +281,6 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Vie
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\RequestDetail.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\SearchPaymentRequest.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\SearchRequest.g.cshtml.cs
-F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestAttachment.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Permission\FormPermissionInCharge.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Permission\PermisonInChargeIndex.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Project\FormCreateProject.g.cshtml.cs
@@ -301,3 +299,11 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.Vi
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.csproj.CopyComplete
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.dll
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.pdb
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\BoPhan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\ThongTinHoSoThanhToan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_AddBoPhan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_AddThongTinHoSoThanhToan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Category\_AddThongTinThanhToanMucChi.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestApproveCheckist.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Permission\FormPermissionCreateRequest.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Permission\PermisonCreateRequest.g.cshtml.cs

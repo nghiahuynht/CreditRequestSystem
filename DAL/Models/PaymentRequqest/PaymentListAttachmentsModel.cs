@@ -14,5 +14,6 @@ namespace DAL.Models.PaymentRequqest
         public string AttachFileName { get; set; }
         public string AttachURL { get; set; }
         public long? AttachId { get; set; }
+        public long ProfileId { get; set; }
     }
 }

@@ -46,20 +46,21 @@
 
                         </td>
                     </tr>
-                    if (Model.Status != Contanst.PaymentRequesStatus_Draft && Model.Status != Contanst.CreditRequestStatus_Canceled)
-                    {
-                        // for each step approve in each attachment
-                        foreach (var step in Model.LstApproveChecklist)
-                        {
-                            string approvedStep = step.Approved ? "checked='checked' disabled" : string.Empty;
-                            string disabledApproved = step.Approved ? "disabled='disabled'" : string.Empty;
+                                            if (Model.Status != Contanst.PaymentRequesStatus_Draft && Model.Status != Contanst.CreditRequestStatus_Canceled)
+                                            {
+                                                // for each step approve in each attachment
+                                                var stepEachFile = Model.LstApproveChecklist.Where(k => k.PaymentProfileId == item.ProfileId).ToList();
+                                                foreach (var step in Model.LstApproveChecklist)
+                                                {
+                                                    string approvedStep = step.Approved ? "checked='checked' disabled" : string.Empty;
+                                                    string disabledApproved = step.Approved ? "disabled='disabled'" : string.Empty;
 
-                            <tr class="tr-step">
-                                <td colspan="6">@(step.Name)</td>
-                                <td><input onclick="ApproveStepChecklist(@(step.PaymentProfileId),@(step.Id))" type="checkbox" @(approvedStep) class="ck-step-approve" @(disabledApproved) /></td>
-                            </tr>
-                        }
-                    }
+                                                    <tr class="tr-step">
+                                                        <td colspan="6">@(step.Name)</td>
+                                                        <td><input onclick="ApproveStepChecklist(@(step.PaymentProfileId),@(step.Id))" type="checkbox" @(approvedStep) class="ck-step-approve" @(disabledApproved) /></td>
+                                                    </tr>
+                                                }
+                                }
 
 
 
