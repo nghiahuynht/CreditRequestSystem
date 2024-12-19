@@ -489,20 +489,6 @@
 
 
 
-
-
-
-           
-
-
-
-
-
-
-
-
-
-
         });
 
         function validateSaveRequest() {
@@ -548,6 +534,7 @@
             if (valid) {
 
                 let invalidAttach = ValidateUploadAttachs();
+       
                 if (invalidAttach == 0) {
 
                     var headerRequestData = FormToObject("#form-paymentrequest", "RequestHeader.");
@@ -574,8 +561,6 @@
                         "RequestHeader": headerRequestData,
                         "ListRequestItems": lstItems
                     };
-
-
                     $.ajax({
                         type: "POST",
                         contentType: 'application/json; charset=utf-8',
