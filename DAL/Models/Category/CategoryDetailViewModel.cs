@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Models.ProjectFinancialSummar;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -113,5 +114,11 @@ namespace DAL.Models.Category
         public string PaymentInfoName { get; set; }
         public string Notes { get; set; }
 
+    }
+
+    public class ResImportActiveGroupModel
+    {
+        public CategoryActiveGroupViewModel item { get; set; }
+        public string message { get; set; }
     }
 }
