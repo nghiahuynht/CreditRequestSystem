@@ -81,6 +81,7 @@
                             @if (isAdd == true)
                             {
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateActiveGroup(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn btn-primary" onclick="showModalImport()"><i class="fas fa-file-import"></i>&nbsp;Import</button>
                             }
                         </div>
 
@@ -117,7 +118,121 @@
     </div>
 </div>
 
+<!--modal import-->
+<div class="modal modal-blur fade" id="modal_import_active_group" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog " id="form_import_active_group">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Tải lên dữ liệu nhóm hoạt động</h5>
 
+            </div>
+            <div class="modal-body">
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/template/TemplateImportActiveGroup.xlsx" class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
+                <form>
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Chọn file</label>
+                        <input class="form-control" type="file" id="fileInput" accept=".xls, .xlsx" onchange="readFileImport()">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal read import-->
+
+<div id="cntModalListActiveGroup">
+    <div class="modal fade" id="ListActiveGroupModal" tabindex="-1" aria-labelledby="ListActiveGroupModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header pt-2 pb-2">
+                    <h5 class="modal-title" id="ListActiveGroupModalLabel">Tải lên dữ liệu nhóm mục chi</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                        <span aria-hidden="true">
+                            <i class="fa fa-times"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: calc(100vh - 200px);overflow:scroll">
+                    <div class="row mb-2">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                            <table class="table table-root">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" name="checkAllRow" checked="checked">
+                                        </th>
+                                        <th scope="col">Mã nhóm</th>
+                                        <th scope="col" class="">Tên nhóm</th>
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody id="lst-data-info">
+                                </tbody>
+                               
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-custom">
+                    <div class="footer-left col-6">
+                        <label>Số lượng dòng đã chọn: </label>
+                        <span id="sumcheck"></span>
+                    </div>
+
+                    <div class="footer-right col-6 pb-3">
+                        <button type="button" class="btn btn-primary" onclick="ImportNhomHoatDong()">Import nhóm mục chi</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal result import-->
+<div id="cntModalResultImport">
+    <div class="modal fade" id="ListActiveGroupModalResultImport" tabindex="-1" aria-labelledby="ListActiveGroupModalResultImportLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header pt-2 pb-2">
+                    <h5 class="modal-title" id="ListNVModalResultImportLabel">Kết Quả Import</h5>
+
+                </div>
+                <div class="modal-body" style="height: calc(100vh - 200px);overflow:scroll">
+                    <div class="row mb-2">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                            <table class="table table-root" id="table-root-result-import">
+                                <thead>
+                                    <tr>
+
+                                        <th scope="col">Mã hoạt động</th>
+                                        <th scope="col" class="">Tên hoạt động</th>
+                                        <th scope="col" class="">Trạng thái</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="lst-data-info">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-custom">
+
+
+                    <div class="footer-right col-6 pb-3">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModalResultImport()">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section scripts{
@@ -310,6 +425,176 @@
                         }
                     });
 
+                }
+            });
+        }
+
+        function showModalImport() {
+            $("#modal_import_active_group").modal("show")
+        }
+
+        function readFileImport() {
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            if (file == undefined) {
+
+                Swal.fire({
+                    title: "Vui lòng chọn file!",
+                    icon: "error"
+                });
+                return;
+            }
+            formData.append('file', file);
+            $.ajax({
+                url: '/Category/ReadFileImportActiveGroup',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    ShowWaiting();
+                },
+                complete: function () {
+                    HideWaiting();
+                },
+                success: function (response) {
+                    console.log("response", response)
+                    dataSubmit = [];
+                    dataResponeAjax = [];
+
+                    if (response.status = "Success") {
+                        var data = response.data;
+                        var htmlAppend = '';
+                        for (var i = 0; i < data.length; i++) {
+                            var code = generateCode("NHD");
+                            data[i].code = code;
+                            htmlAppend += `<tr>`;
+                            htmlAppend += `<td class="col-checkbox">
+                                                             <input data-id='`+ data[i].code + `' type="checkbox" checked="checked" name="checkRow">
+                                     </td>`;
+                            htmlAppend += `<td>` + data[i].code + `</td>`;
+                            htmlAppend += `<td>` + data[i].name + `</td>`;
+                            htmlAppend += `</tr>`;
+                            dataSubmit.push(data[i]);
+                            dataResponeAjax.push(data[i]);
+                        }
+                        $('#cntModalListActiveGroup #ListActiveGroupModal #lst-data-info').html(htmlAppend);
+                        showModal();
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Swal.fire({
+                        title: jqXHR.responseText,
+                        icon: "error"
+                    });
+                }
+            });
+        }
+
+        function showModal() {
+            $('#cntModalListActiveGroup #ListActiveGroupModal').modal().show();
+            caclCheckTotal();
+            $('#modal_import_active_group').modal('hide');
+            $('#cntModalListActiveGroup #ListActiveGroupModal #lst-data-info').on('click', '[name="checkRow"]', function () {
+                var dataId = $(this).attr('data-id');
+                if ($(this).is(':checked')) {
+                    var dtSubmit = dataResponeAjax.find(x => x.code == dataId);
+                    if (dtSubmit) {
+                        dataSubmit.push(dtSubmit);
+                    }
+                }
+                else {
+                    $('[name="checkAllRow"]').prop('checked', false);
+                    dataSubmit = dataSubmit.filter(x => x.code != dataId);
+                }
+                caclCheckTotal();
+            });
+            $('#cntModalListActiveGroup #ListActiveGroupModal [name="checkAllRow"]').on('click', function () {
+                if ($(this).is(':checked')) {
+                    $('#cntModalListActiveGroup #ListActiveGroupModal #lst-data-info [name="checkRow"]').prop('checked', true);
+                    dataSubmit = dataResponeAjax;
+                }
+                else {
+                    $('#cntModalListActiveGroup #ListActiveGroupModal #lst-data-info [name="checkRow"]').prop('checked', false);
+                    dataSubmit = [];
+                }
+                caclCheckTotal();
+            })
+
+        }
+
+
+        function caclCheckTotal() {
+            var total = 0;
+            $('#cntModalListActiveGroup #ListActiveGroupModal #lst-data-info [name="checkRow"]').each(function () {
+                if ($(this).is(':checked')) {
+                    total++;
+                }
+            });
+            $('#cntModalListActiveGroup #ListActiveGroupModal #sumcheck').text(total);
+        }
+        function checkAllCheckbox() {
+            var flag = true;
+            $('#cntModalListActiveGroup #ListActiveGroupModal #lst-data-info [name="checkRow"]').each(function () {
+                if (!$(this).is(':checked')) {
+                    flag = false;
+                    return false;
+                }
+            });
+            return flag;
+        }
+
+        function ImportNhomHoatDong() {
+            if (dataSubmit.length < 1) {
+                Swal.fire({
+                    title: "Vui lòng chọn ít nhất 1 dòng",
+                    icon: "error"
+                });
+                return;
+            }
+            console.log("dataSubmit", dataSubmit)
+            var jsonStr = JSON.stringify(dataSubmit);
+            $.ajax({
+                url: '/Category/ImportActiveGroup',
+                type: 'POST',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: jsonStr,
+                processData: false,
+                beforeSend: function () {
+                    $('#cntModalListActiveGroup #ListActiveGroupModal').modal('hide');
+
+                },
+                complete: function () {
+
+                },
+                success: function (response) {
+                    console.log("response", response)
+                    Swal.fire({
+                        title: "Thao tác đã thực hiện",
+                        text: dataSubmit.length + " dòng dữ liệu",
+                        icon: response.status == "Thành công" ? "success" : "error"
+                    });
+
+                    var htmlAppend = '';
+                    for (var i = 0; i < response.data.length; i++) {
+                        htmlAppend += `<tr>`;
+                        htmlAppend += `<td>` + response.data[i].item.code + `</td>`;
+                        htmlAppend += `<td>` + response.data[i].item.name + `</td>`;
+                        var messageColor = response.data[i].message == "Thành công" ? "green" : "red";
+                        htmlAppend += `<td style='color:${messageColor};'>` + (response.data[i].message) + `</td>`;
+                        htmlAppend += `</tr>`;
+
+
+                    }
+                    $('#ListActiveGroupModalResultImport #table-root-result-import #lst-data-info').html(htmlAppend);
+
+                    $('#ListActiveGroupModalResultImport').modal().show();
+                    SearchNhomHoatDong();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#result').html('Error: ' + textStatus + ' - ' + errorThrown);
                 }
             });
         }

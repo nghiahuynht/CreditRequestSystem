@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DAL.Entities;
 using DAL.IService;
 using DAL.Models;
 using DAL.Models.Category;
+using DAL.Models.ProjectFinancialSummar;
+using DAL.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 
 namespace WebApp.Controllers
 {
@@ -165,6 +170,124 @@ namespace WebApp.Controllers
                     message = $"Đã xảy ra lỗi: {ex.Message}"
                 });
             }
+        }
+
+
+        [HttpPost]
+        public IActionResult ReadFileImportActiveGroup(IFormFile file)
+        {
+            // Get all DM Trung Tam
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            List<CategoryActiveGroupViewModel> lstProject = new List<CategoryActiveGroupViewModel>();
+            if (file == null || file.Length == 0)
+                return BadRequest("File không hợp lệ");
+            string[] permittedExtensions = { ".xlsx", ".xls" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+            {
+                return BadRequest("File không hợp lệ");
+            }
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    int rows = worksheet.Dimension.Rows;
+                    int columns = worksheet.Dimension.Columns;
+                    // Check number rows
+                    if (rows > 201)
+                    {
+                        return BadRequest("File vượt quá số dòng tối đa (200 dòng)");
+                    }
+                    int indexHaveData = 1;
+                    for (int row = 2; row <= rows; row++)
+                    {
+
+                        if (columns > 0 && row > 1)
+                        {
+                            object tenNhomHoatDong = worksheet.Cells[row, 1].Value;
+
+                            
+
+
+                            if (string.IsNullOrEmpty(tenNhomHoatDong?.ToString()))
+                            {
+                                return BadRequest("Tên nhóm hoạt động không được bỏ trống");
+                            }
+
+
+
+                            CategoryActiveGroupViewModel item = new CategoryActiveGroupViewModel
+                            {
+
+                               Code = "",
+                               Name = tenNhomHoatDong.ToString()
+
+                            };
+                            lstProject.Add(item);
+                        }
+                    }
+                }
+            }
+            return Json(new
+            {
+                data = lstProject,
+                Status = "Success"
+            });
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportActiveGroup([FromBody] List<CategoryActiveGroupViewModel> data)
+        {
+
+            try
+            {
+                List<ResImportActiveGroupModel> resImport = new List<ResImportActiveGroupModel>();
+                foreach (var item in data)
+                {
+                    var res = await categoryService.CreateActiveGroup(item, AuthenInfo().UserName);
+                    string ms = "Thành công";
+                    if (res.LongValReturn < 0)
+                    {
+                        if (res.LongValReturn == -409)
+                        {
+                            ms = "Mã dự án đã tồn tại";
+                        }
+                        else
+                        {
+                            ms = "Thất bại";
+
+                        }
+                    };
+
+                    resImport.Add(new ResImportActiveGroupModel()
+                    {
+                        item = item,
+                        message = ms
+                    });
+                }
+                return Json(new
+                {
+                    data = resImport,
+                    Status = "Thành công"
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    message = ex.Message,
+                    Status = "Thất bại",
+
+                });
+            }
+
+
         }
         #endregion
 
