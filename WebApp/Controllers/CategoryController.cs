@@ -390,6 +390,125 @@ namespace WebApp.Controllers
             
         }
 
+        [HttpPost]
+        public IActionResult DowloadTemplateImportExpense()
+        {
+            // Path to the template Excel file
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            string templateFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "template", "TemplateImportExpense.xlsx");
+
+            var lstDataActiveGroup = categoryService.LstAllCategoryActiveGroup();
+            // Load the template Excel file
+            using (var package = new ExcelPackage(new FileInfo(templateFilePath)))
+            {
+
+                // Access the second sheet (Sheet2)
+                var worksheet = package.Workbook.Worksheets[1];  // Worksheet index starts at 0, so index 1 is the second sheet
+
+                // Starting row and column
+                int startRow = 3;
+                int startColumn = 1;  // Column B
+
+                // Insert data into the sheet starting at the specified row and column
+                for (int i = 0; i < lstDataActiveGroup.Count; i++)
+                {
+                    worksheet.Cells[startRow, 1].Value = lstDataActiveGroup[i].Code;
+                    worksheet.Cells[startRow, 2].Value = lstDataActiveGroup[i].Code+"_"+lstDataActiveGroup[i].Name;
+                    startRow++;
+                }
+
+                // Save the modified Excel file to a memory stream
+                var memoryStream = new MemoryStream();
+                package.SaveAs(memoryStream);
+                memoryStream.Position = 0; // Reset the stream position to the beginning
+
+                // Return the file as a download
+                var fileName = "TemplateImportExpense.xlsx";
+                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ReadFileImportExpense(IFormFile file)
+        {
+            // Get all DM Trung Tam
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var lstNhomHoatDong = categoryService.LstAllCategoryActiveGroup();
+            List<CategoryExpenseViewImportModel> lstProject = new List<CategoryExpenseViewImportModel>();
+            if (file == null || file.Length == 0)
+                return BadRequest("File không hợp lệ");
+            string[] permittedExtensions = { ".xlsx", ".xls" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+            {
+                return BadRequest("File không hợp lệ");
+            }
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    int rows = worksheet.Dimension.Rows;
+                    int columns = worksheet.Dimension.Columns;
+                    // Check number rows
+                    if (rows > 201)
+                    {
+                        return BadRequest("File vượt quá số dòng tối đa (200 dòng)");
+                    }
+                    int indexHaveData = 2;
+                    for (int row = 2; row <= rows; row++)
+                    {
+
+                        if (columns > 0 && row > 2)
+                        {
+                            object nhomHoatDong = worksheet.Cells[row, 1].Value;
+                            object tenMucChi= worksheet.Cells[row, 2].Value;
+                            object ghiChu= worksheet.Cells[row, 3].Value;
+
+
+
+                            if (string.IsNullOrEmpty(nhomHoatDong?.ToString()))
+                            {
+                                return BadRequest("Tên nhóm hoạt động không được bỏ trống");
+                            }  
+                            if (string.IsNullOrEmpty(tenMucChi?.ToString()))
+                            {
+                                return BadRequest("Tên mục chi không được bỏ trống");
+                            }
+
+                            // check mã nhóm hoạt động có tòn tại trong hệ thống
+                            string[] ttNhomHD = nhomHoatDong?.ToString().Split('_');
+                            var dataNhomHD = lstNhomHoatDong.FirstOrDefault(x => x.Code == ttNhomHD[0]);
+                            if (dataNhomHD == null )
+                            {
+                                return BadRequest("Nhóm hoạt động không có trong hệ thống.Hàng " + row);
+                            }
+
+                            CategoryExpenseViewImportModel item = new CategoryExpenseViewImportModel
+                            {
+
+                                Code = "",
+                                Name = tenMucChi?.ToString(),
+                                Notes=ghiChu?.ToString() == null?"": ghiChu?.ToString(),
+                                ActiveGroupId= dataNhomHD.Id,
+                                ActiveGroupName= dataNhomHD.Name,
+
+                            };
+                            lstProject.Add(item);
+                        }
+                    }
+                }
+            }
+            return Json(new
+            {
+                data = lstProject,
+                Status = "Success"
+            });
+
+        }
         #endregion
 
         #region DM Thong Tin Thanh Toan
@@ -596,6 +715,8 @@ namespace WebApp.Controllers
                 });
             }
         }
+
+       
         #endregion
 
         #region DM Bo Phan
