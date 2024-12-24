@@ -40,13 +40,13 @@
             <div class="row">
 
                 <div class="col-sm-2">
-                    <label>Dự án</label>
+                    <label>Nguồn thu</label>
                     <select class="form-control" id="ddl-project">
                         @{
                             var projects = (List<ProjectFinancialSummarDLLModel>)ViewBag.DDLProject;
                             if (projects.Any() && projects.Count > 1)
                             {
-                                <option value="0">Tất cả dự án</option>
+                                <option value="0">Tất cả nguồn thu</option>
                                 foreach (var pro in projects)
                                 {
                                     <option value="@(pro.Id)">@(pro.Name)</option>
@@ -58,7 +58,7 @@
                             }
                             else
                             {
-                                <option value="-1">Tất cả dự án</option>
+                                <option value="-1">Tất cả nguồn thu</option>
                             }
                         }
                     </select>
@@ -121,7 +121,7 @@
                        <th>Phòng ban</th>
                        <th>Trạng thái</th>
                        <th>Tổng tiền</th>
-                       <th>Dự án</th>
+                       <th>Nguồn thu</th>
                        <th>Hoạt động</th>
                        <th>Khoản chi</th>
                    </tr>

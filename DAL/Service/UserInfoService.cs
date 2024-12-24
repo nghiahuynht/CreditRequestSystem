@@ -406,5 +406,44 @@ namespace DAL.Service
                 return false;
             }
         }
+
+
+        public void CreateUserByImport(List<UserInfoImportModel> models, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                foreach (var itemUser in models)
+                {
+                    var param = new SqlParameter[]
+                    {
+                        new SqlParameter("@FullName", itemUser.FullName),
+                        new SqlParameter("@SDT", itemUser.SDT),
+                        new SqlParameter("@Email", itemUser.Email),
+                        new SqlParameter("@Title", itemUser.Title),
+                        new SqlParameter("@DepartmentCode", itemUser.DepartmentCode),
+                        new SqlParameter("@CreatedBy", userName),
+                        new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+                    };
+                    ValidNullValue(param);
+                    dtx.Database.ExecuteSqlCommand("EXEC sp_CreateUserByImport @FullName,@SDT,@Email,@Title,@DepartmentCode,@CreatedBy,@NewId OUT", param);
+                    res.LongValReturn = Convert.ToInt32(param[param.Length - 1].Value);
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+
+        }
+
+
+
+
     }
 }

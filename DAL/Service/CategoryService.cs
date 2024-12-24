@@ -195,7 +195,7 @@ namespace DAL.Service
             res.Data = null;
             try
             {
-                var param = new SqlParameter[]
+               var param = new SqlParameter[]
                {
                   new SqlParameter("@Id", model.Id),
                     new SqlParameter("@Code", model.Code),

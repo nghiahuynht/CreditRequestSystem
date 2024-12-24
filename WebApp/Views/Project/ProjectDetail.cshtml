@@ -1,6 +1,6 @@
 ﻿@using System.Globalization
 @{
-    ViewData["Title"] = "Thông tin dự án/chương trình/dịch vụ";
+    ViewData["Title"] = "Thông tin nguồn thu";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -29,7 +29,7 @@
         <div class="card-header p-0 pt-1 border-bottom-0">
             <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="project-detail-tab" data-toggle="pill" href="#project-detail-tab-content" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">THÔNG TIN CHƯƠNG TRÌNH/DỰ ÁN/DỊCH VỤ</a>
+                    <a class="nav-link active" id="project-detail-tab" data-toggle="pill" href="#project-detail-tab-content" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">THÔNG TIN NGUỒN THU</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="project-history-tab" data-toggle="pill" href="#project-history-tab-content" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false">LỊCH SỬ ĐIỀU CHỈNH</a>
@@ -57,13 +57,13 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="col-md-4 col-form-label">Mã dự án <span class="text-red">*</span></label>
+                                        <label class="col-md-4 col-form-label">Mã nguồn thu<span class="text-red">*</span></label>
                                         <div class="col-md-8">
                                             <input type="text" class="form-control" value="@Model.ProjectInfo.ProjectCode" name="ma_du_an" id="a_ma_du_an" readonly />
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="col-md-4 col-form-label">Tên dự án <span class="text-red">*</span></label>
+                                        <label class="col-md-4 col-form-label">Tên nguồn thu<span class="text-red">*</span></label>
                                         <div class="col-md-8">
                                             <input type="text" class="form-control" id="a_ten_du_an" name="ten_du_an" value="@Model.ProjectInfo.ProjectName" readonly />
                                         </div>
@@ -371,12 +371,12 @@
                     success: function (response) {
                         if (response.success) {
                             console.log(response)
-                            toastr.success('Dự án đã được tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            toastr.success('Nguồn thu đã được tạo thành công!', 'Thành công', { positionClass: "toast-top-center" });
                             $("#projectId").val(response.projectId);
                             document.getElementById("regon_hang_muc_phan_bo").style.display = "block";
 
                         } else {
-                            toastr.error('Có lỗi khi tạo dự án. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                            toastr.error('Có lỗi khi nguồn thu. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
                         }
                     },
                     error: function (xhr, status, error) {
@@ -417,8 +417,8 @@
 
                 },
                 messages: {
-                    "ten_du_an": "Tên chương trình/dự án/dịch vụ không được để trống!",
-                    "ma_du_an": "Mã chương trình/dự án/dịch vụ không được để trống!",
+                    "ten_du_an": "Tên nguồn thu không được để trống!",
+                    "ma_du_an": "Mã nguồn thu không được để trống!",
                     "can_cu_phap_ly": "Căn cứ pháp lý không được để trống!",
                     "thoi_gian_bat_dau": "Thời gian thực hiện không được để trống!",
                     "thoi_gian_ket_thuc": "Thời gian thực hiện không được để trống!",

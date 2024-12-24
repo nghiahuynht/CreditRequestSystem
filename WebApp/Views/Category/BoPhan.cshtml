@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @using WebApp.ExcelHelper;
 @{
-    ViewData["Title"] = "Danh sách bộ phận";
+    ViewData["Title"] = "Danh sách khoa/phòng ban";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
      bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.BoPhan.Delete);
@@ -68,11 +68,11 @@
                     <div class="row">
 
                         <div class="col-sm-3">
-                            <label>Mã bộ phận</label>
+                            <label>Mã khoa/phòng ban</label>
                             <input type="text" class="form-control" id="txtMa" />
                         </div>
                         <div class="col-sm-3">
-                            <label>Tên bộ phận</label>
+                            <label>Tên khoa/phòng ban</label>
                             <input type="text" class="form-control" id="txtTen" />
                         </div>
                         <div class="col-sm-3">
@@ -91,8 +91,8 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Mã bộ phận</th>
-                                <th>Tên bộ phận</th>
+                                <th>Mã khoa/phòng ban</th>
+                                <th>Tên khoa/phòng ban</th>
                                 <th>Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -235,7 +235,7 @@
                     },
                     success: function (res) {
                         if (res.isSuccess === true) {
-                            toastr.success('Thêm bộ phận thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                            toastr.success('Thêm khoa/phòng ban thành công!', 'Thành công', { positionClass: "toast-top-center" });
                             SearchBoPhan();
                             $("#modal_add_department").modal("hide")
                         } else {

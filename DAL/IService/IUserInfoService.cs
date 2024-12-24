@@ -32,5 +32,6 @@ namespace DAL.IService
         Task<List<PermissionMenuInfoModel>> GetPermissionByUserIdMenuId(int UserId,int MenuId);
 
         Task<bool> DeletePermissionByUserIdMenuId(int UserId, int MenuId);
+        void CreateUserByImport(List<UserInfoImportModel> models, string userName);
     }
 }

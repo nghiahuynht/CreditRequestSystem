@@ -12,20 +12,24 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Configuration;
+using WebApp.ImportHelper;
 
 namespace WebApp.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : AppBaseController
     {
         private IUserInfoService userService;
         private ICategoryService categoryService;
+        private IConfiguration config;
 
-        public AccountController(IUserInfoService userService, ICategoryService categoryService)
+        public AccountController(IUserInfoService userService, ICategoryService categoryService, IConfiguration config)
         {
             this.userService = userService;
             this.categoryService = categoryService;
+            this.config = config;
         }
 
         #region Login 
@@ -280,6 +284,23 @@ namespace WebApp.Controllers
                 });
             }
         }
+
+        [HttpPost]
+
+        public JsonResult ImportUserAction(IFormFile postedFile)
+        {
+            string rootFolder = config["General:RootFolder"];
+            var dataImport = new UserAccountImportHelper(rootFolder);
+            if (dataImport.Parse(postedFile))
+            {
+                userService.CreateUserByImport(dataImport.list, AuthenInfo().UserName);
+            }
+
+
+            return Json(true);
+        }
+
+
         #endregion
 
 

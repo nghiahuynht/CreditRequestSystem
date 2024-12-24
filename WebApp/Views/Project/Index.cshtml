@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Danh sách chương trình/dự án/dịch vụ";
+    ViewData["Title"] = "Danh sách nguồn thu";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -63,11 +63,11 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-3">
-                            <label>Mã dự án</label>
+                            <label>Mã nguồn thu</label>
                             <input type="text" class="form-control" id="txtMaDuAn" />
                         </div>
                         <div class="col-sm-3">
-                            <label>Tên dự án</label>
+                            <label>Tên nguồn thu</label>
                             <input type="text" class="form-control" id="txtTenDuAn" />
                         </div>
                         <div class="col-sm-3">
@@ -84,8 +84,8 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th width="100px">Mã dự án </th>
-                                <th width="200px">Tên dự án</th>
+                                <th width="100px">Mã nguồn thu </th>
+                                <th width="200px">Tên nguồn thu</th>
                                 <th width="200px">Căn cứ pháp lý</th>
                                 <th width="140px">Thời gian thực hiện</th>
                                 <th width="120px">Tổng hạn mức</th>
@@ -118,7 +118,7 @@
     <div class="modal-dialog " id="form_import_project">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Tải lên dữ liệu chương trình/dự án/dịch vụ</h5>
+                <h5 class="modal-title" id="uploadModalLabel">Tải lên dữ liệu nguồn thu</h5>
 
             </div>
             <div class="modal-body">
@@ -145,7 +145,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header pt-2 pb-2">
-                    <h5 class="modal-title" id="ListProjectModalLabel">Tải lên dữ liệu chương trình/dự án/dịch vụ</h5>
+                    <h5 class="modal-title" id="ListProjectModalLabel">Tải lên dữ liệu nguồn thu</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
                         <span aria-hidden="true">
                             <i class="fa fa-times"></i>
@@ -161,8 +161,8 @@
                                         <th>
                                             <input type="checkbox" name="checkAllRow" checked="checked">
                                         </th>
-                                        <th scope="col">Mã dự án</th>
-                                        <th scope="col" class="">Tên dự án</th>
+                                        <th scope="col">Mã nguồn thu</th>
+                                        <th scope="col" class="">Tên nguồn thu</th>
                                         <th scope="col" class="">Căn cứ pháp lý</th>
                                         <th scope="col" class="">Thời gian bắt đầu</th>
                                         <th scope="col" class="">Thời gian kết thúc</th>
@@ -213,8 +213,8 @@
                                 <thead>
                                     <tr>
 
-                                        <th scope="col">Mã dự án</th>
-                                        <th scope="col" class="">Tên dự án</th>
+                                        <th scope="col">Mã nguồn thu</th>
+                                        <th scope="col" class="">Tên nguồn thu</th>
                                         <th scope="col" class="">Căn cứ pháp lý</th>
                                         <th scope="col" class="">Thời gian bắt đầu</th>
                                         <th scope="col" class="">Thời gian kết thúc</th>
@@ -507,8 +507,8 @@
 
                 },
                 messages: {
-                    "ten_du_an": "Tên chương trình/dự án/dịch vụ không được để trống!",
-                    "ma_du_an": "Mã chương trình/dự án/dịch vụ không được để trống!",
+                    "ten_du_an": "Tên nguồn thu không được để trống!",
+                    "ma_du_an": "Mã nguồn thu không được để trống!",
                     "can_cu_phap_ly": "Căn cứ pháp lý không được để trống!",
                     "thoi_gian_bat_dau": "Thời gian thực hiện không được để trống!",
                     "thoi_gian_ket_thuc": "Thời gian thực hiện không được để trống!",
