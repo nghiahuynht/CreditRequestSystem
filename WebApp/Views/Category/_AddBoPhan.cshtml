@@ -3,11 +3,11 @@
     <div class="modal-header p-2">
         @if (Model.Id == 0)
         {
-            <h5 class="modal-title">Thêm bộ phận</h5>
+            <h5 class="modal-title">Thêm khoa/phòng ban</h5>
         }
         else
         {
-            <h5 class="modal-title">Chỉnh sửa mục chi</h5>
+            <h5 class="modal-title">Chỉnh sửa khoa/phòng ban</h5>
         }
 
     </div>
@@ -21,12 +21,12 @@
                     <div class="row">
                        
                         <div class="col-md-6">
-                            <label class="form-label">Mã mục chi: <span class="text-red">*</span></label>
+                            <label class="form-label">Mã khoa/phòng ban: <span class="text-red">*</span></label>
                             <input type="text" class="form-control" id="a_code" name="code" value="@Model.Code" />
                         </div>
 
                         <div class="col-md-6 ">
-                            <label class="form-label col-auto">Tên mục chi: <span class="text-red">*</span></label>
+                            <label class="form-label col-auto">Tên khoa/phòng ban: <span class="text-red">*</span></label>
                             <input type="text" class="form-control" id="a_name" name="name" value="@Model.Name" />
                         </div>
 

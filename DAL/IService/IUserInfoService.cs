@@ -33,5 +33,6 @@ namespace DAL.IService
 
         Task<bool> DeletePermissionByUserIdMenuId(int UserId, int MenuId);
         void CreateUserByImport(List<UserInfoImportModel> models, string userName);
+        Task<SaveResultModel<Object>> CopyPermisionUser(string fromUser, string toUser);
     }
 }

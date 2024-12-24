@@ -161,12 +161,13 @@ namespace DAL.Service
             return res;
         }
 
-        public DataTableResultModel<CategoryActiveGroupViewModel> GetActiveGroupByFilter(CategoryFilterModel filter)
+        public DataTableResultModel<CategoryActiveGroupViewModel> GetActiveGroupByFilter(CategoryFilterModel filter,bool isExcel)
         {
             var res = new DataTableResultModel<CategoryActiveGroupViewModel>();
             try
             {
                 var param = new SqlParameter[] {
+                    new SqlParameter("@Excel", isExcel),
                     new SqlParameter("@Ma", filter.Code),
                     new SqlParameter("@Ten", filter.Name),
                     new SqlParameter("@Start", filter.start),
@@ -174,7 +175,7 @@ namespace DAL.Service
                     new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
                 };
                 ValidNullValue(param);
-                var lstData = dtx.CategoryActiveGroupViewModel.FromSql("sp_GetActiveGroupPaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
+                var lstData = dtx.CategoryActiveGroupViewModel.FromSql("sp_GetActiveGroupPaging @Excel,@Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
                 res.recordsTotal = Convert.ToInt16(param[4].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();
@@ -257,12 +258,13 @@ namespace DAL.Service
             return res;
         }
 
-        public DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter)
+        public DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter,bool isExcel)
         {
             var res = new DataTableResultModel<CategoryExpenseTableViewModel>();
             try
             {
                 var param = new SqlParameter[] {
+                    new SqlParameter("@Excel",isExcel),
                     new SqlParameter("@Ma", filter.Code),
                     new SqlParameter("@Ten", filter.Name),
                     new SqlParameter("@Start", filter.start),
@@ -270,7 +272,7 @@ namespace DAL.Service
                     new SqlParameter { ParameterName = "@TotalRow", DbType = System.Data.DbType.Int16, Direction = System.Data.ParameterDirection.Output }
                 };
                 ValidNullValue(param);
-                var lstData = dtx.CategoryExpenseTableViewModel.FromSql("sp_GetExpensePaging @Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
+                var lstData = dtx.CategoryExpenseTableViewModel.FromSql("sp_GetExpensePaging @Excel,@Ma,@Ten,@Start,@Length,@TotalRow OUT", param).ToList();
                 res.recordsTotal = Convert.ToInt16(param[4].Value);
                 res.recordsFiltered = res.recordsTotal;
                 res.data = lstData.ToList();

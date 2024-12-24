@@ -113,6 +113,7 @@ namespace WebApp.Controllers
             var lstDepartment =categoryService.LstAllCategoryDepartment();
             par.LstRoles = lstRoles;
             par.LstDepartment = lstDepartment;
+            ViewBag.UserAll = userService.GetListUserByRoles("All").Results;
             return View(par);
         }
 
@@ -300,7 +301,12 @@ namespace WebApp.Controllers
             return Json(true);
         }
 
-
+        [HttpPost]
+        public async Task<JsonResult> CopyPermissionUser([FromBody] CopyPermissModel model)
+        {
+            var res = await userService.CopyPermisionUser(model.FromUser,model.ToUser);
+            return Json(res);
+        }
         #endregion
 
 

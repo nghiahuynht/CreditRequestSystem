@@ -19,13 +19,13 @@ namespace DAL.IService
         List<CategoryActiveGroupViewModel> LstAllCategoryActiveGroup();
         List<CategoryPaymentProfileViewModel> LstAllCategoryPaymentProfile();
         CategoryActiveGroupViewModel GetActiveGroupById(int Id);
-        DataTableResultModel<CategoryActiveGroupViewModel> GetActiveGroupByFilter(CategoryFilterModel filter);
+        DataTableResultModel<CategoryActiveGroupViewModel> GetActiveGroupByFilter(CategoryFilterModel filter, bool isExcel);
         Task<SaveResultModel<object>> CreateActiveGroup(CategoryActiveGroupViewModel model, string userName);
         Task<bool> DeleteActiveGroup(int categoryId, string userName);
 
         CategoryExpenseViewModel GetExpenseById(int Id);
         List<CategoryExpenseViewModel> LstAllCategoryExpense();
-        DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter);
+        DataTableResultModel<CategoryExpenseTableViewModel> GetExpenseByFilter(CategoryFilterModel filter, bool isExcel);
         SaveResultModel<object> CreateExpense(CategoryExpenseViewModel model, string userName);
         Task<bool> DeleteExpense(int categoryId, string userName);
         DataTableResultModel<CategoryPaymentProfileViewModel> GetPaymentProfileByFilter(CategoryFilterModel filter);

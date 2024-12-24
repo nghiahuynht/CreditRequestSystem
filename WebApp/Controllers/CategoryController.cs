@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,10 @@ using DAL.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.Table;
+using WebApp.ExcelHelper;
 using WebApp.ImportHelper;
 
 namespace WebApp.Controllers
@@ -87,7 +91,7 @@ namespace WebApp.Controllers
         // [Authorize(Roles = "Admin")]
         public DataTableResultModel<CategoryActiveGroupViewModel> GetDataActiveGroup(CategoryFilterModel filter)
         {
-            var res = categoryService.GetActiveGroupByFilter(filter);
+            var res = categoryService.GetActiveGroupByFilter(filter,false);
             return res;
         }
         public IActionResult _AddNhomHoatDong(int id = 0)
@@ -293,6 +297,59 @@ namespace WebApp.Controllers
 
 
         }
+
+
+        [HttpGet]
+        public FileContentResult ExportNhomHoatDong(string filfer)
+        {
+
+            var filterModel = !string.IsNullOrEmpty(filfer) ? JsonConvert.DeserializeObject<CategoryFilterModel>(filfer) : new CategoryFilterModel();
+            filterModel.start = 0;
+            filterModel.start = 10000;
+            var res = categoryService.GetActiveGroupByFilter(filterModel,true);
+
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
+            ExcelPackage excel = new ExcelPackage();
+            var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
+            Color colFromHex = ColorTranslator.FromHtml("#3377ff");
+            Color colFromHexTextHeader = ColorTranslator.FromHtml("#ffffff");
+
+            workSheet.Cells["A1"].Value = "Mã nhóm hoạt động";
+            workSheet.Cells["B1"].Value = "Tên nhóm hoạt động";
+            workSheet.Cells["C1"].Value = "Ghi chú";
+
+
+            workSheet.Cells[1, 1, 1, 3].Style.Font.Bold = true;
+            int rowData = 2;
+
+            if (res.data.Any())
+            {
+                foreach (var item in res.data)
+                {
+                    workSheet.Cells["A" + rowData].Value = item.Code;
+                    workSheet.Cells["B" + rowData].Value = item.Name;
+                    workSheet.Cells["C" + rowData].Value = item.Notes;
+                    rowData++;
+                }
+            }
+
+            //Format table
+            ExcelRange range = workSheet.Cells[1, 1, rowData - 1, workSheet.Dimension.End.Column];
+            ExcelTable tab = workSheet.Tables.Add(range, "Table1");
+            tab.TableStyle = OfficeOpenXml.Table.TableStyles.Medium2;
+            //FreezePanes
+            //workSheet.View.FreezePanes(1,13);
+
+            workSheet.Column(1).Width = 10;
+            workSheet.Column(2).Width = 30;
+            workSheet.Column(3).Width = 30;
+
+            return File(excel.GetAsByteArray(), ExcelExportHelper.ExcelContentType, "DanhSach-NhomHoatDong.xlsx");
+        }
+
+
+
+
         #endregion
 
         #region DM  mục chi
@@ -306,9 +363,63 @@ namespace WebApp.Controllers
         // [Authorize(Roles = "Admin")]
         public DataTableResultModel<CategoryExpenseTableViewModel> GetDataExpense(CategoryFilterModel filter)
         {
-            var res = categoryService.GetExpenseByFilter(filter);
+            var res = categoryService.GetExpenseByFilter(filter,false);
             return res;
         }
+
+
+        [HttpGet]
+        public FileContentResult ExportMucChi(string filfer)
+        {
+
+            var filterModel = !string.IsNullOrEmpty(filfer) ? JsonConvert.DeserializeObject<CategoryFilterModel>(filfer) : new CategoryFilterModel();
+            filterModel.start = 0;
+            filterModel.start = 10000;
+            var res = categoryService.GetExpenseByFilter(filterModel, true);
+
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
+            ExcelPackage excel = new ExcelPackage();
+            var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
+            Color colFromHex = ColorTranslator.FromHtml("#3377ff");
+            Color colFromHexTextHeader = ColorTranslator.FromHtml("#ffffff");
+
+            workSheet.Cells["A1"].Value = "Tên nhóm hoạt động";
+            workSheet.Cells["B1"].Value = "Mã mục chi";
+            workSheet.Cells["C1"].Value = "Tên mục chi";
+            workSheet.Cells["D1"].Value = "Ghi chú";
+
+            workSheet.Cells[1, 1, 1, 4].Style.Font.Bold = true;
+            int rowData = 2;
+
+            if (res.data.Any())
+            {
+                foreach (var item in res.data)
+                {
+                    workSheet.Cells["A" + rowData].Value = item.ActiveGroupName;
+                    workSheet.Cells["B" + rowData].Value = item.Code;
+                    workSheet.Cells["C" + rowData].Value = item.Name;
+                    workSheet.Cells["D" + rowData].Value = item.Notes;
+                    rowData++;
+                }
+            }
+
+            //Format table
+            ExcelRange range = workSheet.Cells[1, 1, rowData - 1, workSheet.Dimension.End.Column];
+            ExcelTable tab = workSheet.Tables.Add(range, "Table1");
+            tab.TableStyle = OfficeOpenXml.Table.TableStyles.Medium2;
+            //FreezePanes
+            //workSheet.View.FreezePanes(1,13);
+
+            workSheet.Column(1).Width = 10;
+            workSheet.Column(2).Width = 30;
+            workSheet.Column(3).Width = 30;
+            workSheet.Column(4).Width = 20;
+
+            return File(excel.GetAsByteArray(), ExcelExportHelper.ExcelContentType, "DanhSach-MucChi.xlsx");
+        }
+
+
+
         public IActionResult _AddMucChi(int id = 0)
         {
             var viewModel = new CategoryExpenseViewModel();
@@ -832,5 +943,13 @@ namespace WebApp.Controllers
             }
         }
         #endregion
+
+
+
+
+
+
+
+
     }
 }

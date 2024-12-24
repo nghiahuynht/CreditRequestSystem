@@ -67,7 +67,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
                             <label>Bộ phận</label>
                             <select class="form-control" id="ddl-role">
                                 <option value="all">Tất cả</option>
@@ -92,16 +92,17 @@
                                 }
                             </select>
                         </div> *@
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <label>Tìm theo SĐT/tên/email</label>
                             <input type="text" class="form-control" id="txtkeyword" />
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                             <button id="btn-search" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                             @if (isAdd == true)
                             {
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
                                 <button style="margin-left:5px;" id="btn-open-import-modal" class="btn btn-filter btn-sm btn btn-success"><i class="fas fa-file-import"></i>&nbsp;Import</button>
+                                <button style="margin-left:5px;" id="btn-open-copy-perrmisionModal" class="btn btn-filter btn-sm btn btn-primary"><i class="fas fa-cut"></i>&nbsp;Copy phân quyền</button>
                             }
 
                         </div>
@@ -181,7 +182,58 @@
     <!-- /.modal-dialog -->
 </div>
 
-
+<div class="modal fade show" id="modal-copy-permission-user" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Copy phân quyền</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">Copy phân quyền của </div>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="ddl-user-origin-permiss">
+                            <option value=""></option>
+                            @{ 
+                                var lstUserFrom = (List<DAL.Models.ComboBoxModel>)ViewBag.UserAll;
+                                foreach (var us in lstUserFrom)
+                                {
+                                    <option value="@us.Value">@us.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-4">Cho người dùng</div>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="ddl-user-needs-permiss">
+                            <option value=""></option>
+                            @{
+                                var lstUserTo = (List<DAL.Models.ComboBoxModel>)ViewBag.UserAll;
+                                foreach (var us in lstUserTo)
+                                {
+                                    <option value="@us.Value">@us.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+ 
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-ok-copy" class="btn btn-primary" >OK, copy</button>&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 
 @section scripts{
@@ -241,7 +293,7 @@
 
         var arrMembers = [];
 
-
+        var arrUserNeedCopy = [];
         $(document).ready(function () {
 
             SearchUserInfo();
@@ -259,11 +311,60 @@
                 ImportUserAction();
             });
 
+            $("#btn-open-copy-perrmisionModal").click(function () {
+                $("#modal-copy-permission-user").modal();
+            });
+
+            $("#btn-ok-copy").click(function () {
+                CopyUserPermission();
+            });
 
         });
 
 
-       
+        function CopyUserPermission() {
+            let userFrom = $("#ddl-user-origin-permiss").val();
+            let userTo = $("#ddl-user-needs-permiss").val();
+
+
+            if (userFrom == "" || userTo == "" || userFrom == userTo)
+            {
+                toastr.error('Vui lòng chọn nhân viên, và 2 nhân viên phải khác nhau', 'Lỗi', { positionClass: "toast-top-center" });
+            }
+            else
+            {
+                var modelPost = {
+                    "FromUser": userFrom,
+                    "ToUser": userTo
+                };
+
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/Account/CopyPermissionUser",
+                    dataType: 'json',
+                    data: JSON.stringify(modelPost),
+                    beforeSend: function () {
+                        ShowWaiting();
+                    },
+                    success: function (res)
+                    {
+                        HideWaiting();
+                        if (res.isSuccess === true) {
+                            toastr.success('Copy phân quyền thành công!', 'Thành công', { positionClass: "toast-top-center" });
+
+                        } else {
+                            toastr.error('Có lỗi khi thêm nhân viên. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                        }
+
+                    }
+                });
+            }
+
+           
+        }
+
+
 
         function ImportUserAction()
         {
@@ -683,6 +784,10 @@
                 }
             });
         }
+
+       
+
+
     </script>
 }
 

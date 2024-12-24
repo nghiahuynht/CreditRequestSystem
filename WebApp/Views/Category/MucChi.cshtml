@@ -75,13 +75,13 @@
                             <label>Tên mục chi</label>
                             <input type="text" class="form-control" id="txtTen" />
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                             <button onclick="SearchMucChi()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
-
+                            <button class="btn btn-filter btn-sm btn-success" id="btn-xuatexcel"><i class="fa fa-download"></i>&nbsp;Xuất excel</button>
 
                             @if (isAdd == true)
                             {
-                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateExpense(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn-primary" onclick="showModalCreateExpense(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn btn-success" onclick="showModalImport()"><i class="fas fa-file-import"></i>&nbsp;Import</button>
                             }
                         </div>
@@ -283,8 +283,20 @@
 
             SearchMucChi();
 
-
+            $("#btn-xuatexcel").click(function () {
+                ExportMucChi();
+            });
         });
+
+
+        function ExportMucChi() {
+            var dataSearch = {
+                Code: $("#txtMa").val(),
+                Name: $("#txtTen").val()
+            };
+            location.href = "/Category/ExportMucChi?filfer=" + JSON.stringify(dataSearch);
+        }
+
         function RenderTableAction(id) {
             let html = `<div class='div-table-action'>`;
 

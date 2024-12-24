@@ -388,7 +388,7 @@ namespace DAL.Service
             return res;
         }
 
-        public  async Task<bool> DeletePermissionByUserIdMenuId(int UserId, int MenuId)
+        public async Task<bool> DeletePermissionByUserIdMenuId(int UserId, int MenuId)
         {
             try
             {
@@ -441,6 +441,31 @@ namespace DAL.Service
             }
 
         }
+
+
+        public async Task<SaveResultModel<Object>> CopyPermisionUser(string fromUser,string toUser)
+        {
+            var res = new SaveResultModel<object>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@FromUser", fromUser),
+                    new SqlParameter("@ToUser", toUser),
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_CopyPermissonUser @FromUser,@ToUser", param);
+                
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = ex.Message;
+            }
+            return res;
+        }
+
+
 
 
 
