@@ -11,16 +11,20 @@ using DAL.Models.ProjectFinancialSummar;
 using DAL.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
+using WebApp.ImportHelper;
 
 namespace WebApp.Controllers
 {
     public class CategoryController : AppBaseController
     {
         private ICategoryService categoryService;
-        public CategoryController(ICategoryService categoryService)
+        private IConfiguration config;
+        public CategoryController(ICategoryService categoryService, IConfiguration config)
         {
             this.categoryService = categoryService;
+            this.config = config;
         }
 
 
@@ -326,11 +330,11 @@ namespace WebApp.Controllers
 
 
         [HttpPost]
-        public async Task<JsonResult> CreateExpense([FromBody] CategoryExpenseViewModel model)
+        public JsonResult CreateExpense([FromBody] CategoryExpenseViewModel model)
         {
             var res = new SaveResultModel<object>();
 
-            res = await categoryService.CreateExpense(model, User.Identity.Name);
+            res = categoryService.CreateExpense(model, User.Identity.Name);
             if (res.LongValReturn == -409)
             {
                 res.IsSuccess = false;
@@ -390,43 +394,43 @@ namespace WebApp.Controllers
             
         }
 
-        [HttpPost]
-        public IActionResult DowloadTemplateImportExpense()
-        {
-            // Path to the template Excel file
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            string templateFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "template", "TemplateImportExpense.xlsx");
+        //[HttpPost]
+        //public IActionResult DowloadTemplateImportExpense()
+        //{
+        //    // Path to the template Excel file
+        //    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //    string templateFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "template", "TemplateImportExpense.xlsx");
 
-            var lstDataActiveGroup = categoryService.LstAllCategoryActiveGroup();
-            // Load the template Excel file
-            using (var package = new ExcelPackage(new FileInfo(templateFilePath)))
-            {
+        //    var lstDataActiveGroup = categoryService.LstAllCategoryActiveGroup();
+        //    // Load the template Excel file
+        //    using (var package = new ExcelPackage(new FileInfo(templateFilePath)))
+        //    {
 
-                // Access the second sheet (Sheet2)
-                var worksheet = package.Workbook.Worksheets[1];  // Worksheet index starts at 0, so index 1 is the second sheet
+        //        // Access the second sheet (Sheet2)
+        //        var worksheet = package.Workbook.Worksheets[1];  // Worksheet index starts at 0, so index 1 is the second sheet
 
-                // Starting row and column
-                int startRow = 3;
-                int startColumn = 1;  // Column B
+        //        // Starting row and column
+        //        int startRow = 3;
+        //        int startColumn = 1;  // Column B
 
-                // Insert data into the sheet starting at the specified row and column
-                for (int i = 0; i < lstDataActiveGroup.Count; i++)
-                {
-                    worksheet.Cells[startRow, 1].Value = lstDataActiveGroup[i].Code;
-                    worksheet.Cells[startRow, 2].Value = lstDataActiveGroup[i].Code+"_"+lstDataActiveGroup[i].Name;
-                    startRow++;
-                }
+        //        // Insert data into the sheet starting at the specified row and column
+        //        for (int i = 0; i < lstDataActiveGroup.Count; i++)
+        //        {
+        //            worksheet.Cells[startRow, 1].Value = lstDataActiveGroup[i].Code;
+        //            worksheet.Cells[startRow, 2].Value = lstDataActiveGroup[i].Code+"_"+lstDataActiveGroup[i].Name;
+        //            startRow++;
+        //        }
 
-                // Save the modified Excel file to a memory stream
-                var memoryStream = new MemoryStream();
-                package.SaveAs(memoryStream);
-                memoryStream.Position = 0; // Reset the stream position to the beginning
+        //        // Save the modified Excel file to a memory stream
+        //        var memoryStream = new MemoryStream();
+        //        package.SaveAs(memoryStream);
+        //        memoryStream.Position = 0; // Reset the stream position to the beginning
 
-                // Return the file as a download
-                var fileName = "TemplateImportExpense.xlsx";
-                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-            }
-        }
+        //        // Return the file as a download
+        //        var fileName = "TemplateImportExpense.xlsx";
+        //        return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        //    }
+        //}
 
         [HttpPost]
         public IActionResult ReadFileImportExpense(IFormFile file)
@@ -465,14 +469,15 @@ namespace WebApp.Controllers
                         if (columns > 0 && row > 2)
                         {
                             object nhomHoatDong = worksheet.Cells[row, 1].Value;
-                            object tenMucChi= worksheet.Cells[row, 2].Value;
-                            object ghiChu= worksheet.Cells[row, 3].Value;
+                            object maMucChi = worksheet.Cells[row, 2].Value;
+                            object tenMucChi= worksheet.Cells[row, 3].Value;
+                            object ghiChu= worksheet.Cells[row, 4].Value;
 
 
 
                             if (string.IsNullOrEmpty(nhomHoatDong?.ToString()))
                             {
-                                return BadRequest("Tên nhóm hoạt động không được bỏ trống");
+                                return BadRequest("Mã nhóm hoạt động không được bỏ trống");
                             }  
                             if (string.IsNullOrEmpty(tenMucChi?.ToString()))
                             {
@@ -490,7 +495,7 @@ namespace WebApp.Controllers
                             CategoryExpenseViewImportModel item = new CategoryExpenseViewImportModel
                             {
 
-                                Code = "",
+                                Code = maMucChi?.ToString(),
                                 Name = tenMucChi?.ToString(),
                                 Notes=ghiChu?.ToString() == null?"": ghiChu?.ToString(),
                                 ActiveGroupId= dataNhomHD.Id,
@@ -498,6 +503,20 @@ namespace WebApp.Controllers
 
                             };
                             lstProject.Add(item);
+
+
+                            /*a Nghi them insert vao DB chổ này luôn*/
+                            CategoryExpenseViewModel expenseModel = new CategoryExpenseViewModel
+                            {
+                                Code = maMucChi?.ToString(),
+                                Name = tenMucChi?.ToString(),
+                                Notes = ghiChu?.ToString() == null ? "" : ghiChu?.ToString(),
+                                ActiveGroupId = dataNhomHD.Id
+                            };
+
+                            categoryService.CreateExpense(expenseModel, AuthenInfo().UserName);
+
+                            /*end a Nghi them insert vao DB chổ này luôn*/
                         }
                     }
                 }
@@ -576,7 +595,7 @@ namespace WebApp.Controllers
         {
             var res = new SaveResultModel<object>();
 
-            res = await categoryService.CreatePaymentProfile(model, User.Identity.Name);
+            res = categoryService.CreatePaymentProfile(model, User.Identity.Name);
 
             if (res.LongValReturn == -409)
             {
@@ -595,6 +614,28 @@ namespace WebApp.Controllers
             }    
             return Json(res);
         }
+
+
+       
+
+        public JsonResult ImportPaymenProfileInfo(IFormFile postedFile)
+        {
+            string rootFolder = config["General:RootFolder"];
+            var dataImport = new PaymentInfoProfileImportHelper(rootFolder);
+            if (dataImport.Parse(postedFile))
+            {
+                var test = dataImport.list;
+                foreach (var item in dataImport.list)
+                {
+                    categoryService.CreatePaymentProfile(item, User.Identity.Name);
+                }
+            }
+
+
+            return Json(true);
+        }
+
+
 
         [HttpGet]
         public JsonResult GetPaymentInfoByExpense(int Id)

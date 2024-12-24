@@ -285,7 +285,7 @@ namespace DAL.Service
             return res;
         }
 
-        public async Task<SaveResultModel<object>> CreateExpense(CategoryExpenseViewModel model, string userName)
+        public SaveResultModel<object> CreateExpense(CategoryExpenseViewModel model, string userName)
         {
             var res = new SaveResultModel<object>();
             res.Data = null;
@@ -306,7 +306,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@ActiveGroupId,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
+                dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@ActiveGroupId,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)
@@ -398,7 +398,7 @@ namespace DAL.Service
             }
             return res;
         }
-        public async Task<SaveResultModel<object>> CreatePaymentProfile(CategoryPaymentInfoModel model, string userName)
+        public SaveResultModel<object> CreatePaymentProfile(CategoryPaymentInfoModel model, string userName)
         {
             var res = new SaveResultModel<object>();
             res.Data = null;
@@ -420,7 +420,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                await dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdatePaymentProfile @Id,@Code,@Name,@Notes,@FileAttachId,@ActionBy,@IsRequiredDoc,@NewId OUT", param);
+                dtx.Database.ExecuteSqlCommand("EXEC sp_InsertUpdatePaymentProfile @Id,@Code,@Name,@Notes,@FileAttachId,@ActionBy,@IsRequiredDoc,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)

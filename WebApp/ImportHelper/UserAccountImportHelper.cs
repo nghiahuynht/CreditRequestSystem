@@ -20,7 +20,7 @@ namespace WebApp.ImportHelper
 
         protected override bool Parse(ISheet sheet)
         {
-            for (int i = 1; i <= sheet.LastRowNum; i++) //Read Excel File
+            for (int i = 1; i <= sheet.LastRowNum + 1; i++) //Read Excel File
             {
                 IRow row = sheet.GetRow(i);
 

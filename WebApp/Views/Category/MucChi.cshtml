@@ -77,10 +77,12 @@
                         </div>
                         <div class="col-sm-3">
                             <button onclick="SearchMucChi()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+
+
                             @if (isAdd == true)
                             {
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateExpense(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
-                                <button id="btn-createNV" class="btn btn-filter btn-sm btn btn-primary" onclick="showModalImport()"><i class="fas fa-file-import"></i>&nbsp;Import</button>
+                                <button id="btn-createNV" class="btn btn-filter btn-sm btn btn-success" onclick="showModalImport()"><i class="fas fa-file-import"></i>&nbsp;Import</button>
                             }
                         </div>
 
@@ -131,11 +133,11 @@
     <div class="modal-dialog " id="form_import_expense">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Tải lên dữ liệu nhóm hoạt động</h5>
+                <h5 class="modal-title" id="uploadModalLabel">Tải lên dữ liệu mục chi</h5>
 
             </div>
             <div class="modal-body">
-                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a onclick="dowloadTemplate()"  class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/template/TemplateImportExpense.xlsx"  class="text-primary">File mẫu</a></p>
                 <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
                 <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
                 <form>
@@ -219,8 +221,8 @@
                                 <thead>
                                     <tr>
 
-                                        <th scope="col">Mã hoạt động</th>
-                                        <th scope="col" class="">Tên hoạt động</th>
+                                        <th scope="col">Mã mục chi</th>
+                                        <th scope="col" class="">Tên mục chi</th>
                                         <th scope="col" class="">Trạng thái</th>
 
                                     </tr>
@@ -420,12 +422,12 @@
                         success: function (response) {
                             if (response.success) {
 
-                                toastr.success('Nhóm hoạt động đã được xóa thành công!', 'Thành công', { positionClass: "toast-top-center" });
+                                toastr.success('Mục chi đã được xóa thành công!', 'Thành công', { positionClass: "toast-top-center" });
                                 SearchMucChi();
                             }
                             else {
                                 console.error(response);
-                                toastr.error('Có lỗi xảy ra khi xóa nhóm hoạt động !', 'Lỗi', { positionClass: "toast-top-center" });
+                                toastr.error('Có lỗi xảy ra khi mục chi hoạt động !', 'Lỗi', { positionClass: "toast-top-center" });
                             }
                         },
                         error: function (xhr, status, error) {
@@ -659,33 +661,33 @@
         }
 
         function showModalImport() {
-            $("#modal_import_expense").modal("show")
+            $("#modal_import_expense").modal("show");
         }
 
-        function dowloadTemplate() {
-            $.ajax({
-                url: '/Category/DowloadTemplateImportExpense', // URL of the controller action
-                type: 'POST',
-                success: function (data, textStatus, xhr) {
-                    // Check if the response contains a file (xhr.status == 200 means success)
-                    var disposition = xhr.getResponseHeader('Content-Disposition');
-                    var fileName = "TemplateImportExpense.xlsx";
-                    var blob = data;
+        //function dowloadTemplate() {
+        //    $.ajax({
+        //        url: '/Category/DowloadTemplateImportExpense', // URL of the controller action
+        //        type: 'POST',
+        //        success: function (data, textStatus, xhr) {
+        //            // Check if the response contains a file (xhr.status == 200 means success)
+        //            var disposition = xhr.getResponseHeader('Content-Disposition');
+        //            var fileName = "TemplateImportExpense.xlsx";
+        //            var blob = data;
 
-                    // Create a link element and trigger the download
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = fileName;
-                    link.click();
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    alert('Error exporting data: ' + errorThrown);
-                },
-                xhrFields: {
-                    responseType: 'blob'  // Important to handle binary file responses
-                }
-            });
-        }
+        //            // Create a link element and trigger the download
+        //            var link = document.createElement('a');
+        //            link.href = window.URL.createObjectURL(blob);
+        //            link.download = fileName;
+        //            link.click();
+        //        },
+        //        error: function (xhr, textStatus, errorThrown) {
+        //            alert('Error exporting data: ' + errorThrown);
+        //        },
+        //        xhrFields: {
+        //            responseType: 'blob'  // Important to handle binary file responses
+        //        }
+        //    });
+        //}
 
         function readFileImport() {
             var formData = new FormData();
@@ -718,26 +720,32 @@
                     dataResponeAjax = [];
 
                     if (response.status = "Success") {
-                        var data = response.data;
-                        var htmlAppend = '';
-                        for (var i = 0; i < data.length; i++) {
-                            var code = generateCode("MC");
-                            data[i].code = code;
-                            htmlAppend += `<tr>`;
-                            htmlAppend += `<td class="col-checkbox">
-                                                                     <input data-id='`+ data[i].code + `' type="checkbox" checked="checked" name="checkRow">
-                                             </td>`;
-                            htmlAppend += `<td>` + data[i].code + `</td>`;
-                            htmlAppend += `<td>` + data[i].name + `</td>`;
-                            htmlAppend += `<td>` + data[i].activeGroupName + `</td>`;
-                            htmlAppend += `<td>` + data[i].notes + `</td>`;
-                            htmlAppend += `</tr>`;
-                            dataSubmit.push(data[i]);
-                            dataResponeAjax.push(data[i]);
-                        }
-                        $('#cntModalListExpense  #ListExpenseModal #lst-data-info').html(htmlAppend);
-                        showModal();
+
+                        toastr.success('Import mục chi thành công!', 'Thành công', { positionClass: "toast-top-center" });
+
+                        //var data = response.data;
+                        //var htmlAppend = '';
+                        //for (var i = 0; i < data.length; i++) {
+                        //    var code = generateCode("MC");
+                        //    data[i].code = code;
+                        //    htmlAppend += `<tr>`;
+                        //    htmlAppend += `<td class="col-checkbox">
+                        //                                             <input data-id='`+ data[i].code + `' type="checkbox" checked="checked" name="checkRow">
+                        //                     </td>`;
+                        //    htmlAppend += `<td>` + data[i].code + `</td>`;
+                        //    htmlAppend += `<td>` + data[i].name + `</td>`;
+                        //    htmlAppend += `<td>` + data[i].activeGroupName + `</td>`;
+                        //    htmlAppend += `<td>` + data[i].notes + `</td>`;
+                        //    htmlAppend += `</tr>`;
+                        //    dataSubmit.push(data[i]);
+                        //    dataResponeAjax.push(data[i]);
+                        //}
+                        //$('#cntModalListExpense  #ListExpenseModal #lst-data-info').html(htmlAppend);
+                        //showModal();
                     }
+                   
+                    $("#modal_import_expense").modal("hide");
+                    SearchMucChi();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Swal.fire({

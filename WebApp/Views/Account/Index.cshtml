@@ -101,7 +101,7 @@
                             @if (isAdd == true)
                             {
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
-                                <button style="margin-left:5px;" id="btn-open-import-modal" class="btn btn-filter btn-sm btn btn-primary"><i class="fas fa-file-import"></i>&nbsp;Import</button>
+                                <button style="margin-left:5px;" id="btn-open-import-modal" class="btn btn-filter btn-sm btn btn-success"><i class="fas fa-file-import"></i>&nbsp;Import</button>
                             }
 
                         </div>
@@ -168,7 +168,7 @@
                 <form id="formimportuser" class="form-horizontal" action="/Account/ImportUserAction" method="post" enctype="multipart/form-data">
                     @(Html.AntiForgeryToken())
                     <input type="file" name="postedFile" id="postedFile" style="width:80%;" />
-                    <input type="button" id="btn-import-customer" value="Import" class="btn btn-sm btn-success" />
+                    <input type="button" id="btn-import-user" value="Import" class="btn btn-sm btn-success" />
                     <strong style="display:none;" id="span-waiting">Đang xử lý.....</strong>
                 </form>
             </div>
@@ -255,7 +255,7 @@
             $("#btn-open-import-modal").click(function () {
                 $("#modal-import-user").modal();
             });
-            $("#btn-import-customer").click(function () {
+            $("#btn-import-user").click(function () {
                 ImportUserAction();
             });
 

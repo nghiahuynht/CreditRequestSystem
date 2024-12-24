@@ -1,13 +1,13 @@
 ﻿@using System.Security.Claims
 @using WebApp.ExcelHelper;
 @{
-    ViewData["Title"] = "Danh sách thông tin hồ sơ";
+    ViewData["Title"] = "Danh sách thông tin chứng từ";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
     bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.HoSoThanhToan.Delete);
     bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.HoSoThanhToan.Add);
     bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.HoSoThanhToan.Edit);
-    
+
 }
 @model List<DAL.Models.ComboBoxModel>
 @section styles{
@@ -69,18 +69,19 @@
                     <div class="row">
 
                         <div class="col-sm-3">
-                            <label>Mã hồ sơ</label>
+                            <label>Mã chứng từ</label>
                             <input type="text" class="form-control" id="txtMa" />
                         </div>
                         <div class="col-sm-3">
-                            <label>Tên hồ sơ</label>
+                            <label>Tên chứng từ</label>
                             <input type="text" class="form-control" id="txtTen" />
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                             <button onclick="SearchThongTinHoSo()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                             @if (isAdd == true)
                             {
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreatePaymentProfile(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                                <button id="btn-open-import-profileModal" class="btn btn-filter btn-sm btn-success"><i class="fa fa-plus-circle"></i>&nbsp;Import excel</button>
                             }
                         </div>
 
@@ -92,8 +93,8 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Mã hồ sơ</th>
-                                <th>Tên hồ sơ</th>
+                                <th>Mã chứng từ</th>
+                                <th>Tên chứng từ</th>
                                 <th>Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -118,6 +119,35 @@
 </div>
 
 
+<div class="modal fade show" id="modal-import-profile" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Import thông tin chứng từ</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/template/TemplateImportPaymentInfoProfile.xlsx" class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
+                <br />
+                <form id="formimporpaymentinfoprofile" class="form-horizontal" action="/Category/ImportPaymenProfileInfo" method="post" enctype="multipart/form-data">
+                    @(Html.AntiForgeryToken())
+                    <input type="file" name="postedFile" id="postedFile" style="width:80%;" />
+                    <input type="button" id="btn-import-profile" value="Import" class="btn btn-sm btn-success" />
+                    <strong style="display:none;" id="span-waiting">Đang xử lý.....</strong>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="ClosePopupImport()" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 
 
@@ -158,8 +188,61 @@
 
             SearchThongTinHoSo();
 
-
+            $("#btn-open-import-profileModal").click(function () {
+                $("#modal-import-profile").modal();
+            });
+            $("#btn-import-profile").click(function () {
+                ImportPaymentInfoProfile();
+            });
         });
+
+        function ImportPaymentInfoProfile()
+        {
+            debugger;
+            var urlPost = $("#formimporpaymentinfoprofile").attr("action");
+            var formData = new FormData();
+            var fileInput = document.getElementById('postedFile');
+            var file = fileInput.files[0];
+
+            if (file == undefined) {
+
+                Swal.fire({
+                    title: "Vui lòng chọn file cần import!",
+                    icon: "error"
+                });
+                return;
+            }
+
+
+            formData.append("postedFile", file);
+
+            $.ajax({
+                url: urlPost, // Đường dẫn đến API xử lý file
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function () {
+                    ShowWaiting();
+                },
+                complete: function () {
+                    HideWaiting();
+                },
+                success: function (response) {
+                    if (response === true) {
+                        toastr.success('Import thông tin chứng từ!', 'Thành công', { positionClass: "toast-top-center" });
+                        SearchThongTinHoSo();
+                        $("#modal-import-profile").modal("hide");
+                    }
+                },
+                error: function () {
+                    toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });
+                }
+            });
+        }
+
+
+
         function RenderTableAction(id) {
             let html = `<div class='div-table-action'>`;
 
@@ -227,7 +310,7 @@
                                         <span class="fa fa-trash" onclick="RemovePaymentProfileDetail(${randomId},false)"></span>
                                     </td>
                                 </tr>`
-           
+
             $('#table_thong_tin_hs_thanh_toan_chi_tiet').append(html);
         }
 
@@ -277,7 +360,7 @@
                         $(`span.fa-trash[onclick="RemovePaymentProfileDetail(${Id},false)"]`).closest('tr').remove();
 
                     }
-                    
+
 
                 }
             });
@@ -286,12 +369,12 @@
         function CreatePaymentProfile() {
 
             var isValidate = validateData();
-           
+
             if (isValidate == true) {
 
                 if (arrPaymentProfileDetail.length == 0) {
                     toastr.error("Nội dung kiểm tra không được bỏ trống", 'Lỗi', { positionClass: "toast-top-center" });
-                    return 
+                    return
                 }
                 var dataPost = {
                     Id: $("#a_payment_profile_id").val(),
@@ -337,7 +420,7 @@
 
                 },
                 messages: {
-                    
+
                     "code": "Mã không được để trống!",
                     "name": "Tên không được để trống!"
                 },
@@ -353,7 +436,7 @@
 
         }
 
-        
+
 
         //function showModalCreatePaymentInfo(id) {
         //    $.ajax({
@@ -376,9 +459,9 @@
         //}
 
         //--------------HS Thanh Toán ---------------
-       
 
-     
+
+
 
         function RemovePaymentProfile(Id) {
             Swal.fire({
@@ -431,7 +514,7 @@
             var IdInput = row.find('input[name="chi_tiet_hs_id"]');
             var nameInput = row.find('textarea[name="chi_tiet_hs_ten"]');
             var notesInput = row.find('textarea[name="chi_tiet_hs_ghi_chu"]');
-           
+
             var name = nameInput.val();
             var id = IdInput.val();
             var notes = notesInput.val();
@@ -442,7 +525,7 @@
             if (!name || name.trim() === "") {
                 errors.push("Nội dung kiểm tra không được để trống!");
             }
-            
+
 
             // Display validation errors if any
             if (errors.length > 0) {
@@ -456,7 +539,7 @@
                 PaymentProfileId: 0,
                 Name: name.trim(),
                 Notes: notes?.trim()
-                
+
             };
             nameInput.prop('readonly', true);
             notesInput.prop('readonly', true);
@@ -465,7 +548,7 @@
             arrPaymentProfileDetail.push(dataPost)
             // Log the data (optional for debugging)
             console.log("dataPost", arrPaymentProfileDetail)
-          
+
         }
     </script>
 }

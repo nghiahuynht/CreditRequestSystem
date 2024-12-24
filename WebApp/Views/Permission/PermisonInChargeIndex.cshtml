@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @using WebApp.ExcelHelper;
 @{
-    ViewData["Title"] = "Danh sách phân quyền nhân viên chịu trách nhiệm ";
+    ViewData["Title"] = "Danh sách phân quyền nhân viên phụ trách nguồn thu";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
     bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanQuyenNhanVienPhuTrach.Add);
