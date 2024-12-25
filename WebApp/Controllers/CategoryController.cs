@@ -386,7 +386,8 @@ namespace WebApp.Controllers
             workSheet.Cells["A1"].Value = "Tên nhóm hoạt động";
             workSheet.Cells["B1"].Value = "Mã mục chi";
             workSheet.Cells["C1"].Value = "Tên mục chi";
-            workSheet.Cells["D1"].Value = "Ghi chú";
+            workSheet.Cells["D1"].Value = "Tiểu mục";
+            workSheet.Cells["E1"].Value = "Ghi chú";
 
             workSheet.Cells[1, 1, 1, 4].Style.Font.Bold = true;
             int rowData = 2;
@@ -398,7 +399,8 @@ namespace WebApp.Controllers
                     workSheet.Cells["A" + rowData].Value = item.ActiveGroupName;
                     workSheet.Cells["B" + rowData].Value = item.Code;
                     workSheet.Cells["C" + rowData].Value = item.Name;
-                    workSheet.Cells["D" + rowData].Value = item.Notes;
+                    workSheet.Cells["D" + rowData].Value = item.TieuMuc;
+                    workSheet.Cells["E" + rowData].Value = item.Notes;
                     rowData++;
                 }
             }
@@ -582,7 +584,8 @@ namespace WebApp.Controllers
                             object nhomHoatDong = worksheet.Cells[row, 1].Value;
                             object maMucChi = worksheet.Cells[row, 2].Value;
                             object tenMucChi= worksheet.Cells[row, 3].Value;
-                            object ghiChu= worksheet.Cells[row, 4].Value;
+                            object tieumuc = worksheet.Cells[row, 4].Value;
+                            object ghiChu= worksheet.Cells[row, 5].Value;
 
 
 
@@ -611,6 +614,7 @@ namespace WebApp.Controllers
                                 Notes=ghiChu?.ToString() == null?"": ghiChu?.ToString(),
                                 ActiveGroupId= dataNhomHD.Id,
                                 ActiveGroupName= dataNhomHD.Name,
+                                TieuMuc = tieumuc?.ToString()
 
                             };
                             lstProject.Add(item);
@@ -622,7 +626,8 @@ namespace WebApp.Controllers
                                 Code = maMucChi?.ToString(),
                                 Name = tenMucChi?.ToString(),
                                 Notes = ghiChu?.ToString() == null ? "" : ghiChu?.ToString(),
-                                ActiveGroupId = dataNhomHD.Id
+                                ActiveGroupId = dataNhomHD.Id,
+                                TieuMuc = tieumuc?.ToString()
                             };
 
                             categoryService.CreateExpense(expenseModel, AuthenInfo().UserName);

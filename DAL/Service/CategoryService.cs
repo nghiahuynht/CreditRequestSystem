@@ -300,6 +300,7 @@ namespace DAL.Service
                     new SqlParameter("@Code", model.Code),
                     new SqlParameter("@Name", model.Name),
                     new SqlParameter("@Notes", model.Notes),
+                    new SqlParameter("@TieuMuc", model.TieuMuc),
                     new SqlParameter("@ActionBy", userName),
                     new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
 
@@ -308,7 +309,7 @@ namespace DAL.Service
 
 
                 ValidNullValue(param);
-                dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@ActiveGroupId,@Code,@Name,@Notes,@ActionBy,@NewId OUT", param);
+                dtx.Database.ExecuteSqlCommandAsync("EXEC sp_InsertUpdateExpense @Id,@ActiveGroupId,@Code,@Name,@Notes,@TieuMuc,@ActionBy,@NewId OUT", param);
                 res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
             }
             catch (Exception ex)

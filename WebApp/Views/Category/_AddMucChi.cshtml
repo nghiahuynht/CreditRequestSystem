@@ -46,13 +46,16 @@
                             <label class="form-label col-auto">Tên mục chi: <span class="text-red">*</span></label>
                             <input type="text" class="form-control" id="a_name" name="name" value="@Model.Name" />
                         </div>
+                        <div class="col-md-6 ">
+                            <label class="form-label col-auto">Tiểu mục: <span class="text-red"></span></label>
+                            <input type="text" class="form-control" id="a_tieumuc" name="tieumuc" value="@Model.TieuMuc" />
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <label class="form-label">Ghi chú:</label>
                             <textarea class="form-control" id="a_ghi_chu" name="ghi_chu">@Model.Notes</textarea>
                         </div>
-
-
-
                     </div>
                 </fieldset>
 

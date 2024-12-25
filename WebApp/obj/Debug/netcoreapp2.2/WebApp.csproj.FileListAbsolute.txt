@@ -655,3 +655,4 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestApproveCheckist.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\BoPhan.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Category\_AddBoPhan.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Debug\netcoreapp2.2\Razor\Views\Account\_PartialCopyPermissionForm.g.cshtml.cs

@@ -1,0 +1,30 @@
+﻿@model  List<DAL.Models.ComboBoxModel>
+<div class="row">
+    <div class="col-sm-4">Copy phân quyền của </div>
+    <div class="col-sm-6">
+        <select class="form-control" id="ddl-user-origin-permiss">
+            <option value=""></option>
+            @{
+                foreach (var us in Model)
+                {
+                    <option value="@us.Value">@us.Text</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-4">Cho người dùng</div>
+    <div class="col-sm-6">
+        <select class="form-control" id="ddl-user-needs-permiss">
+            <option value=""></option>
+            @{
+                foreach (var us in Model)
+                {
+                    <option value="@us.Value">@us.Text</option>
+                }
+            }
+        </select>
+    </div>
+</div>

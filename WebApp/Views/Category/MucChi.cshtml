@@ -97,6 +97,7 @@
                                 <th>Nhóm hoạt động</th>
                                 <th>Mã mục chi</th>
                                 <th>Tên mục chi</th>
+                                <th>Tiểu mục</th>
                                 <th>Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -267,6 +268,7 @@
             { "data": "activeGroupName" },
             { "data": "code" },
             { "data": "name" },
+            { "data": "tieuMuc" },
             { "data": "notes" },
             {
                 "data": "id", "render": function (data, type, row, meta) {
@@ -357,6 +359,7 @@
                     Code: $("#a_code").val(),
                     Name: $("#a_name").val(),
                     Notes: $("#a_ghi_chu").val(),
+                    TieuMuc: $("#a_tieumuc").val(),
                 };
                 $.ajax({
                     type: "POST",

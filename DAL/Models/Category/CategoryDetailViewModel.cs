@@ -50,6 +50,7 @@ namespace DAL.Models.Category
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }
+        public string TieuMuc { get; set; }
     }
 
     public class PaymentProfileModel
@@ -86,6 +87,7 @@ namespace DAL.Models.Category
         public string ActiveGroupName { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public string TieuMuc { get; set; }
         public string Notes { get; set; }
     }
 
@@ -130,5 +132,6 @@ namespace DAL.Models.Category
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }
+        public string TieuMuc { get; set; }
     }
 }

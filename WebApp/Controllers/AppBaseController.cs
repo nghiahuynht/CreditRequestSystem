@@ -16,8 +16,8 @@ namespace WebApp.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 authen.UserName = User.Identity.Name;
-                authen.FullName = User.Claims.FirstOrDefault(x => x.Type == "FullName").Value;
-                authen.DepartmentId = User.Claims.FirstOrDefault(x => x.Type == "DepartmentId").Value;
+               // authen.FullName = User.Claims.FirstOrDefault(x => x.Type == "FullName").Value;
+               // authen.DepartmentId = User.Claims.FirstOrDefault(x => x.Type == "DepartmentId").Value;
                 authen.Role = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
                 var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
                 if (int.TryParse(userIdClaim, out int userId))

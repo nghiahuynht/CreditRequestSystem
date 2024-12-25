@@ -307,6 +307,14 @@ namespace WebApp.Controllers
             var res = await userService.CopyPermisionUser(model.FromUser,model.ToUser);
             return Json(res);
         }
+
+        public PartialViewResult _PartialCopyPermissionForm()
+        {
+            var lstUser = userService.GetListUserByRoles("All").Results;
+            return PartialView(lstUser);
+        }
+
+
         #endregion
 
 

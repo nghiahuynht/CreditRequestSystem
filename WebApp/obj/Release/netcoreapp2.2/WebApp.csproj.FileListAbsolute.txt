@@ -307,3 +307,4 @@ F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Vie
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\_PaymentRequestApproveCheckist.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Permission\FormPermissionCreateRequest.g.cshtml.cs
 F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Permission\PermisonCreateRequest.g.cshtml.cs
+F:\Projects\OnGIT\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\Account\_PartialCopyPermissionForm.g.cshtml.cs
