@@ -112,3 +112,14 @@ F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.Cor
 F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.dll
 F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
 F:\Projects\OnGIT\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache
+D:\Projects\OnGit\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.deps.json
+D:\Projects\OnGit\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.json
+D:\Projects\OnGit\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.runtimeconfig.dev.json
+D:\Projects\OnGit\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.dll
+D:\Projects\OnGit\CreditRequestSystem\DAL\bin\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csproj.CoreCompileInputs.cache
+D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfoInputs.cache
+D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
+D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.dll
+D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
+D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache

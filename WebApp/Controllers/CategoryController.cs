@@ -421,6 +421,85 @@ namespace WebApp.Controllers
         }
 
 
+        [HttpGet]
+        public FileContentResult ExportMucChiTemplateForImport()
+        {
+
+            
+            CategoryFilterModel filter = new CategoryFilterModel();
+            filter.start = 0;
+            filter.start = 10000;
+
+            var res = categoryService.GetActiveGroupByFilter(filter, true);
+
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
+            ExcelPackage excel = new ExcelPackage();
+
+            // Sheet 1
+
+            var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
+            Color colFromHex = ColorTranslator.FromHtml("#3377ff");
+            Color colFromHexTextHeader = ColorTranslator.FromHtml("#ffffff");
+
+            workSheet.Cells["A1"].Value = "Mã nhóm";
+            workSheet.Cells["B1"].Value = "Mã mục chi";
+            workSheet.Cells["C1"].Value = "Tên mục chi";
+            workSheet.Cells["D1"].Value = "Tiểu mục";
+            workSheet.Cells["E1"].Value = "Ghi chú";
+
+            workSheet.Cells[1, 1, 1, 4].Style.Font.Bold = true;
+            
+          
+           
+            //FreezePanes
+            //workSheet.View.FreezePanes(1,13);
+
+            workSheet.Column(1).Width = 10;
+            workSheet.Column(2).Width = 30;
+            workSheet.Column(3).Width = 30;
+            workSheet.Column(4).Width = 20;
+
+
+
+            // sheet2
+
+            var workSheet2 = excel.Workbook.Worksheets.Add("NhomHoatDong");
+            colFromHex = ColorTranslator.FromHtml("#3377ff");
+            colFromHexTextHeader = ColorTranslator.FromHtml("#ffffff");
+
+            workSheet2.Cells["A1"].Value = "Mã nhóm";
+            workSheet2.Cells["B1"].Value = "Tên nhóm";
+
+            workSheet2.Cells[1, 1, 1, 4].Style.Font.Bold = true;
+            int rowData = 2;
+
+            if (res.data.Any())
+            {
+                foreach (var item in res.data)
+                {
+                    workSheet2.Cells["A" + rowData].Value = item.Code;
+                    workSheet2.Cells["B" + rowData].Value = item.Name;
+                    rowData++;
+                }
+            }
+
+            //Format table
+            ExcelRange range = workSheet2.Cells[1, 1, rowData - 1, workSheet2.Dimension.End.Column];
+            ExcelTable tab = workSheet2.Tables.Add(range, "Table1");
+            tab.TableStyle = TableStyles.Medium2;
+
+
+            workSheet2.Column(1).Width = 15;
+            workSheet2.Column(2).Width = 30;
+
+
+            return File(excel.GetAsByteArray(), ExcelExportHelper.ExcelContentType, "TemplateImportExpense.xlsx");
+        }
+
+
+
+
+
 
         public IActionResult _AddMucChi(int id = 0)
         {
