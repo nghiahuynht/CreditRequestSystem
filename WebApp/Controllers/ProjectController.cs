@@ -408,6 +408,7 @@ namespace WebApp.Controllers
             paramModel.LstProject = lstProject;
             paramModel.LstActiveGroup = lstActiveGroup;
             paramModel.LstExpense = lstExpense;
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View(paramModel);
         }
 

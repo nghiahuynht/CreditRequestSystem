@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rotativa.AspNetCore;
+using WebApp.ExcelHelper;
 
 namespace WebApp
 {
@@ -37,9 +38,18 @@ namespace WebApp
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+     
+            // Đăng ký IHttpContextAccessor để có thể sử dụng trong các lớp khác
+            services.AddHttpContextAccessor();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddDbContext<EntityDataContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddDistributedMemoryCache(); // Cấu hình bộ nhớ để lưu session
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(1440); // Thời gian session hết hạn
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true; // Bắt buộc cookie để hoạt động
+            });
             services.AddTransient<ICommonService, CommonService>();
             services.AddTransient<IUserInfoService, UserInfoService>();
             services.AddTransient<ICategoryService, CategoryService>();
@@ -75,10 +85,11 @@ namespace WebApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSession();
             app.UseAuthentication();
             app.UseMvc(routes =>
             {

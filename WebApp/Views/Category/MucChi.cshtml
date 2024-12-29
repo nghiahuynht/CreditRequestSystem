@@ -3,10 +3,10 @@
 @{
     ViewData["Title"] = "Danh sách mục chi";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
-    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Delete);
-    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Add);
-    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.MucChi.Edit);
+    // string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.MucChi.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.MucChi.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.MucChi.Edit);
 }
 @model List<DAL.Models.ComboBoxModel>
 @section styles{

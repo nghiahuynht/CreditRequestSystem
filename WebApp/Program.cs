@@ -19,6 +19,14 @@ namespace WebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            .ConfigureKestrel((context, options) =>
+            {
+                // Only apply Kestrel configurations when running in development
+                if (context.HostingEnvironment.IsDevelopment())
+                {
+                    options.Limits.MaxRequestHeadersTotalSize = 100048576; 
+                }
+            })
+            .UseStartup<Startup>();
     }
 }

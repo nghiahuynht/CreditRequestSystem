@@ -4,10 +4,10 @@
     ViewData["Title"] = "Danh sách nhóm hoạt động";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
-    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.NhomHoatDong.Delete);
-    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.NhomHoatDong.Add);
-    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.NhomHoatDong.Edit);
+    // string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.NhomHoatDong.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.NhomHoatDong.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.NhomHoatDong.Edit);
 }
 @model List<DAL.Models.ComboBoxModel>
 @section styles{

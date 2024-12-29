@@ -3,8 +3,8 @@
 @{
     ViewData["Title"] = "Danh sách phân quyền nhân viên phụ trách nguồn thu";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
-    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanQuyenNhanVienPhuTrach.Add);
+    //string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isAdd = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.PhanQuyenNhanVienPhuTrach.Add);
 }
 @model DAL.Models.UserInfo.UserParViewModel
 @section styles{
