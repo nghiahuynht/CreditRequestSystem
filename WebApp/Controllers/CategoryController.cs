@@ -84,6 +84,7 @@ namespace WebApp.Controllers
 
         public IActionResult NhomHoatDong()
         {
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View();
         }
 
@@ -356,6 +357,7 @@ namespace WebApp.Controllers
 
         public IActionResult MucChi()
         {
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View();
         }
 
@@ -650,6 +652,7 @@ namespace WebApp.Controllers
 
         public IActionResult ThongTinHoSoThanhToan()
         {
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View();
         }
 
@@ -879,6 +882,7 @@ namespace WebApp.Controllers
         #region DM Bo Phan
         public IActionResult BoPhan()
         {
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View();
         }
 

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApp.Controllers
 {
@@ -38,6 +39,8 @@ namespace WebApp.Controllers
             var lstDepartment = _categoryService.LstAllCategoryDepartment();
             par.LstRoles = lstRoles;
             par.LstDepartment = lstDepartment;
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
+
             return View(par);
         }
 
@@ -117,6 +120,7 @@ namespace WebApp.Controllers
             var lstDepartment = _categoryService.LstAllCategoryDepartment();
             par.LstRoles = lstRoles;
             par.LstDepartment = lstDepartment;
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View(par);
         }
 

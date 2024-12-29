@@ -59,14 +59,16 @@ namespace WebApp.Controllers
                     foreach(var per in dataPer)
                     {
                         permission += ","+per.Permissions;  
-                    };   
+                    };
+                    // Lưu permission vào session thay vì thêm vào claim
+                    HttpContext.Session.SetString("Permission", permission);
                     identity = new ClaimsIdentity(new[] {
                         new Claim(ClaimTypes.Name,model.UserName),
                         new Claim("FullName",userInfo.FullName),
                         new Claim("DepartmentId",userInfo.DepartmentId.HasValue?userInfo.DepartmentId.Value.ToString():"0"),
                         new Claim(ClaimTypes.Role,roleName),
                         new Claim("UserId",userInfo.Id.ToString()),
-                        new Claim("Permission",permission)
+                        new Claim("Permission","")
                     },CookieAuthenticationDefaults.AuthenticationScheme);
                     IsAuthenticated = true;
                 }
@@ -114,6 +116,7 @@ namespace WebApp.Controllers
             par.LstRoles = lstRoles;
             par.LstDepartment = lstDepartment;
             ViewBag.UserAll = userService.GetListUserByRoles("All").Results;
+            ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View(par);
         }
 

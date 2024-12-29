@@ -1,12 +1,13 @@
 ﻿@using System.Security.Claims
 @using WebApp.ExcelHelper;
 @{
+   
     ViewData["Title"] = "Danh sách phân bổ ";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
-    bool isDelete = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanBoKinhPhi.Delete);
-    bool isAdd = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanBoKinhPhi.Add);
-    bool isEdit = AuthHelper.GetPermissionHelper(Permission).Contains(PermissionHelper.PhanBoKinhPhi.Edit);
+    //string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
+    bool isDelete = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.PhanBoKinhPhi.Delete);
+    bool isAdd = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.PhanBoKinhPhi.Add);
+    bool isEdit = AuthHelper.GetPermissionHelper(ViewBag.Permissions).Contains(PermissionHelper.PhanBoKinhPhi.Edit);
 }
 @model DAL.Models.ProjectFinancialDetail.ProjectFinancialDetailParamModel
 @section styles{
