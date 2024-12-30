@@ -5,6 +5,12 @@
 @section styles{
     <link href="~/plugins/amcharts5/examples/xy-clustered-column/index.css" rel="stylesheet" />
     <style>
+        .card {
+            background: rgba(245, 246, 252, 0.52);
+        }
+        .list-group {
+            background: rgba(245, 246, 252, 0.52) !important;
+        }
         #chartdiv {
             height: 400px;
         }
@@ -12,11 +18,14 @@
         #dashboard {
             width: 100%;
             height: 620px;
-            background: url(/img/TTKSBT-HCM.jpg);
+            background-image: linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url(/img/TTKSBT-HCM.jpg);
             background-size: cover;
             background-position: center;
-            opacity: 0.2;
         }
+
+       
+
+
     </style>
 }
 <section class="content-header">
@@ -35,113 +44,116 @@
 </section>
 <!-- Main content -->
 <section class="content">
-    <div class="card">
-        <div class="card-header">
-            Tổng quan yêu cầu trong năm @(DateTime.Now.Year)
+    <div id="dashboard">
+        <div class="card">
+            <div class="card-header">
+                Tổng quan yêu cầu trong năm @(DateTime.Now.Year)
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-cog"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Tổng số yêu cầu</span>
+                                <span class="info-box-number number-divide" id="count-quanti-cust">78</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Đã hoàn thành</span>
+                                <span class="info-box-number number-divide" id="count-quanti-cust-visited">70</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+
+
+                    <!-- /.col -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-thumbs-up"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Đang xử lý</span>
+                                <span class="info-box-number number-divide" id="count-quanti-cust-notyet">06</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                    <!-- fix for small devices only -->
+                    <div class="clearfix hidden-md-up"></div>
+
+
+                    <!-- /.col -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Từ chối</span>
+                                <span class="info-box-number number-divide" id="count-quanti-contract-effective">02</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-cog"></i></span>
 
-                        <div class="info-box-content">
-                            <span class="info-box-text">Tổng số yêu cầu</span>
-                            <span class="info-box-number number-divide" id="count-quanti-cust">78</span>
-                        </div>
-                        <!-- /.info-box-content -->
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="card">
+                    <div class="card-header">
+                        Thống kê tổng chi hoàn thành năm @(DateTime.Now.Year)
                     </div>
-                    <!-- /.info-box -->
+                    <div class="card-body" id="chartdiv">
 
-                </div>
-
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-shopping-cart"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text">Đã hoàn thành</span>
-                            <span class="info-box-number number-divide" id="count-quanti-cust-visited">70</span>
-                        </div>
-                        <!-- /.info-box-content -->
                     </div>
-                    <!-- /.info-box -->
                 </div>
-
-
-                <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-thumbs-up"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text">Đang xử lý</span>
-                            <span class="info-box-number number-divide" id="count-quanti-cust-notyet">06</span>
-                        </div>
-                        <!-- /.info-box-content -->
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-header">
+                        Top người dùng tích cực
                     </div>
-                    <!-- /.info-box -->
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="fa fa-user"></i>&nbsp; Nguyễn Văn Long
+                            <p style="margin-left:10px;font-size:8pt;"><i>Quản lý</i></p>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-user"></i>&nbsp; Trần Tú Anh
+                            <p style="margin-left:10px;font-size:8pt;"><i>Quản lý</i></p>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-user"></i>&nbsp; Ngô Đình Nại
+                            <p style="margin-left:10px;font-size:8pt;"><i>NV văn phòng</i></p>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-user"></i>&nbsp; Trần Thanh Lực
+                            <p style="margin-left:10px;font-size:8pt;"><i>NV văn phòng</i></p>
+                        </li>
+                    </ul>
                 </div>
-                <!-- /.col -->
-                <!-- fix for small devices only -->
-                <div class="clearfix hidden-md-up"></div>
-
-
-                <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text">Từ chối</span>
-                            <span class="info-box-number number-divide" id="count-quanti-contract-effective">02</span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-sm-9">
-            <div class="card">
-                <div class="card-header">
-                    Thống kê tổng chi hoàn thành năm @(DateTime.Now.Year)
-                </div>
-                <div class="card-body" id="chartdiv">
-
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header">
-                    Top người dùng tích cực
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <i class="fa fa-user"></i>&nbsp; Nguyễn Văn Long
-                        <p style="margin-left:10px;font-size:8pt;"><i>Quản lý</i></p>
-                    </li>
-                    <li class="list-group-item">
-                        <i class="fa fa-user"></i>&nbsp; Trần Tú Anh
-                        <p style="margin-left:10px;font-size:8pt;"><i>Quản lý</i></p>
-                    </li>
-                    <li class="list-group-item">
-                        <i class="fa fa-user"></i>&nbsp; Ngô Đình Nại
-                        <p style="margin-left:10px;font-size:8pt;"><i>NV văn phòng</i></p>
-                    </li>
-                    <li class="list-group-item">
-                        <i class="fa fa-user"></i>&nbsp; Trần Thanh Lực
-                        <p style="margin-left:10px;font-size:8pt;"><i>NV văn phòng</i></p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    
 
 
 
