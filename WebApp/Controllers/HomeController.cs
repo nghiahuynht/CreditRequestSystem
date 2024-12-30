@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using DAL.IService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers
@@ -13,11 +14,13 @@ namespace WebApp.Controllers
     public class HomeController : AppBaseController
     {
         private IDashboardService dashboardService;
-        public HomeController(IDashboardService dashboardService)
+        private IUserInfoService userInfoService;
+        public HomeController(IDashboardService dashboardService, IUserInfoService userInfoService)
         {
             this.dashboardService = dashboardService;
+            this.userInfoService = userInfoService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -26,6 +29,21 @@ namespace WebApp.Controllers
             else
             {
                 ViewBag.FullNameLogin = AuthenInfo().FullName;
+
+
+                if (HttpContext.Session.GetString("Permission") == null)// neu da co cookies ma chua co session thi tao lai session
+                {
+                    string permission = "";
+                    var dataPer = await userInfoService.GetPermissionMenuByUserId(AuthenInfo().UserId);
+                    foreach (var per in dataPer)
+                    {
+                        permission += "," + per.Permissions;
+                    };
+                    HttpContext.Session.SetString("Permission", permission);
+                }
+
+
+
                 return View();
             }
            
