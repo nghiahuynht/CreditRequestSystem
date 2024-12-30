@@ -108,7 +108,7 @@ namespace WebApp.Controllers
 
         #region User info
        // [Authorize(Roles ="Admin")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             UserParViewModel par = new UserParViewModel();
             var lstRoles = userService.GetAllRoles();
@@ -116,6 +116,9 @@ namespace WebApp.Controllers
             par.LstRoles = lstRoles;
             par.LstDepartment = lstDepartment;
             ViewBag.UserAll = userService.GetListUserByRoles("All").Results;
+
+            
+
             ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View(par);
         }
