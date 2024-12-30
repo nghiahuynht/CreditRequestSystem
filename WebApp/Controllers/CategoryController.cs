@@ -357,6 +357,7 @@ namespace WebApp.Controllers
 
         public IActionResult MucChi()
         {
+            string test = HttpContext.Session.GetString("Permission");
             ViewBag.Permissions = HttpContext.Session.GetString("Permission");
             return View();
         }

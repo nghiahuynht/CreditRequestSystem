@@ -5,6 +5,13 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="wwwroot\img-visit\**" />
+    <Content Remove="wwwroot\img-visit\**" />
+    <EmbeddedResource Remove="wwwroot\img-visit\**" />
+    <None Remove="wwwroot\img-visit\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.2" />
@@ -37,7 +44,6 @@
 
 
   <ItemGroup>
-    <Folder Include="wwwroot\img-visit\" />
     <Folder Include="wwwroot\upload\contract\" />
     <Folder Include="wwwroot\upload\credit-request\" />
   </ItemGroup>

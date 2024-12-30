@@ -138,7 +138,7 @@
 
             </div>
             <div class="modal-body">
-                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/Category/ExportMucChiTemplateForImport.xlsx"  class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="#" onclick="GetTemplateImportExpense()"  class="text-primary">File mẫu</a></p>
                 <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
                 <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
                 <form>
@@ -299,7 +299,9 @@
             location.href = "/Category/ExportMucChi?filfer=" + JSON.stringify(dataSearch);
         }
 
-
+        function GetTemplateImportExpense() {
+            location.href = "/Category/ExportMucChiTemplateForImport";
+        }
      
 
         function RenderTableAction(id) {

@@ -122,4 +122,3 @@ D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyIn
 D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.AssemblyInfo.cs
 D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.dll
 D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.pdb
-D:\Projects\OnGit\CreditRequestSystem\DAL\obj\Debug\netcoreapp2.2\DAL.csprojAssemblyReference.cache
