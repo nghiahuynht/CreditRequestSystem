@@ -20,12 +20,18 @@ namespace WebApp.Controllers
         private IProjectFinancialDetailService _projectFinancialDetailService;
         private IAttachFileService _attachFileService;
         private ICategoryService _categoryService;
-        public ProjectController(IProjectFinancialSummarService projectFinancialSummarService, IProjectFinancialDetailService projectFinancialDetailService, IAttachFileService attachFileService, ICategoryService categoryService)
+        private IPermissionService permissionService;
+        public ProjectController(IProjectFinancialSummarService projectFinancialSummarService
+            , IProjectFinancialDetailService projectFinancialDetailService
+            , IAttachFileService attachFileService
+            , ICategoryService categoryService
+            , IPermissionService permissionService)
         {
             _projectFinancialSummarService = projectFinancialSummarService;
             _projectFinancialDetailService = projectFinancialDetailService;
             _attachFileService = attachFileService;
             _categoryService = categoryService;
+            this.permissionService = permissionService;
         }
         public IActionResult Index()
         {
@@ -402,10 +408,30 @@ namespace WebApp.Controllers
         public async Task<IActionResult> ProjectDetailIndex()
         {
             ProjectFinancialDetailParamModel paramModel = new ProjectFinancialDetailParamModel();
-            var lstProject = await  _projectFinancialSummarService.LstAllProjectFinancialSummar();
+            // var lstProject = await  _projectFinancialSummarService.LstAllProjectFinancialSummar();
+            var lstProject = await permissionService.GetPermissionProjectByUserId(AuthenInfo().UserId);
             var lstActiveGroup = _categoryService.LstAllCategoryActiveGroup();
             var lstExpense = _categoryService.LstAllCategoryExpense();
-            paramModel.LstProject = lstProject;
+
+
+            var projectAssigned = new List<ProjectFinancialSummarDLLModel>();
+            if (lstProject.Any())
+            {
+                foreach (var item in lstProject)
+                {
+                    var newline = new ProjectFinancialSummarDLLModel
+                    {
+                        Id=item.Id,
+                        Code=item.ProjectId.ToString(),
+                        Name=item.ProjectName
+                    };
+                    projectAssigned.Add(newline);
+                }
+            }
+
+
+
+            paramModel.LstProject = projectAssigned;
             paramModel.LstActiveGroup = lstActiveGroup;
             paramModel.LstExpense = lstExpense;
             ViewBag.Permissions = HttpContext.Session.GetString("Permission");
