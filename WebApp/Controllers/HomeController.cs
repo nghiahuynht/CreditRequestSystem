@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DAL.IService;
+using DAL.Models.Dashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -64,8 +65,22 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<JsonResult> GetDashBoardColumnChart(int year)
         {
-           
-            return Json(true);
+            var lstRes = new List<DashboardColumnChartModel>
+            {
+                new DashboardColumnChartModel{Thang="T1", TongChi=40000000},
+                new DashboardColumnChartModel{Thang="T2", TongChi=55000000},
+                 new DashboardColumnChartModel{Thang="T3", TongChi=70500000},
+                 new DashboardColumnChartModel{Thang="T4", TongChi=11000000},
+                 new DashboardColumnChartModel{Thang="T5", TongChi=9000000},
+                new DashboardColumnChartModel{Thang="T6", TongChi=9000000},
+                 new DashboardColumnChartModel{Thang="T7", TongChi=12000000},
+                  new DashboardColumnChartModel{Thang="T8", TongChi=24000000},
+                   new DashboardColumnChartModel{Thang="T9", TongChi=13000000},
+                   new DashboardColumnChartModel{Thang="T10", TongChi=7050000},
+                   new DashboardColumnChartModel{Thang="T11", TongChi=9250000},
+                   new DashboardColumnChartModel{Thang="T12", TongChi=6250000},
+            };
+            return Json(lstRes);
         }
 
         [HttpGet]
