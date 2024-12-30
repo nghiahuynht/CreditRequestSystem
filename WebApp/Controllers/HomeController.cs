@@ -74,10 +74,10 @@ namespace WebApp.Controllers
                  new DashboardColumnChartModel{Thang="T5", TongChi=9000000},
                 new DashboardColumnChartModel{Thang="T6", TongChi=9000000},
                  new DashboardColumnChartModel{Thang="T7", TongChi=12000000},
-                  new DashboardColumnChartModel{Thang="T8", TongChi=24000000},
-                   new DashboardColumnChartModel{Thang="T9", TongChi=13000000},
-                   new DashboardColumnChartModel{Thang="T10", TongChi=7050000},
-                   new DashboardColumnChartModel{Thang="T11", TongChi=9250000},
+                  new DashboardColumnChartModel{Thang="T8", TongChi=34000000},
+                   new DashboardColumnChartModel{Thang="T9", TongChi=63000000},
+                   new DashboardColumnChartModel{Thang="T10", TongChi=77050000},
+                   new DashboardColumnChartModel{Thang="T11", TongChi=45250000},
                    new DashboardColumnChartModel{Thang="T12", TongChi=6250000},
             };
             return Json(lstRes);
