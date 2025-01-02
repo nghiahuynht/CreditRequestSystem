@@ -2,6 +2,7 @@
 using DAL.Models;
 using DAL.Models.Category;
 using DAL.Models.ProjectFinancialDetail;
+using DAL.Models.ProjectFinancialSummar;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -92,6 +93,49 @@ namespace DAL.Service
             }
             return res;
         }
+
+
+        public SaveResultModel<object> ImportProjectFinancialDetail(ProjectPlaningImportModel model, string userName)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[]
+               {
+                    new SqlParameter("@ProjectCode", model.ProjectCode),
+                    new SqlParameter("@ActivitiCode", model.ActivitiCode),
+                    new SqlParameter("@ActivitiName", model.ActivitiName),
+                    new SqlParameter("@ExpenseCode", model.ExpenseCode),
+                    new SqlParameter("@ExpenseName", model.ExpenseName),
+                    new SqlParameter("@TieuMuc", model.TieuMuc),
+                    new SqlParameter("@TieuChuan", model.TieuChuan),
+                    new SqlParameter("@Unit", model.DonVi),
+                    new SqlParameter("@Price", model.Price),
+                    new SqlParameter("@Quanti", model.Quanti),
+                    new SqlParameter("@ActionBy", userName),
+                  
+               };
+
+
+
+                ValidNullValue(param);
+                dtx.Database.ExecuteSqlCommand("EXEC sp_SaveImportProjectPlaningDetail @ProjectCode" +
+                    ",@ActivitiCode,@ActivitiName" +
+                    ",@ExpenseCode,@ExpenseName" +
+                    ",@TieuMuc,@TieuChuan" +
+                    ",@Unit,@Price,@Quanti,@ActionBy", param);
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+
+
 
         public async Task<bool> DeleteProjectFinancialDetail(int Id, string userName)
         {

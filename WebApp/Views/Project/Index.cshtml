@@ -74,6 +74,7 @@
                             <button id="btn-search" onclick="SearchProjectFinancialSummar()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                             <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateNV(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
                             <button id="btn-createNV" class="btn btn-filter btn-sm btn btn-success" onclick="showModalImport()"><i class="fas fa-file-import"></i>&nbsp;Import</button>
+                            
                         </div>
 
                     </div>
@@ -130,7 +131,7 @@
                         <label for="fileInput" class="form-label">Chọn file</label>
                         <input class="form-control" type="file" id="fileInput" accept=".xls, .xlsx" onchange="readFileImport()">
                     </div>
-                    
+
                 </form>
             </div>
         </div>
@@ -171,12 +172,11 @@
 
                                     </tr>
                                 </thead>
-                                <tbody id="lst-data-info">
-                                </tbody>
+                                <tbody id="lst-data-info"></tbody>
                                 @*  <tfoot>
-                                <td id="sumcheck"></td>
-                                <td colspan="7"></td>
-                                </tfoot> *@
+                                    <td id="sumcheck"></td>
+                                    <td colspan="7"></td>
+                                    </tfoot> *@
                             </table>
                         </div>
                     </div>
@@ -223,8 +223,7 @@
                                         <th scope="col" class="">Trạng thái</th>
                                     </tr>
                                 </thead>
-                                <tbody id="lst-data-info">
-                                </tbody>
+                                <tbody id="lst-data-info"></tbody>
                             </table>
                         </div>
                     </div>
@@ -242,6 +241,48 @@
     </div>
 </div>
 
+<div class="modal fade show" id="modal-import-planing-project" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Import kế hoạch phân bổ nguồn thu</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/template/MauNhap-KeHoach-PhanBo-NguonThu.xlsx" class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
+                <br />
+                <form id="formimporplaningproject" class="form-horizontal" action="/Project/ImportPlaningProject" method="post" enctype="multipart/form-data">
+                    @(Html.AntiForgeryToken())
+                    <input type="file" name="postedFile" id="postedFile" style="width:80%;" />
+                    <input type="button" id="btn-import-profile" value="Import" class="btn btn-sm btn-success" />
+                    <strong style="display:none;" id="span-waiting">Đang xử lý.....</strong>
+                </form>
+                <br />
+                <table class="table table-bordered" id="table-import-result" style="display:none;">
+                    <tr>
+                        <th>Tổng nhập</th>
+                        <th>Thành công</th>
+                        <th>Thất bại</th>
+                    </tr>
+                    <tr>
+                        <td><span id="span_total_import">0</span></td>
+                        <td><span id="span_total_success">0</span></td>
+                        <td><span id="span_total_fail">0</span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="ClosePopupImport()" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 
 
@@ -289,7 +330,10 @@
             },
 
 
-        ];
+         
+
+
+            ];
 
         var arrMembers = [];
         var listFileAttact = [];
@@ -315,23 +359,23 @@
                         success: function (response) {
                             if (response.success == true && response.fileNameAttactId > 0) {
                                 const html = `
-                                                    <tr>
-                                                        <td width="40px" style="text-align:center;">
-                                                            <a  target="_blank">
-                                                                <span class="fa fa-download"></span>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="${response.filePath}" target="_blank">${response.fileName}</a>
-                                                        </td>
-                                                         <td width="40px" style="text-align:center;color:crimson;">
-                                                            <span class="fa fa-trash delete-file"
-                                                                  data-id="${response.fileNameAttactId}"
-                                                                  style="cursor:pointer;"
-                                                                  onclick="RemoveFile(${response.fileNameAttactId})"></span>
-                                                        </td>
-                                                    </tr>
-                                                `;
+                                                        <tr>
+                                                            <td width="40px" style="text-align:center;">
+                                                                <a  target="_blank">
+                                                                    <span class="fa fa-download"></span>
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                <a href="${response.filePath}" target="_blank">${response.fileName}</a>
+                                                            </td>
+                                                             <td width="40px" style="text-align:center;color:crimson;">
+                                                                <span class="fa fa-trash delete-file"
+                                                                      data-id="${response.fileNameAttactId}"
+                                                                      style="cursor:pointer;"
+                                                                      onclick="RemoveFile(${response.fileNameAttactId})"></span>
+                                                            </td>
+                                                        </tr>
+                                                    `;
 
                                 $('#table_Attact_File').append(html)
                             }
@@ -344,14 +388,21 @@
                     });
                 }
             });
+
+
+
+
+           
+
+
         });
         function RenderTableAction(id) {
             var html = `
-                        <div class='div-table-action'>
-                            <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
-                            <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>&nbsp;
-                            <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>&nbsp;
-                        </div>`;
+                            <div class='div-table-action'>
+                                <span class="fa fa-eye" onclick="GotoProjectDetail(${id})"></span>&nbsp;
+                                <i class='fa fa-edit' onclick='showModalCreateNV(${id})' title='sửa'></i>&nbsp;
+                                <i class='fa fa-trash' onclick='DeleteProject(${id})' title='xóa'></i>&nbsp;
+                            </div>`;
             return html;
         }
         function GotoProjectDetail(id) {
@@ -633,12 +684,12 @@
                         var data = response.data;
                         var htmlAppend = '';
                         for (var i = 0; i < data.length; i++) {
-                            var projectCode=generateCode("DA");
+                            var projectCode = generateCode("DA");
                             data[i].projectCode = projectCode;
                             htmlAppend += `<tr>`;
                             htmlAppend += `<td class="col-checkbox">
-                                             <input data-id='`+ data[i].projectCode + `' type="checkbox" checked="checked" name="checkRow">
-                             </td>`;
+                                                 <input data-id='`+ data[i].projectCode + `' type="checkbox" checked="checked" name="checkRow">
+                                 </td>`;
                             htmlAppend += `<td>` + data[i].projectCode + `</td>`;
                             htmlAppend += `<td>` + data[i].projectName + `</td>`;
                             htmlAppend += `<td>` + data[i].legalBasis + `</td>`;
@@ -734,10 +785,10 @@
                 processData: false,
                 beforeSend: function () {
                     $('#cntModalListProject #ListProjectModal').modal('hide');
-                   
+
                 },
                 complete: function () {
-                  
+
                 },
                 success: function (response) {
                     console.log("response", response)

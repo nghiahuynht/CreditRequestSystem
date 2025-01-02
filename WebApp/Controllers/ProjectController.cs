@@ -5,12 +5,14 @@ using DAL.Models.ProjectFinancialDetail;
 using DAL.Models.ProjectFinancialSummar;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.ImportHelper;
 
 namespace WebApp.Controllers
 {
@@ -21,17 +23,21 @@ namespace WebApp.Controllers
         private IAttachFileService _attachFileService;
         private ICategoryService _categoryService;
         private IPermissionService permissionService;
+        private IConfiguration config;
+
         public ProjectController(IProjectFinancialSummarService projectFinancialSummarService
             , IProjectFinancialDetailService projectFinancialDetailService
             , IAttachFileService attachFileService
             , ICategoryService categoryService
-            , IPermissionService permissionService)
+            , IPermissionService permissionService
+            , IConfiguration config)
         {
             _projectFinancialSummarService = projectFinancialSummarService;
             _projectFinancialDetailService = projectFinancialDetailService;
             _attachFileService = attachFileService;
             _categoryService = categoryService;
             this.permissionService = permissionService;
+            this.config = config;
         }
         public IActionResult Index()
         {
@@ -649,7 +655,36 @@ namespace WebApp.Controllers
             }
         }
 
+
         #endregion
+
+
+        public JsonResult ImportPlaningProject(IFormFile postedFile)
+        {
+            string rootFolder = config["General:RootFolder"];
+            var dataImport = new PlaningProjectImportHelper(rootFolder);
+
+            var result = new ImportCounterResultModel();
+
+            if (dataImport.Parse(postedFile))
+            {
+                foreach (var item in dataImport.list)
+                {
+                    var res = _projectFinancialDetailService.ImportProjectFinancialDetail(item, User.Identity.Name);
+                    if (res.IsSuccess == false)
+                    {
+                        result.QuantiFail += 1;
+                    }
+                }
+                result.QuantiImport = dataImport.list.Count;
+                result.QuantiSuccess= dataImport.list.Count - result.QuantiFail;
+            }
+
+
+            return Json(result);
+        }
+
+
 
 
     }

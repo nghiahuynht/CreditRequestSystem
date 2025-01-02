@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @using WebApp.ExcelHelper;
 @{
-   
+
     ViewData["Title"] = "Danh sách phân bổ ";
     Layout = "~/Views/Shared/_Layout.cshtml";
     //string Permission = User.Claims.FirstOrDefault(x => x.Type == "Permission").Value;
@@ -80,7 +80,7 @@
                                 }
                             </select>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
                             <label>Hoạt động</label>
                             <select class="form-control" id="dll-activegroup">
                                 <option value="all">Tất cả</option>
@@ -92,7 +92,7 @@
                                 }
                             </select>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
                             <label>Mục chi</label>
                             <select class="form-control" id="dll-expense">
                                 <option value="all">Tất cả</option>
@@ -104,11 +104,12 @@
                                 }
                             </select>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-5">
                             <button onclick="SearchProjectDetail()" class="btn btn-filter btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                             @if (isAdd == true)
                             {
                                 <button id="btn-createNV" class="btn btn-filter btn-sm btn-success" onclick="showModalCreateProjectDetail(0)"><i class="fa fa-plus-circle"></i>&nbsp;Thêm mới</button>
+                                <button id="btn-open-import-planing-project" class="btn btn-filter btn-sm btn-success"><i class="fa fa-upload"></i>&nbsp;Import kế hoạch nguồn thu</button>
                             }
                         </div>
 
@@ -151,6 +152,48 @@
 </div>
 
 
+<div class="modal fade show" id="modal-import-planing-project" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Import kế hoạch phân bổ nguồn thu</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Bước 1:</strong> Tải file mẫu tại đây - <a href="~/template/MauNhap-KeHoach-PhanBo-NguonThu.xlsx" class="text-primary">File mẫu</a></p>
+                <p><strong>Bước 2:</strong> Tải lên file dữ liệu mẫu phía trên</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> Không thay đổi header của file mẫu</p>
+                <br />
+                <form id="formimporplaningproject" class="form-horizontal" action="/Project/ImportPlaningProject" method="post" enctype="multipart/form-data">
+                    @(Html.AntiForgeryToken())
+                    <input type="file" name="postedFile" id="postedFile" style="width:80%;" />
+                    <input type="button" id="btn-import-planning-project" value="Import" class="btn btn-sm btn-success" />
+                    <strong style="display:none;" id="span-waiting">Đang xử lý.....</strong>
+                </form>
+                <br />
+                <table class="table table-bordered" id="table-import-result" style="display:none;">
+                    <tr>
+                        <th>Tổng nhập</th>
+                        <th>Thành công</th>
+                        <th>Thất bại</th>
+                    </tr>
+                    <tr>
+                        <td><span id="span_total_import">0</span></td>
+                        <td><span id="span_total_success">0</span></td>
+                        <td><span id="span_total_fail">0</span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="ClosePopupImport()" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 
 
@@ -203,9 +246,63 @@
         $(document).ready(function () {
 
             SearchProjectDetail();
-
-
+            $("#btn-open-import-planing-project").click(function () {
+                $("#modal-import-planing-project").modal();
+            });
+            $("#btn-import-planning-project").click(function () {
+                ImportPlanforProject();
+            });
         });
+
+
+        function ImportPlanforProject() {
+            var urlPost = $("#formimporplaningproject").attr("action");
+            var formData = new FormData();
+            var fileInput = document.getElementById('postedFile');
+            var file = fileInput.files[0];
+
+            if (file == undefined) {
+
+                Swal.fire({
+                    title: "Vui lòng chọn file cần import!",
+                    icon: "error"
+                });
+                return;
+            }
+
+
+            formData.append("postedFile", file);
+
+            $.ajax({
+                url: urlPost, // Đường dẫn đến API xử lý file
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function () {
+                    ShowWaiting();
+                    $("#table-import-result").hide();
+                },
+                complete: function () {
+                    HideWaiting();
+                    
+                },
+                success: function (response) {
+                    $("#span_total_import").html(response.quantiImport);
+                    $("#span_total_success").html(response.quantiSuccess);
+                    $("#span_total_fail").html(response.quantiFail);
+                    $("#table-import-result").show();
+                    $("#postedFile").val(null);
+                    SearchProjectDetail();
+
+                },
+                error: function () {
+                    toastr.error('Có lỗi khi tải file!', 'Lỗi', { positionClass: "toast-top-center" });
+                }
+            });
+        }
+
+
         function RenderTableAction(id) {
             let html = `<div class='div-table-action'>`;
 
@@ -573,7 +670,7 @@
 
         }
 
-        
+
 
         function uploadFilePaymentInfo(input, id) {
             const file = input.files[0]; // Lấy file được chọn
