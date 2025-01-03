@@ -268,22 +268,24 @@ namespace WebApp.Controllers
                     {
                         return BadRequest("File vượt quá số dòng tối đa (200 dòng)");
                     }
-                    int indexHaveData = 2;
+
                     for (int row = 2; row <= rows; row++)
                     {
 
                         if (columns > 0 && row > 2)
                         {
-                            object tenDA = worksheet.Cells[row, 1].Value;
+           
+                            object maDA = worksheet.Cells[row, 1].Value;
+                            object tenDA = worksheet.Cells[row, 2].Value;
 
-                            object canCuPhapLy = worksheet.Cells[row, 2].Value;
+                            object canCuPhapLy = worksheet.Cells[row, 3].Value;
 
-                            object thoiGianBatDau = worksheet.Cells[row, 3].Value;
+                            object thoiGianBatDau = worksheet.Cells[row, 4].Value;
 
-                            object thoiGianKetThuc = worksheet.Cells[row, 4].Value;
+                            object thoiGianKetThuc = worksheet.Cells[row, 5].Value;
 
-                            object tongHanMuc = worksheet.Cells[row, 5].Value;
-                            object ghiChu = worksheet.Cells[row, 6].Value;
+                            object tongHanMuc = worksheet.Cells[row, 6].Value;
+                            object ghiChu = worksheet.Cells[row, 7].Value;
 
 
                             if (string.IsNullOrEmpty(tenDA?.ToString()))
@@ -336,7 +338,7 @@ namespace WebApp.Controllers
 
                             ProjectFinancialSummarModel item = new ProjectFinancialSummarModel
                             {
-
+                                ProjectCode= maDA !=null? maDA.ToString():"",
                                 ProjectName = tenDA.ToString(),
                                 LegalBasis = canCuPhapLy.ToString(),
                                 TimeStart = parsedBatDau,

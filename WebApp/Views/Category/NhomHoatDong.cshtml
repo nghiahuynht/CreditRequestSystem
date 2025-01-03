@@ -478,7 +478,11 @@
                         var htmlAppend = '';
                         for (var i = 0; i < data.length; i++) {
                             var code = generateCode("NHD");
-                            data[i].code = code;
+                            if (data[i].code == null || data[i].code == "")
+                            {
+                                data[i].code = code;
+                            }
+                            
                             htmlAppend += `<tr>`;
                             htmlAppend += `<td class="col-checkbox">
                                                              <input data-id='`+ data[i].code + `' type="checkbox" checked="checked" name="checkRow">

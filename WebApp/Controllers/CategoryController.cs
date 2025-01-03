@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
 using WebApp.ExcelHelper;
 using WebApp.ImportHelper;
@@ -217,10 +218,8 @@ namespace WebApp.Controllers
 
                         if (columns > 0 && row > 1)
                         {
-                            object tenNhomHoatDong = worksheet.Cells[row, 1].Value;
-
-                            
-
+                            object maNhom = worksheet.Cells[row, 1].Value;
+                            object tenNhomHoatDong = worksheet.Cells[row, 2].Value;
 
                             if (string.IsNullOrEmpty(tenNhomHoatDong?.ToString()))
                             {
@@ -232,7 +231,7 @@ namespace WebApp.Controllers
                             CategoryActiveGroupViewModel item = new CategoryActiveGroupViewModel
                             {
 
-                               Code = "",
+                               Code = (maNhom != null)?maNhom.ToString():"",
                                Name = tenNhomHoatDong.ToString()
 
                             };
@@ -264,7 +263,7 @@ namespace WebApp.Controllers
                     {
                         if (res.LongValReturn == -409)
                         {
-                            ms = "Mã dự án đã tồn tại";
+                            ms = "Mã nhóm đã tồn tại";
                         }
                         else
                         {
@@ -441,19 +440,23 @@ namespace WebApp.Controllers
             // Sheet 1
 
             var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
-            Color colFromHex = ColorTranslator.FromHtml("#3377ff");
+            Color colFromHex = ColorTranslator.FromHtml("#EC741C");
             Color colFromHexTextHeader = ColorTranslator.FromHtml("#ffffff");
 
-            workSheet.Cells["A1"].Value = "Mã nhóm";
-            workSheet.Cells["B1"].Value = "Mã mục chi";
-            workSheet.Cells["C1"].Value = "Tên mục chi";
-            workSheet.Cells["D1"].Value = "Tiểu mục";
-            workSheet.Cells["E1"].Value = "Ghi chú";
+            workSheet.Cells["A1"].Value = "Import mục chi thuộc nhóm hoạt động";
+            workSheet.Cells["A1"].Style.Font.Size = 16;
 
-            workSheet.Cells[1, 1, 1, 4].Style.Font.Bold = true;
-            
-          
-           
+            workSheet.Cells["A2"].Value = "Mã nhóm";
+            workSheet.Cells["B2"].Value = "Mã mục chi";
+            workSheet.Cells["C2"].Value = "Tên mục chi";
+            workSheet.Cells["D2"].Value = "Tiểu mục";
+            workSheet.Cells["E2"].Value = "Ghi chú";
+
+            workSheet.Cells[2, 1, 2, 5].Style.Font.Bold = true;
+
+            workSheet.Cells[2, 1, 2, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            workSheet.Cells[2, 1,2, 5].Style.Fill.BackgroundColor.SetColor(colFromHex);
+
             //FreezePanes
             //workSheet.View.FreezePanes(1,13);
 
@@ -473,7 +476,7 @@ namespace WebApp.Controllers
             workSheet2.Cells["A1"].Value = "Mã nhóm";
             workSheet2.Cells["B1"].Value = "Tên nhóm";
 
-            workSheet2.Cells[1, 1, 1, 4].Style.Font.Bold = true;
+            workSheet2.Cells[1, 1, 1, 5].Style.Font.Bold = true;
             int rowData = 2;
 
             if (res.data.Any())

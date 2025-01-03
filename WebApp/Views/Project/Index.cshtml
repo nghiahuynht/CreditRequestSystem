@@ -647,7 +647,7 @@
         }
 
         function showModalImport() {
-            $("#modal_import_project").modal("show")
+            $("#modal_import_project").modal("show");
         }
 
         function readFileImport() {
@@ -685,7 +685,13 @@
                         var htmlAppend = '';
                         for (var i = 0; i < data.length; i++) {
                             var projectCode = generateCode("DA");
-                            data[i].projectCode = projectCode;
+
+                            if (data[i].projectCode == null || data[i].projectCode=="")
+                            {
+                                data[i].projectCode = projectCode;
+                            }
+
+                           
                             htmlAppend += `<tr>`;
                             htmlAppend += `<td class="col-checkbox">
                                                  <input data-id='`+ data[i].projectCode + `' type="checkbox" checked="checked" name="checkRow">
