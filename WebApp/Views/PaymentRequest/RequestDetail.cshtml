@@ -62,7 +62,20 @@
                                     </div>
                                 </div>
                             </div>
-                           
+                            @{
+                                if (Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Approved
+                                    || Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Unc
+                                    || Model.RequestHeader.Status == DAL.Contanst.PaymentRequesStatus_Completed)
+                                {
+                                    <div class="form-group row">
+                                        <div class="col-sm-10" id="load-unc-attach">
+                                           
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
                         </div>
 
                         <div class="col-md-6">
@@ -86,6 +99,7 @@
                                         {
                                             <table class="table table-bordered">
                                                 @{
+                                                    int stt = 1;
                                                     foreach (var status in lstStatus.Results)
                                                     {
                                                         string classStatus = "";
@@ -118,11 +132,14 @@
                                                         {
                                                             classStatus = "<span class='badge badge-success badge-status'>Hoàn thành</span>";
                                                         }
-                                                        <tr>
-                                                            <td>@Html.Raw(classStatus)</td>
-                                                            <td>@status.ActionName</td>
-                                                            <td>@status.ActionDate.Value.ToString("dd/MM/yyyy hh:mm tt")</td>
-                                                        </tr>
+                                                <tr>
+                                                    <td>@(stt)</td>
+                                                    <td>@Html.Raw(classStatus)</td>
+                                                    <td>@status.ActionName</td>
+                                                    <td>@status.ActionDate.Value.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                                </tr>
+
+                                                        stt++;
                                                     }
                                                 }
                                             </table>
@@ -413,7 +430,27 @@
 </div>
 
 
+<div class="modal modal-blur fade" id="modal_attach_UNC" data-bs-backdrop="static" data-bs-focus="false" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog " id="form_attach_UNC">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Tải lên UNC</h5>
 
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Chọn file</label>
+                        <input class="form-control" type="file" id="fileInput"  >
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-warning" id="btn-attach-unc-action" value="OK" />&nbsp;<input type="button" value="Đóng" class="btn btn-default"/>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section scripts{
@@ -488,6 +525,11 @@
             });
 
 
+          
+
+            $("#btn-attach-unc-action").click(function () {
+                attachUNC();
+            });
 
         });
 
@@ -680,6 +722,7 @@
 
                 let requestId = $("#RequestHeader_Id").val();
                 LoadAttachRequestFile(requestId, projectId, activityId, expsenseId);
+                ListAttachUNC();
             }
         }
 
@@ -704,36 +747,51 @@
 
         function ChangeStatus(statusCode) {
 
-            let modelChangeStatus = {
-                "requestId": parseFloat($("#RequestHeader_Id").val()),
-                "status": statusCode,
-                "userName": "",
-                "note": $("#txt-note").val()
+
+            let validChange = true;
+            if (statusCode == "unc")
+            {
+                validChange = validateAttachUNC();
             }
 
-            $.ajax({
-                type: "POST",
-                contentType: 'application/json; charset=utf-8',
-                url: "/PaymentRequest/ChangePaymentRequestStatus",
-                dataType: 'json',
-                data: JSON.stringify(modelChangeStatus),
-                beforeSend: function () {
-                    ShowWaiting();
-                },
-                success: function (res) {
-                    HideWaiting();
-                    if (res.isSuccess === true) {
-                        bootbox.alert(AlertSuccess("Chuyển trạng thái thành công"), function () {
-                           
-                            location.href = "/PaymentRequest/RequestDetail/" + modelChangeStatus.requestId;
-                        });
-
-                    } else {
-                        bootbox.alert(AlertFail(res.errorMessage));
-                    }
-
+            if (validChange == true) {
+                let modelChangeStatus = {
+                    "requestId": parseFloat($("#RequestHeader_Id").val()),
+                    "status": statusCode,
+                    "userName": "",
+                    "note": $("#txt-note").val()
                 }
-            });
+
+                $.ajax({
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    url: "/PaymentRequest/ChangePaymentRequestStatus",
+                    dataType: 'json',
+                    data: JSON.stringify(modelChangeStatus),
+                    beforeSend: function () {
+                        ShowWaiting();
+                    },
+                    success: function (res) {
+                        HideWaiting();
+                        if (res.isSuccess === true) {
+                            bootbox.alert(AlertSuccess("Chuyển trạng thái thành công"), function () {
+
+                                location.href = "/PaymentRequest/RequestDetail/" + modelChangeStatus.requestId;
+                            });
+
+                        } else {
+                            bootbox.alert(AlertFail(res.errorMessage));
+                        }
+
+                    }
+                });
+            } else {
+                bootbox.alert(AlertFail("Bạn chưa đính kèm UNC"));
+            }
+
+
+
+           
 
         }
 
@@ -887,6 +945,115 @@
         }
 
 
+        function attachUNC() {
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            if (file == undefined) {
+
+                Swal.fire({
+                    title: "Vui lòng chọn file!",
+                    icon: "error"
+                });
+                return;
+            }
+
+            let requestId = $("#RequestHeader_Id").val();
+
+            formData.append('file', file);
+            formData.append('paymentRequestId', requestId.toString());
+            $.ajax({
+                url: '/PaymentRequest/AttachUNC',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    ShowWaiting();
+                },
+                complete: function () {
+                    HideWaiting();
+                },
+                success: function (response) {
+
+
+                    if (response.status = "Success") {
+
+                        toastr.success('Đính kèm UNC thành công', { positionClass: "toast-top-center" });
+                        $("#modal_attach_UNC").modal("hide");
+                    } else {
+                        toastr.success('Đính kèm UNC thất bại', { positionClass: "toast-top-center" });
+                    }
+                    ListAttachUNC();
+
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Swal.fire({
+                        title: jqXHR.responseText,
+                        icon: "error"
+                    });
+                }
+            });
+        }
+
+
+        function ListAttachUNC() {
+            let requestId = $("#RequestHeader_Id").val();
+            ShowWaiting();
+            $("#load-unc-attach").load("/paymentrequest/_PartialGetAttachUNC?requestId=" + requestId, function () {
+                $("#btn-open-modal-unc").click(function () {
+                    $("#modal_attach_UNC").modal();
+                });
+                HideWaiting();
+            });
+        }
+
+        function validateAttachUNC()
+        {
+            let attachUNCName = "";
+            $('#table-unc-attc tr.tr-unc-file-name').each(function () {
+                attachUNCName = $(this).find("td").eq(0).html();
+               
+            });
+            if (attachUNCName != null && attachUNCName != undefined && attachUNCName != "")
+            {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+
+        function DeleteUNCAttachment(attachId) {
+
+            let statusRequest = $("#RequestHeader_Status").val();
+            if (statusRequest == "draft" || statusRequest == "draft" || statusRequest == "approved") {
+                var conf = bootbox.confirm("Bạn có chắc muốn file đính kèm UNC này?", function () {
+                    if (conf) {
+                        $.ajax({
+                            type: "GET",
+                            contentType: 'application/json; charset=utf-8',
+                            url: "/PaymentRequest/DeleteAttachmentUNC?attachId=" + attachId,
+                            success: function (result) {
+                                bootbox.alert(AlertSuccess("Đã xoá thành công"), function () {
+                                    ListAttachUNC();
+
+                                });
+
+                            }
+                        });
+                    }
+                });
+            } else {
+                bootbox.alert(AlertFail("Yêu cầu ở trạng thái đã ủy nhiệm chi hoặc hoàn thành thì không xóa UNC được !"));
+            }
+
+            
+
+
+        }
 
 
     </script>

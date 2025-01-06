@@ -307,6 +307,80 @@ namespace DAL.Service
 
 
 
+        /* ============= Attach UNC ====================== */
+
+        public async Task<SaveResultModel<object>> SaveAttachmentUNC(PaymentRequestAttachUNCModel obj)
+        {
+            var res = new SaveResultModel<object>();
+            res.Data = null;
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@PaymentRequestId", obj.PaymentRequestId),
+                    new SqlParameter("@FileName", obj.AttachFileName),
+                    new SqlParameter("@FilePath", obj.AttachFileURL),
+                    new SqlParameter("@AttachBy", obj.AttachByUser),
+                   // new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_SaveAttachUNC @PaymentRequestId,@FileName,@FilePath,@AttachBy", param);
+                res.LongValReturn = Convert.ToInt64(param[param.Length - 1].Value);
+
+            }
+            catch (Exception ex)
+            {
+                res.ErrorMessage = ex.Message;
+                res.IsSuccess = false;
+            }
+            return res;
+        }
+
+
+
+        public async Task<List<PaymentRequestAttachUNCModel>> GetAttachUNCByPaymentRequest(long requestId)
+        {
+            var res = new List<PaymentRequestAttachUNCModel>();
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@PaymentRequestId", requestId),
+                   // new SqlParameter { ParameterName = "@NewId", DbType = System.Data.DbType.Int64, Direction = System.Data.ParameterDirection.Output }
+
+                };
+                ValidNullValue(param);
+                res = await dtx.PaymentRequestAttachUNCModel.FromSql("EXEC sp_GetAttachUNCByRequestId @PaymentRequestId", param).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return res;
+        }
+
+
+
+        public async Task DeleteAttactmentUNC(long attachId)
+        {
+            try
+            {
+                var param = new SqlParameter[] {
+                    new SqlParameter("@AttachId", attachId),
+
+                };
+                ValidNullValue(param);
+                await dtx.Database.ExecuteSqlCommandAsync(@"EXEC sp_DeleteAttachUNCFile @AttachId", param);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+
+
 
     }
 }

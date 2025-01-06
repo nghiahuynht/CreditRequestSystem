@@ -21,56 +21,52 @@
                 // for each attachment
                 foreach (var item in Model.LstAttachments)
                 {
-        <tr class="tr_attach" style="height:32px !important;">
-            <td>@(item.SuggestName)</td>
-            <td>@(item.SuggestNote)</td>
-            <td><a href="@(item.SuggestFileURL)">@(item.SuggestFileName)</a></td>
-            <td>@(item.AttachFileName)</td>
-            @{
-                if (Model.Status != Contanst.PaymentRequesStatus_Draft && Model.Status != Contanst.CreditRequestStatus_Canceled)
-                {
-                    var stepEachFile = Model.LstApproveChecklist.Where(k => k.PaymentProfileId == item.ProfileId).ToList();
-                    <td><label class="badge badge-warning">@(stepEachFile.Any()?stepEachFile.Count.ToString():"0")</label></td>
-                }
-            }
+                    <tr class="tr_attach" style="height:32px !important;">
+                        <td>@(item.SuggestName)</td>
+                        <td>@(item.SuggestNote)</td>
+                        <td><a href="@(item.SuggestFileURL)">@(item.SuggestFileName)</a></td>
+                        <td>@(item.AttachFileName)</td>
+                        @{
+                            if (Model.Status != Contanst.PaymentRequesStatus_Draft && Model.Status != Contanst.CreditRequestStatus_Canceled)
+                            {
+                                var stepEachFile = Model.LstApproveChecklist.Where(k => k.PaymentProfileId == item.ProfileId).ToList();
+                                <td><label class="badge badge-warning">@(stepEachFile.Any() ? stepEachFile.Count.ToString() : "0")</label></td>
+                            }
+                        }
 
-            <td width="40px"><i class="fa fa-upload file-btn-action" title="Up đính kèm" onclick="openUploadForm(@(item.Id))"></i></td>
-            <td width="40px">
-                @{
-                    if (!string.IsNullOrEmpty(item.AttachFileName))
-                    {
-                        <a href="@(item.AttachURL)" title="Tải đính kèm"><i class="fa fa-download file-btn-action"></i></a>
-                    }
-                }
-
-            </td>
-
-            <td width="40px">
-
-                @{
-                    if (!string.IsNullOrEmpty(item.AttachFileName))
-                    {
-                        <i onclick="DeleteAttachment(@(item.AttachId))" title="Xoá đính kèm" class="fa fa-trash file-btn-action"></i>
-                    }
-                }
-
-            </td>
-        </tr>
-                                            if (Model.Status != Contanst.PaymentRequesStatus_Draft && Model.Status != Contanst.CreditRequestStatus_Canceled)
-                                            {
-                                                // for each step approve in each attachment
-                                                var stepEachFile = Model.LstApproveChecklist.Where(k => k.PaymentProfileId == item.ProfileId).ToList();
-                                                foreach (var step in stepEachFile)
-                                                {
-                                                    string approvedStep = step.Approved ? "checked='checked' disabled" : string.Empty;
-                                                    string disabledApproved = step.Approved ? "disabled='disabled'" : string.Empty;
-
-                                                    <tr class="tr-step">
-                                                        <td colspan="7">@(step.Name)</td>
-                                                        <td><input onclick="ApproveStepChecklist(@(step.PaymentProfileId),@(step.Id))" type="checkbox" @(approvedStep) class="ck-step-approve" @(disabledApproved) /></td>
-                                                    </tr>
-                                                }
+                        <td width="40px"><i class="fa fa-upload file-btn-action" title="Up đính kèm" onclick="openUploadForm(@(item.Id))"></i></td>
+                        <td width="40px">
+                            @{
+                                if (!string.IsNullOrEmpty(item.AttachFileName))
+                                {
+                                    <a href="@(item.AttachURL)" title="Tải đính kèm"><i class="fa fa-download file-btn-action"></i></a>
                                 }
+                            }
+
+                        </td>
+
+                        <td width="40px">
+
+                            @{
+                                if (!string.IsNullOrEmpty(item.AttachFileName))
+                                {
+                                    <i onclick="DeleteAttachment(@(item.AttachId))" title="Xoá đính kèm" class="fa fa-trash file-btn-action"></i>
+                                }
+                            }
+
+                        </td>
+                    </tr>// for each step approve in each attachment
+                            var stepEachFile2 = Model.LstApproveChecklist.Where(k => k.PaymentProfileId == item.ProfileId).ToList();
+                            foreach (var step in stepEachFile2)
+                            {
+                                string approvedStep = step.Approved ? "checked='checked' disabled" : string.Empty;
+                                string disabledApproved = step.Approved ? "disabled='disabled'" : string.Empty;
+
+                                <tr class="tr-step">
+                                    <td colspan="7">@(step.Name)</td>
+                                    <td><input onclick="ApproveStepChecklist(@(step.PaymentProfileId),@(step.Id))" type="checkbox" @(approvedStep) class="ck-step-approve" @(disabledApproved) /></td>
+                                </tr>
+                            }
 
 
 

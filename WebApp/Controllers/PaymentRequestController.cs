@@ -210,6 +210,90 @@ namespace WebApp.Controllers
             return Json(res);
         }
 
+        [HttpGet]
+        public async Task<PartialViewResult> _PartialGetAttachUNC(long requestId)
+        {
+            var lstUNC = await paymentRequestService.GetAttachUNCByPaymentRequest(requestId);
+            return PartialView(lstUNC);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> AttachUNC(IFormCollection formattact)
+        {
+
+            if (formattact.Files.Any())
+            {
+                string rootFolder = config["General:RootFolder"];
+                string domain = config["General:Domain"];
+
+                var fileInform = formattact.Files.FirstOrDefault();
+
+
+                var fName = fileInform.FileName;
+                string paymentRequestId = formattact["paymentRequestId"];
+
+                //======== Step 1: upload to folder ===========
+
+                var folder = $"{rootFolder}\\upload\\payment-request\\{paymentRequestId}";
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+
+                string filePath = Path.Combine(folder, fName);
+                string urlPath = $"{domain}/upload/payment-request/{paymentRequestId}/{fName}";
+
+
+                using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await fileInform.CopyToAsync(fileStream);
+
+                    // save to db
+
+                    var fileAttachUNCModel = new PaymentRequestAttachUNCModel
+                    {
+                        PaymentRequestId = Convert.ToInt64(paymentRequestId),
+                        AttachFileName = fName,
+                        AttachFileURL = urlPath,
+                        AttachByUser = AuthenInfo().UserName
+                    };
+
+
+                   await paymentRequestService.SaveAttachmentUNC(fileAttachUNCModel);
+
+
+                }
+
+                return Json(new
+                {
+                    Status = "Success"
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    Status = "Fail"
+                });
+            }
+
+            
+
+        }
+
+
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteAttachmentUNC(long attachId)
+        {
+
+            await paymentRequestService.DeleteAttactmentUNC(attachId);
+            return Json(true);
+        }
 
 
     }

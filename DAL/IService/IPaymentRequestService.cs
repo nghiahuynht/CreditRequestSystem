@@ -22,5 +22,8 @@ namespace DAL.IService
         Task<ListResultModel<PaymentListAttachmentsModel>> GetAttachmentByRequest(long requestId, int projectId, int actityId, int expenseId);
         Task<ListResultModel<PaymentCheckListHistoryModel>> GetCheckListApproveStepByRequest(long requestId);
         SaveResultModel<object> ApproveStepChecklist(PaymentRequestApproveStepModel model, string userName);
+        Task<SaveResultModel<object>> SaveAttachmentUNC(PaymentRequestAttachUNCModel obj);
+        Task<List<PaymentRequestAttachUNCModel>> GetAttachUNCByPaymentRequest(long requestId);
+        Task DeleteAttactmentUNC(long attachId);
     }
 }

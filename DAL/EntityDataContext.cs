@@ -78,7 +78,7 @@ namespace DAL
         public DbSet<PaymentListAttachmentsModel> PaymentListAttachmentsModel { get; set; }
         public DbSet<StatusHistoryModel> StatusHistoryModel { get; set; }
         public DbSet<PaymentCheckListHistoryModel> PaymentCheckListHistoryModel { get; set; }
-
+        public DbSet<PaymentRequestAttachUNCModel> PaymentRequestAttachUNCModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

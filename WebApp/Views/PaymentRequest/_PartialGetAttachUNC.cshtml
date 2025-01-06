@@ -1,0 +1,31 @@
+﻿@model List<DAL.Models.PaymentRequqest.PaymentRequestAttachUNCModel>
+<table class="table table-bordered" id="table-unc-attc">
+    <thead>
+        <tr>
+            <th><span>Đính kèm UNC tại đây</span></th>
+            <th width="100px">
+                <input type="button" class="btn btn-sm btn-primary" id="btn-open-modal-unc" value="Đính kèm" />
+            </th>
+        </tr>
+    </thead>
+    <tbody id="tbody-unc">
+        @{ 
+            if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr class="tr-unc-file-name">
+                        <td><a href="@(item.AttachFileURL)"><i class="fa fa-download"></i>&nbsp;@(item.AttachFileName)</a> </td>
+                        <td style="text-align:center;cursor:pointer;"><i onclick="DeleteUNCAttachment(@(item.Id))" class="fa fa-trash"></i></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2">Chưa có UNC đính kèm</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
