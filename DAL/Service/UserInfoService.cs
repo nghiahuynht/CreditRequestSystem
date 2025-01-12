@@ -21,7 +21,7 @@ namespace DAL.Service
         }
         public UserInfo Login(string userName, string pass)
         {
-            var user = dtx.UserInfo.FirstOrDefault(x => (x.Email == userName.Trim() || x.UserName == userName.Trim()) && x.Pass == pass && x.IsActive);
+            var user = dtx.UserInfo.FirstOrDefault(x => (x.Phone == userName.Trim() || x.UserName == userName.Trim()) && x.Pass == pass && x.IsActive);
             return user;
         }
         public string GetRoleByUser(string userName)

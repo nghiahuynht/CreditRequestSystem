@@ -46,7 +46,7 @@ namespace DAL.Models.Category
     public class CategoryExpenseViewModel
     {
         public int Id { get; set; }
-        public int ActiveGroupId { get; set; }
+        public int? ActiveGroupId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Notes { get; set; }

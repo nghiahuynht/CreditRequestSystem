@@ -356,11 +356,11 @@
 
             var isValidateDetail = validateDataDetail();
             if (isValidateDetail == true) {
-                console.log("arrPaymentProfile", arrPaymentProfile)
-                if (arrPaymentProfile == null || arrPaymentProfile.length == 0) {
-                    toastr.error('Hồ sơ thanh toán không được để trống. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
-                    return;
-                }
+                //console.log("arrPaymentProfile", arrPaymentProfile)
+                //if (arrPaymentProfile == null || arrPaymentProfile.length == 0) {
+                //    toastr.error('Hồ sơ thanh toán không được để trống. Vui lòng thử lại!', 'Lỗi', { positionClass: "toast-top-center" });
+                //    return;
+                //}
                 // check tổng tiền phân bổ có vướt quá hạn mức
                 var tonghanmuc = parseFloat($('#a_tong_han_muc_khong_format').val());
                 var sotiendaphanbo = parseFloat($('#a_so_tien_da_phan_bo_khong_format').val());
