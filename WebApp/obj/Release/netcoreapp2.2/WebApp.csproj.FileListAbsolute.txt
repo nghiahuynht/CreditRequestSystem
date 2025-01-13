@@ -379,3 +379,4 @@ D:\Projects\OnGit\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.Vi
 D:\Projects\OnGit\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.csproj.CopyComplete
 D:\Projects\OnGit\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.dll
 D:\Projects\OnGit\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\WebApp.pdb
+D:\Projects\OnGit\CreditRequestSystem\WebApp\obj\Release\netcoreapp2.2\Razor\Views\PaymentRequest\_PartialGetAttachUNC.g.cshtml.cs
